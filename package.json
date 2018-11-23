@@ -1,0 +1,28 @@
+{
+  "name": "drcash-react-libs",
+  "version": "0.1.0",
+  "description": "Dr cash react libs",
+  "main": "",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dinfyru/drcash-react-libs"
+  },
+  "keywords": [],
+  "author": "Nikolay Glushchenko <dinfyru@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dinfyru/drcash-react-libs/issues"
+  },
+  "homepage": "https://github.com/Dinfyru/drcash-react-libs",
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "1.15.1",
+    "eslint": "5.8.0",
+    "eslint-config-airbnb": "17.1.0",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-jsx-a11y": "6.1.2",
+    "eslint-plugin-react": "7.11.1"
+  }
+}

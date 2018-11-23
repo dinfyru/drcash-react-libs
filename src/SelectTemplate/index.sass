@@ -1,0 +1,128 @@
+.select
+  position: relative
+  &.is-disabled
+    cursor: default !important
+    .select__control
+      background-color: rgb(235, 235, 228) !important
+      cursor: default !important
+  .select__control
+    min-height: 0
+    width: 100%
+    height: 35px
+    background-color: #fff
+    padding: 0 30px 0 11px
+    border: 1px solid #eee
+    color: #b9b9b9
+    position: relative
+    display: block
+    line-height: 33px
+    overflow: hidden
+    cursor: pointer
+    font-size: 14px
+    border-radius: 2px
+    &:hover
+      border-color: #eee
+    &.select__control--is-focused
+      border: 1px solid #eee
+      box-shadow: none
+    .select__indicator-separator
+      background-color: transparent
+    div
+      padding: 0
+      margin: 0
+    .select__value-container
+      color: #626262
+      padding: 0
+      .select__placeholder
+        color: #bababa
+    .select__indicators
+      cursor: pointer
+      position: absolute
+      right: 10px
+      top: 6px
+      text-align: center
+      .select__dropdown-indicator
+        //float: left
+        font-family: 'Font Awesome 5 Pro'
+        font-weight: 400
+        line-height: 20px
+        color: #b9b9b9
+        &:before
+          content: "\f107"
+        svg
+          display: none
+    .select__clear-indicator
+      position: absolute
+      right: 15px
+      width: 20px
+      height: 20px
+      text-align: center
+      +far
+      line-height: 20px
+      color: #b9b9b9
+      &:before
+        content: "\f00d"
+        width: 20px
+      svg
+        display: none
+  .select__menu
+    border-radius: 2px
+    background-color: #fff
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.15)
+    position: absolute
+    top: 100%
+    width: 100%
+    z-index: 5
+    margin-top: 2px
+    -webkit-overflow-scrolling: touch
+    max-height: 300px !important
+    .select__menu-list
+      padding: 9px
+      max-height: 300px !important
+      .track-vertical
+        width: 5px !important
+        right: 4px
+        bottom: 4px
+        top: 4px
+        border-radius: 3px
+        >div
+          background-color: #c3c3c3 !important
+      .select__option
+        cursor: pointer
+        display: inline-block
+        height: 30px
+        line-height: 30px
+        width: 100%
+        padding: 0 8px
+        color: #626262
+        font-size: 14px
+        position: relative
+        overflow: hidden
+        vertical-align: top
+        white-space: nowrap
+        text-overflow: ellipsis
+        border-radius: 1px
+        &:hover
+          background-color: #f0f0f0
+          border-radius: 2px
+        &.select__option--is-selected
+          cursor: default
+          font-weight: 600
+          background-color: $green-color !important
+          color: #ffffff
+        &.select__option--is-focused
+          background-color: #f0f0f0
+  .select__value-container--is-multi
+    line-height: 33px
+    min-height: 33px
+    >div
+      line-height: 20px
+      margin: 2px 4px 2px 0 !important
+    .select__placeholder
+      margin: 0 !important
+    &.select__value-container--has-value
+      padding: 8px 0 !important
+    .select__multi-value__remove
+      margin: 3px 0 3px 3px
+      width: 14px
+      height: 14px
