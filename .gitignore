@@ -3,6 +3,15 @@ dist
 .idea
 npm-debug.log
 
+
+### Node ###
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Created by https://www.gitignore.io/api/git,linux,macos,windows,webstorm
 
 ### Git ###

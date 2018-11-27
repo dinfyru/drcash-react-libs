@@ -1,7 +1,4 @@
 {
-  "_moduleAliases": {
-    "drcash-react-libs/SelectTemplate": "./public/packages/SelectTemplate"
-  },
   "name": "drcash-react-libs",
   "version": "0.1.2",
   "description": "Dr cash react libs",
@@ -63,7 +60,6 @@
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-jsx-a11y": "6.1.2",
     "eslint-plugin-react": "7.11.1",
-    "module-alias": "^2.1.0",
     "prettier": "1.15.1",
     "prop-types": "^15.6.2",
     "react-select": "^2.1.2",
