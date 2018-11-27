@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'redux-i18n';
 import Select from 'react-select';
 
-class SelectTemplate extends Component {
+export default class SelectTemplate extends Component {
   static defaultProps = {
     nameParams: null,
     setValue: 'no',
@@ -204,4 +203,3 @@ class SelectTemplate extends Component {
     );
   }
 }
-export default SelectTemplate;
