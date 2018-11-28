@@ -1,5 +1,13 @@
-# Dr cash react templates
+Dr cash react templates v0.1.3
+=
+React библиотки, шаблоны для переиспользования в проектах
 
-**SelectTemplate**
 
-require `"react-select": "2.1.1"` in project
+**SelectTemplate** 
+-
+[Документация](https://github.com/dinfyru/drcash-react-libs/tree/master/packages/SelectTemplate)
+
+На основе [react-select](https://www.npmjs.com/package/react-select)
+
+`import SelectTemplate from 'drcash-react-libs/public/packages/SelectTemplate';`
+

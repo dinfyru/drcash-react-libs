@@ -4,8 +4,8 @@ import Select from 'react-select';
 
 export default class SelectTemplate extends Component {
   static defaultProps = {
-    nameParams: null,
-    setValue: 'no',
+    nameParams: undefined,
+    setValue: 0,
     options: [],
     placeholder: 'Выберите значение',
     className: 'select',
@@ -16,7 +16,8 @@ export default class SelectTemplate extends Component {
     creatable: false,
     disabled: false,
     trackValue: false,
-    noOptionsMessage: () => 'No data'
+    noOptionsMessage: () => 'No data',
+    multi: false
   };
   static propTypes = {
     nameParams: PropTypes.string,
@@ -25,14 +26,15 @@ export default class SelectTemplate extends Component {
     className: PropTypes.string,
     changeable: PropTypes.object,
     clearable: PropTypes.bool,
-    setValue: PropTypes.string,
+    setValue: PropTypes.number,
     searchable: PropTypes.bool,
     placeholder: PropTypes.string,
     noOptionsMessage: PropTypes.func,
     isFetching: PropTypes.bool,
     disabled: PropTypes.bool,
     creatable: PropTypes.bool,
-    trackValue: PropTypes.bool
+    trackValue: PropTypes.bool,
+    multi: PropTypes.bool
   };
 
   constructor(props) {
@@ -69,10 +71,9 @@ export default class SelectTemplate extends Component {
 
   setValue = () => {
     const { setValue, options } = this.props;
-    if (setValue !== 'no') {
+    if (setValue) {
       const random = Math.floor(Math.random() * (options.length - 0));
-      const value =
-        setValue === 'random' ? options[random].value : options[0].value;
+      const value = setValue === 2 ? options[random].value : options[0].value;
       this.handleOnChange(value);
     }
   };
@@ -99,11 +100,7 @@ export default class SelectTemplate extends Component {
     }
 
     this.setState({ value: newValue });
-    if (nameParams) {
-      this.props.onChange(nameParams, newValue);
-    } else {
-      this.props.onChange(newValue);
-    }
+    this.props.onChange(newValue, nameParams);
   };
 
   filterOptions = (options, filter, currentValues) => {
