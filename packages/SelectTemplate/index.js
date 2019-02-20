@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
+import debounce from 'debounce-promise';
 
 export default class SelectTemplate extends Component {
   static defaultProps = {
@@ -17,7 +19,9 @@ export default class SelectTemplate extends Component {
     disabled: false,
     trackValue: false,
     noOptionsMessage: () => 'No data',
-    multi: false
+    multi: false,
+    async: false,
+    loadOptions: null
   };
   static propTypes = {
     nameParams: PropTypes.string,
@@ -34,7 +38,9 @@ export default class SelectTemplate extends Component {
     disabled: PropTypes.bool,
     creatable: PropTypes.bool,
     trackValue: PropTypes.bool,
-    multi: PropTypes.bool
+    multi: PropTypes.bool,
+    async: PropTypes.bool,
+    loadOptions: PropTypes.func
   };
 
   constructor(props) {
@@ -48,6 +54,9 @@ export default class SelectTemplate extends Component {
       value,
       isFetching: props.isFetching && (!props.options || !props.options.length)
     };
+    this.debounceLoadOptions = props.async
+      ? debounce(props.loadOptions, 300)
+      : null;
   }
 
   componentDidMount() {
@@ -89,6 +98,7 @@ export default class SelectTemplate extends Component {
     const { nameParams } = this.props;
     const { multi } = this.state;
     let newValue = value;
+
     if (multi) {
       if (value && value.length) {
         newValue = value.map(el => {
@@ -188,11 +198,17 @@ export default class SelectTemplate extends Component {
       onOpen: this.onOpenSelect,
       noOptionsMessage
     };
+    if (this.props.async) {
+      delete props.value;
+      props.loadOptions = this.debounceLoadOptions;
+    }
 
     return (
       <>
         {this.props.creatable ? (
           <Select.Creatable {...props} />
+        ) : this.props.async ? (
+          <AsyncSelect cacheOptions debounceInterval={300} {...props} />
         ) : (
           <Select {...props} />
         )}

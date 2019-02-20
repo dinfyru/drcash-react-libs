@@ -54,23 +54,24 @@
     "babel-plugin-transform-imports": "1.5.1",
     "babel-plugin-transform-react-remove-prop-types": "0.4.20",
     "core-js": "2.5.7",
+    "debounce-promise": "^3.1.0",
     "eslint": "5.8.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-loader": "2.1.1",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-jsx-a11y": "6.1.2",
     "eslint-plugin-react": "7.11.1",
+    "lodash.debounce": "^4.0.8",
     "prettier": "1.15.1",
     "prop-types": "^15.6.2",
-    "react-select": "^2.1.2",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-select": "^2.4.1",
     "rollup": "^0.67.3",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-uglify": "^6.0.0"
   },
-  "peerDependencies": {
-    "react": "^15.0.0 || ^16.0.0",
-    "react-dom": "^15.0.0 || ^16.0.0"
-  }
+  "peerDependencies": {}
 }
