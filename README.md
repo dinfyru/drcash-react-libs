@@ -1,4 +1,4 @@
-Dr cash react templates v0.1.3
+Dr cash react templates v0.3.0
 =
 React библиотки, шаблоны для переиспользования в проектах
 
@@ -11,3 +11,7 @@ React библиотки, шаблоны для переиспользовани
 
 `import SelectTemplate from 'drcash-react-libs/public/packages/SelectTemplate';`
 
+
+**crud** 
+-
+Документация
