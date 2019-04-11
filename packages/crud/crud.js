@@ -1,4 +1,3 @@
-import { RSAA } from 'redux-api-middleware';
 import compact from 'lodash.compact';
 import queryBuilder from 'query-string';
 import cloneDeep from 'lodash.clonedeep';
@@ -7,6 +6,7 @@ import cloneDeep from 'lodash.clonedeep';
 export const CRUD_ACTION_REQUEST = 'CRUD_ACTION_REQUEST';
 export const CRUD_ACTION_SUCCESS = 'CRUD_ACTION_SUCCESS';
 export const CRUD_ACTION_FAILURE = 'CRUD_ACTION_FAILURE';
+const RSAA = '@@redux-api-middleware/RSAA';
 
 /**
  * Easy request to api server

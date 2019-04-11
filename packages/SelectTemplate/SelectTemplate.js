@@ -4,7 +4,7 @@ import Select from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import debounce from 'debounce-promise';
 
-export default class SelectTemplate extends Component {
+class SelectTemplate extends Component {
   static defaultProps = {
     nameParams: undefined,
     setValue: 0,
@@ -216,3 +216,5 @@ export default class SelectTemplate extends Component {
     );
   }
 }
+
+export default SelectTemplate;
