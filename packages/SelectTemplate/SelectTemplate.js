@@ -4,6 +4,8 @@ import Select from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import debounce from 'debounce-promise';
 
+import './index.sass';
+
 class SelectTemplate extends Component {
   static defaultProps = {
     nameParams: undefined,
