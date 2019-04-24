@@ -102,16 +102,23 @@ $green-color: #0ACEDB
           color: #ffffff
         &.select__option--is-focused
           background-color: #f0f0f0
+.select.multi
+  .select__control
+    min-height: 35px
+    height: auto
   .select__value-container--is-multi
     line-height: 33px
     min-height: 33px
+    padding: 0 !important
     >div
       line-height: 20px
       margin: 2px 4px 2px 0 !important
     .select__placeholder
       margin: 0 !important
     &.select__value-container--has-value
-      padding: 8px 0 !important
+      padding: 4px 0 !important
+    .select__multi-value
+      padding-left: 3px
     .select__multi-value__remove
       margin: 3px 0 3px 3px
       width: 14px
