@@ -20,10 +20,13 @@ class SelectTemplate extends Component {
     creatable: false,
     disabled: false,
     trackValue: false,
+    defaultOptions: false,
+    inputValue: null,
     noOptionsMessage: () => 'No data',
     multi: false,
     async: false,
-    loadOptions: null
+    loadOptions: null,
+    onInputChange: null
   };
   static propTypes = {
     nameParams: PropTypes.string,
@@ -40,9 +43,12 @@ class SelectTemplate extends Component {
     disabled: PropTypes.bool,
     creatable: PropTypes.bool,
     trackValue: PropTypes.bool,
+    defaultOptions: PropTypes.bool,
+    inputValue: PropTypes.string,
     multi: PropTypes.bool,
     async: PropTypes.bool,
-    loadOptions: PropTypes.func
+    loadOptions: PropTypes.func,
+    onInputChange: PropTypes.func
   };
 
   constructor(props) {
@@ -164,7 +170,10 @@ class SelectTemplate extends Component {
       disabled,
       searchable,
       clearable,
-      placeholder
+      placeholder,
+      defaultOptions,
+      inputValue,
+      onInputChange
     } = this.props;
     if (Object.keys(changeable).length) {
       options = options.filter(
@@ -192,6 +201,7 @@ class SelectTemplate extends Component {
       onChange: this.handleOnChange,
       value: curValue,
       className,
+      onInputChange,
       filterOptions: this.filterOptions,
       isDisabled: disabled,
       isSearchable: searchable,
@@ -202,6 +212,10 @@ class SelectTemplate extends Component {
     };
     if (this.props.async) {
       delete props.value;
+      if (this.props.inputValue) {
+        props.inputValue = inputValue;
+      }
+      props.defaultOptions = defaultOptions;
       props.loadOptions = this.debounceLoadOptions;
     }
 

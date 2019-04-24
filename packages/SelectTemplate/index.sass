@@ -2,7 +2,7 @@ $green-color: #0ACEDB
 
 .select
   position: relative
-  &.is-disabled
+  &.select--is-disabled
     cursor: default !important
     .select__control
       background-color: rgb(235, 235, 228) !important
@@ -38,6 +38,9 @@ $green-color: #0ACEDB
       padding: 0
       .select__placeholder
         color: #bababa
+      .select__input
+        input
+          opacity: 1 !important
     .select__indicators
       cursor: pointer
       position: absolute
