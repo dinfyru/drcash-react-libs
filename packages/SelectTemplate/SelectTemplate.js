@@ -17,6 +17,7 @@ class SelectTemplate extends Component {
     changeable: {},
     clearable: true,
     searchable: true,
+    filterFunc: option => option,
     creatable: false,
     disabled: false,
     trackValue: false,
@@ -37,6 +38,7 @@ class SelectTemplate extends Component {
     clearable: PropTypes.bool,
     setValue: PropTypes.number,
     searchable: PropTypes.bool,
+    filterFunc: PropTypes.func,
     placeholder: PropTypes.string,
     noOptionsMessage: PropTypes.func,
     isFetching: PropTypes.bool,
@@ -55,7 +57,6 @@ class SelectTemplate extends Component {
     super(props);
 
     const { value } = props;
-
     this.state = {
       multi: props.multi,
       options: [...props.options],
@@ -182,6 +183,7 @@ class SelectTemplate extends Component {
           this.props[changeable.storeName][changeable.storeField]
       );
     }
+    options = options.filter(this.props.filterFunc);
 
     let curValue = value;
     if (multi && value) {
