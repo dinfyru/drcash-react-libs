@@ -27,7 +27,7 @@ class SelectTemplate extends Component {
     multi: false,
     async: false,
     loadOptions: null,
-    onInputChange: null
+    onInputChange: false
   };
   static propTypes = {
     nameParams: PropTypes.string,
@@ -50,7 +50,7 @@ class SelectTemplate extends Component {
     multi: PropTypes.bool,
     async: PropTypes.bool,
     loadOptions: PropTypes.func,
-    onInputChange: PropTypes.func
+    onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
   };
 
   constructor(props) {
@@ -61,7 +61,9 @@ class SelectTemplate extends Component {
       multi: props.multi,
       options: [...props.options],
       value,
-      isFetching: props.isFetching && (!props.options || !props.options.length)
+      filteredOptions: [],
+      isFetching: props.isFetching && (!props.options || !props.options.length),
+      inputValue: false
     };
     this.debounceLoadOptions = props.async
       ? debounce(props.loadOptions, 300)
@@ -122,7 +124,28 @@ class SelectTemplate extends Component {
     this.props.onChange(newValue, nameParams);
   };
 
-  filterOptions = (options, filter, currentValues) => {
+  handleInputChange = (filter = '', { action }) => {
+    if (this.props.async) {
+      if (action !== 'set-value') {
+        this.setState({ inputValue: filter });
+      }
+      if (action === 'menu-close') {
+        this.setState({
+          inputValue: false
+        });
+      }
+    } else {
+      if (action === 'input-change') {
+        this.setState(prevState => {
+          const { options } = prevState;
+          const filteredOptions = this.filterOptions(options, filter);
+          return { filteredOptions };
+        });
+      }
+    }
+  };
+
+  filterOptions = (options, filter) => {
     let newOptions = null;
     if (filter !== '') {
       const regexpStart = new RegExp('^' + filter, 'i');
@@ -163,7 +186,11 @@ class SelectTemplate extends Component {
 
   render() {
     const { multi, value, isFetching } = this.state;
-    let { options } = this.state;
+    let {
+      options: optionsState,
+      filteredOptions,
+      inputValue: inputValueState
+    } = this.state;
     const {
       changeable,
       noOptionsMessage,
@@ -176,6 +203,10 @@ class SelectTemplate extends Component {
       inputValue,
       onInputChange
     } = this.props;
+    let options =
+      Array.isArray(filteredOptions) && filteredOptions.length
+        ? filteredOptions
+        : optionsState;
     if (Object.keys(changeable).length) {
       options = options.filter(
         obj =>
@@ -203,8 +234,7 @@ class SelectTemplate extends Component {
       onChange: this.handleOnChange,
       value: curValue,
       className,
-      onInputChange,
-      filterOptions: this.filterOptions,
+      onInputChange: onInputChange || this.handleInputChange,
       isDisabled: disabled,
       isSearchable: searchable,
       isClearable: clearable,
@@ -214,8 +244,8 @@ class SelectTemplate extends Component {
     };
     if (this.props.async) {
       delete props.value;
-      if (this.props.inputValue) {
-        props.inputValue = inputValue;
+      if (inputValue) {
+        props.inputValue = inputValueState || inputValue;
       }
       props.defaultOptions = defaultOptions;
       props.loadOptions = this.debounceLoadOptions;
