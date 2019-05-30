@@ -52,7 +52,11 @@ class SelectTemplate extends Component {
     async: PropTypes.bool,
     loadOptions: PropTypes.func,
     onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    valueForFirst: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
+    valueForFirst: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+      PropTypes.bool
+    ])
   };
 
   constructor(props) {
@@ -64,9 +68,7 @@ class SelectTemplate extends Component {
       options: [...props.options],
       value,
       filteredOptions: [],
-      isFetching: props.isFetching && (!props.options || !props.options.length),
-      inputValue: false,
-      inputValueForFist: false
+      isFetching: props.isFetching && (!props.options || !props.options.length)
     };
     this.debounceLoadOptions = props.async
       ? debounce(props.loadOptions, 300)
@@ -97,10 +99,9 @@ class SelectTemplate extends Component {
     const { valueForFirst, async } = this.props;
     if (async && valueForFirst) {
       this.props.loadOptions(valueForFirst).then(data => {
-        const inputValueForFist =
-          Array.isArray(data) && data[0] ? data[0].label : false;
+        const value = Array.isArray(data) && data[0] ? data[0] : false;
         this.setState({
-          inputValueForFist
+          value
         });
       });
     }
@@ -123,7 +124,7 @@ class SelectTemplate extends Component {
   };
 
   handleOnChange = value => {
-    const { nameParams } = this.props;
+    const { nameParams, async } = this.props;
     const { multi } = this.state;
     let newValue = value;
 
@@ -137,21 +138,14 @@ class SelectTemplate extends Component {
       newValue = value.value;
     }
 
-    this.setState({ value: newValue, inputValueForFist: false });
+    this.setState({
+      value: async ? value : newValue
+    });
     this.props.onChange(newValue, nameParams);
   };
 
   handleInputChange = (filter = '', { action }) => {
-    if (this.props.async) {
-      if (action !== 'set-value') {
-        this.setState({ inputValue: filter });
-      }
-      if (action === 'menu-close') {
-        this.setState({
-          inputValue: false
-        });
-      }
-    } else {
+    if (!this.props.async) {
       if (action === 'input-change') {
         this.setState(prevState => {
           const { options } = prevState;
@@ -203,12 +197,7 @@ class SelectTemplate extends Component {
 
   render() {
     const { multi, value, isFetching } = this.state;
-    let {
-      options: optionsState,
-      filteredOptions,
-      inputValue: inputValueState,
-      inputValueForFist
-    } = this.state;
+    let { options: optionsState, filteredOptions } = this.state;
     const {
       changeable,
       noOptionsMessage,
@@ -218,7 +207,7 @@ class SelectTemplate extends Component {
       clearable,
       placeholder,
       defaultOptions,
-      inputValue,
+      async,
       onInputChange
     } = this.props;
     let options =
@@ -241,7 +230,7 @@ class SelectTemplate extends Component {
           option => value.filter(valOption => option.value === valOption).length
         );
       }
-    } else if (value || value === 0) {
+    } else if ((value || value === 0) && !async) {
       curValue = options.filter(option => option.value === value);
     }
     const props = {
@@ -260,11 +249,7 @@ class SelectTemplate extends Component {
       onOpen: this.onOpenSelect,
       noOptionsMessage
     };
-    if (this.props.async) {
-      delete props.value;
-      if (inputValue || inputValueForFist) {
-        props.inputValue = inputValueForFist || inputValueState || inputValue;
-      }
+    if (async) {
       props.defaultOptions = defaultOptions;
       props.loadOptions = this.debounceLoadOptions;
     }
