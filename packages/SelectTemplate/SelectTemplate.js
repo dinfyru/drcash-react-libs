@@ -27,7 +27,8 @@ class SelectTemplate extends Component {
     multi: false,
     async: false,
     loadOptions: null,
-    onInputChange: false
+    onInputChange: false,
+    valueForFirst: false
   };
   static propTypes = {
     nameParams: PropTypes.string,
@@ -50,7 +51,8 @@ class SelectTemplate extends Component {
     multi: PropTypes.bool,
     async: PropTypes.bool,
     loadOptions: PropTypes.func,
-    onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
+    onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    valueForFirst: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
   };
 
   constructor(props) {
