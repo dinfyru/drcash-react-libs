@@ -63,7 +63,8 @@ class SelectTemplate extends Component {
       value,
       filteredOptions: [],
       isFetching: props.isFetching && (!props.options || !props.options.length),
-      inputValue: false
+      inputValue: false,
+      inputValueForFist: false
     };
     this.debounceLoadOptions = props.async
       ? debounce(props.loadOptions, 300)
@@ -71,6 +72,7 @@ class SelectTemplate extends Component {
   }
 
   componentDidMount() {
+    this.setValueForFirst();
     this.setValue();
   }
 
@@ -88,6 +90,19 @@ class SelectTemplate extends Component {
       });
     }
   }
+
+  setValueForFirst = () => {
+    const { valueForFirst, async } = this.props;
+    if (async && valueForFirst) {
+      this.props.loadOptions(valueForFirst).then(data => {
+        const inputValueForFist =
+          Array.isArray(data) && data[0] ? data[0].label : false;
+        this.setState({
+          inputValueForFist
+        });
+      });
+    }
+  };
 
   setValue = () => {
     const { setValue, options } = this.props;
@@ -120,7 +135,7 @@ class SelectTemplate extends Component {
       newValue = value.value;
     }
 
-    this.setState({ value: newValue });
+    this.setState({ value: newValue, inputValueForFist: false });
     this.props.onChange(newValue, nameParams);
   };
 
@@ -189,7 +204,8 @@ class SelectTemplate extends Component {
     let {
       options: optionsState,
       filteredOptions,
-      inputValue: inputValueState
+      inputValue: inputValueState,
+      inputValueForFist
     } = this.state;
     const {
       changeable,
@@ -244,8 +260,8 @@ class SelectTemplate extends Component {
     };
     if (this.props.async) {
       delete props.value;
-      if (inputValue) {
-        props.inputValue = inputValueState || inputValue;
+      if (inputValue || inputValueForFist) {
+        props.inputValue = inputValueForFist || inputValueState || inputValue;
       }
       props.defaultOptions = defaultOptions;
       props.loadOptions = this.debounceLoadOptions;
