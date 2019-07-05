@@ -40,7 +40,6 @@ export const crud = ({
     [RSAA]: {
       endpoint,
       method,
-      headers,
       types: [
         { type: `${name}_${CRUD_ACTION_REQUEST}`, meta: { query, ...meta } },
         { type: `${name}_${CRUD_ACTION_SUCCESS}`, meta: { query, ...meta } },
@@ -48,6 +47,10 @@ export const crud = ({
       ]
     }
   };
+
+  if (Object.keys(headers).length) {
+    action[RSAA].headers = headers;
+  }
 
   if (keys) {
     Object.keys(keys).forEach(key => {
