@@ -76,6 +76,8 @@ export const crud = ({
 
   if (body && headers['Content-Type'] === 'application/json') {
     action[RSAA].body = JSON.stringify(body);
+  } else if (body) {
+    action[RSAA].body = body;
   }
 
   return action;
