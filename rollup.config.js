@@ -5,7 +5,11 @@ import { uglify } from 'rollup-plugin-uglify';
 import sass from 'rollup-plugin-sass';
 
 export default {
-  input: ['packages/SelectTemplate/SelectTemplate.js', 'packages/crud/crud.js'],
+  input: [
+    'packages/SelectTemplate/SelectTemplate.js',
+    'packages/crud/crud.js',
+    'packages/flat/flat.js'
+  ],
   output: [
     {
       name: 'SelectTemplate',
@@ -14,6 +18,11 @@ export default {
     },
     {
       name: 'crud',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'flat',
       dir: 'public/packages',
       format: 'cjs'
     }
