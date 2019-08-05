@@ -1,4 +1,4 @@
-Dr cash react templates v0.4.0
+Dr cash react templates v0.5.0
 =
 React библиотки, шаблоны для переиспользования в проектах
 
@@ -14,9 +14,19 @@ React библиотки, шаблоны для переиспользовани
 
 **crud** 
 -
-Документация
+Документация (coming soon)
 
 
 **flat** 
 -
-Документация
+Документация (coming soon)
+
+
+**MainTable** 
+-
+Документация (coming soon)
+
+
+**Checkbox** 
+-
+Документация (coming soon)

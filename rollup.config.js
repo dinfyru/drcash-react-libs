@@ -8,7 +8,10 @@ export default {
   input: [
     'packages/SelectTemplate/SelectTemplate.js',
     'packages/crud/crud.js',
-    'packages/flat/flat.js'
+    'packages/flat/flat.js',
+    'packages/MainTable/MainTable.js',
+    'packages/MainTable/mainTableActions.js',
+    'packages/Checkbox/Checkbox.js'
   ],
   output: [
     {
@@ -25,9 +28,31 @@ export default {
       name: 'flat',
       dir: 'public/packages',
       format: 'cjs'
+    },
+    {
+      name: 'MainTable',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'mainTableActions',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'Checkbox',
+      dir: 'public/packages',
+      format: 'cjs'
     }
   ],
-  external: ['react', 'react-select', 'react-proptypes'],
+  external: [
+    'react',
+    'redux',
+    'react-redux',
+    'react-router-dom',
+    'react-select',
+    'react-proptypes'
+  ],
   plugins: [
     sass({
       insert: true
