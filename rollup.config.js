@@ -11,6 +11,7 @@ export default {
     'packages/flat/flat.js',
     'packages/MainTable/MainTable.js',
     'packages/MainTable/mainTableActions.js',
+    'packages/MainTable/mainTableReducer.js',
     'packages/Checkbox/Checkbox.js'
   ],
   output: [
@@ -36,6 +37,11 @@ export default {
     },
     {
       name: 'mainTableActions',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'mainTableReducer',
       dir: 'public/packages',
       format: 'cjs'
     },

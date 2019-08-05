@@ -20,7 +20,8 @@ class MainTable extends Component {
     afterLineTemplate: null,
     afterLineData: null,
     tfootItem: null,
-    tfootDataForRender: null
+    tfootDataForRender: null,
+    leftMenuWidth: 200
   };
 
   static propTypes = {
@@ -42,7 +43,8 @@ class MainTable extends Component {
     afterLineTemplate: PropTypes.array,
     afterLineData: PropTypes.object,
     tfootItem: PropTypes.object,
-    tfootDataForRender: PropTypes.object
+    tfootDataForRender: PropTypes.object,
+    leftMenuWidth: PropTypes.number
   };
 
   constructor(props) {
@@ -146,10 +148,10 @@ class MainTable extends Component {
       theadVisible: { current: theadVisible },
       tfoot: { current: tfoot }
     } = this.table;
-    const { tfootItem } = this.props;
+    const { tfootItem, leftMenuWidth } = this.props;
 
     const html = document.getElementsByTagName('html')[0];
-    const left = 200 - parent.scrollLeft - html.scrollLeft;
+    const left = leftMenuWidth - parent.scrollLeft - html.scrollLeft;
     theadVisible.style.left = `${left}px`;
 
     if (tfootItem) {
