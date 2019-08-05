@@ -12,6 +12,7 @@ export default {
     'packages/MainTable/MainTable.js',
     'packages/MainTable/mainTableActions.js',
     'packages/MainTable/mainTableReducer.js',
+    'packages/MainTable/mainTableMiddleware.js',
     'packages/Checkbox/Checkbox.js'
   ],
   output: [
@@ -42,6 +43,11 @@ export default {
     },
     {
       name: 'mainTableReducer',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'mainTableMiddleware',
       dir: 'public/packages',
       format: 'cjs'
     },
