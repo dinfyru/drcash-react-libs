@@ -38,3 +38,27 @@ export const elemOffset = elem => {
     left: box.left + ( win.pageXOffset || docElem.scrollLeft ) - ( docElem.clientLeft || 0 )
   };
 };
+
+export const findByValue = (obj, val, key) => {
+  const result = [];
+
+  for (const outerKey in obj) {
+    if (obj[outerKey][key] * 1 === val * 1) {
+      result.push(outerKey);
+    }
+  }
+
+  return result;
+};
+
+export const getParentNodes = (className, parent) => {
+  const arr = [];
+  let par = parent;
+
+  while (document.body !== par && par.classList.contains(className)) {
+    arr.push(parent);
+    par = parent.parentElement;
+  }
+
+  return arr;
+};

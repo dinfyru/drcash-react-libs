@@ -13,6 +13,7 @@ export default {
     'packages/MainTable/mainTableActions.js',
     'packages/MainTable/mainTableReducer.js',
     'packages/MainTable/mainTableMiddleware.js',
+    'packages/MainTable/FilterColumns.js',
     'packages/Checkbox/Checkbox.js'
   ],
   output: [
@@ -48,6 +49,11 @@ export default {
     },
     {
       name: 'mainTableMiddleware',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'FilterColumns',
       dir: 'public/packages',
       format: 'cjs'
     },
