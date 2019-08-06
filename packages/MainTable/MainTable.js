@@ -174,12 +174,17 @@ class MainTable extends Component {
       tfoot: { current: tfoot }
     } = this.table;
 
-    // get top table offset
-    const tableFilterHeight = document.getElementsByClassName(
+    const tableFilter = document.getElementsByClassName(
       'table__filters'
-    )[0].offsetHeight;
-    const offsetTopTable = 32 + tableFilterHeight;
-    const offsetTopThead = 61 + tableFilterHeight;
+    )[0];
+    const switchPages = document.getElementsByClassName(
+      'switch__pages'
+    )[0];
+    // get top table offset
+    const tableFilterHeight = tableFilter ? tableFilter.offsetHeight : 0;
+    const switchPagesHeight = switchPages ? switchPages.offsetHeight + 20 : 0;
+    const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
+    const offsetTopThead = 61 + tableFilterHeight + switchPagesHeight;
     parent.style.top = `${offsetTopTable}px`;
     theadVisible.style.top = `${offsetTopThead}px`;
 
