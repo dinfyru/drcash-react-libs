@@ -1,4 +1,4 @@
-Dr cash react templates v0.6.0
+Dr cash react templates v0.6.3
 =
 React библиотки, шаблоны для переиспользования в проектах
 
