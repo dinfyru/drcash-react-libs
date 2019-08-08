@@ -75,7 +75,7 @@ const filtersDataGetAction = (reducer, url, params) => {
   return {
     needToken: true,
     [RSAA]: {
-      endpoint: params ? `${url}?${endpoint}` : url,
+      endpoint,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
