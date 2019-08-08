@@ -62,8 +62,8 @@ export default class THead extends Component {
     filtersValue.sort_by !== sortBy
       ? ORDER_BY_DESC
       : filtersValue.sort_type === ORDER_BY_DESC
-        ? ORDER_BY_ASC
-        : ORDER_BY_DESC;
+      ? ORDER_BY_ASC
+      : ORDER_BY_DESC;
 
   generateFromTemplate = () => {
     const {
@@ -80,13 +80,13 @@ export default class THead extends Component {
     tableTemplate.forEach((column, index) => {
       if (!visibleColumns || visibleColumns[index]) {
         const {
-          thead: { className, value, sortKey }
+          thead: { className, value, title, sortKey }
         } = column;
 
         const th = (
           <th
             key={index}
-            title={value}
+            title={title || value}
             className={`${className || ''}${sortKey ? ' cup' : ''}`}
             onClick={() => {
               if (!sortKey) return false;
