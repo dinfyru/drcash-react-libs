@@ -62,7 +62,7 @@ export const MTautoUpdateItems = (items, reducer) => ({
 });
 
 export const MT_LIST_REMOVE_ITEM = 'MT_LIST_REMOVE_ITEM';
-const MTlistRemoveItemAction = (id, reducer, key) => ({
+const MTlistRemoveItemAction = (id, reducer, key = 'id') => ({
   type: MT_LIST_REMOVE_ITEM,
   id,
   reducer,
@@ -111,7 +111,7 @@ export const MTupdateVisibleColumns = (data, reducer) => dispatch =>
   dispatch(updateVisibleColumnsAction(data, reducer));
 export const MTautoUpdateItem = (item, reducer) => dispatch =>
   dispatch(MTautoUpdateItemAction(item, reducer));
-export const MTlistRemoveItem = (id, reducer) => dispatch =>
-  dispatch(MTlistRemoveItemAction(id, reducer));
+export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
+  dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
   dispatch(disableItemSwitcherAction(data, reducer, byIndex));
