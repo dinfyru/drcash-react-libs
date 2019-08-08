@@ -32,9 +32,10 @@ export default class THead extends Component {
   shouldComponentUpdate(nextProps) {
     const { props } = this;
 
-    const tableTemplateNotEqual =
-      JSON.stringify(props.tableTemplate) !==
-      JSON.stringify(nextProps.tableTemplate);
+    // todo: need optimize for react elements JSON.stringify
+    // const tableTemplateNotEqual =
+    //   JSON.stringify(props.tableTemplate) !==
+    //   JSON.stringify(nextProps.tableTemplate);
     const sortTypeNotEqual =
       JSON.stringify(props.sortType) !== JSON.stringify(nextProps.sortType);
     const sortByNotEqual =
@@ -42,19 +43,12 @@ export default class THead extends Component {
     const visibleColumnsNotEqual =
       JSON.stringify(props.visibleColumns) !==
       JSON.stringify(nextProps.visibleColumns);
+
     return (
-      tableTemplateNotEqual ||
+      // tableTemplateNotEqual ||
       sortTypeNotEqual ||
       sortByNotEqual ||
       visibleColumnsNotEqual
-    );
-    return (
-      JSON.stringify(props.tableTemplate) !==
-        JSON.stringify(nextProps.tableTemplate) ||
-      props.sortType !== nextProps.sortType ||
-      props.sortBy !== nextProps.sortBy ||
-      JSON.stringify(props.visibleColumns) !==
-        JSON.stringify(nextProps.visibleColumns)
     );
   }
 
@@ -82,7 +76,7 @@ export default class THead extends Component {
         const {
           thead: { className, value, title, sortKey }
         } = column;
-
+        console.log(value);
         const th = (
           <th
             key={index}
