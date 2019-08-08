@@ -76,7 +76,6 @@ export default class THead extends Component {
         const {
           thead: { className, value, title, sortKey }
         } = column;
-        console.log(value);
         const th = (
           <th
             key={index}

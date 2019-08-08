@@ -21,9 +21,9 @@ export default class TFoot extends Component {
   shouldComponentUpdate(nextProps) {
     const { props } = this;
 
-    const tableTemplateNotEqual =
-      JSON.stringify(props.tableTemplate) !==
-      JSON.stringify(nextProps.tableTemplate);
+    // const tableTemplateNotEqual =
+    //   JSON.stringify(props.tableTemplate) !==
+    //   JSON.stringify(nextProps.tableTemplate);
     const visibleColumnsNotEqual =
       JSON.stringify(props.visibleColumns) !==
       JSON.stringify(nextProps.visibleColumns);
@@ -36,7 +36,7 @@ export default class TFoot extends Component {
       JSON.stringify(nextProps.tfootDataForRender);
 
     return (
-      tableTemplateNotEqual ||
+      // tableTemplateNotEqual ||
       visibleColumnsNotEqual ||
       tfootItemNotEqual ||
       itemsNotEqual ||

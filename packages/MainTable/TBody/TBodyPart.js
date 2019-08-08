@@ -179,7 +179,7 @@ export default class TBodyPart extends Component {
             }
             className = tbody.className(keys);
           }
-
+          console.log(className)
           if (className) {
             items[i][index] = (
               <td className={className} {...tbody.props}>
