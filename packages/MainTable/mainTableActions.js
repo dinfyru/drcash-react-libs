@@ -62,15 +62,16 @@ export const MTautoUpdateItems = (items, reducer) => ({
 });
 
 export const MT_LIST_REMOVE_ITEM = 'MT_LIST_REMOVE_ITEM';
-const MTlistRemoveItemAction = (id, reducer) => ({
+const MTlistRemoveItemAction = (id, reducer, key) => ({
   type: MT_LIST_REMOVE_ITEM,
   id,
-  reducer
+  reducer,
+  key
 });
 
 const filtersDataGetAction = (reducer, url, params) => {
   const query = queryBuilder.stringify(params);
-  const endpoint = `${url}${query && query.length ? `?${query}` : '' }`;
+  const endpoint = `${url}${query && query.length ? `?${query}` : ''}`;
   return {
     needToken: true,
     [RSAA]: {
@@ -85,7 +86,7 @@ const filtersDataGetAction = (reducer, url, params) => {
         `MT_FILTERS_DATA@${reducer}_FAILURE`
       ]
     }
-  }
+  };
 };
 
 export const MT_DISABLE_ITEM_SWITCHER = 'MT_DISABLE_ITEM_SWITCH';

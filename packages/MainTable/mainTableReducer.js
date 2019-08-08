@@ -32,11 +32,11 @@ const reducer = (state = initialState, action) => {
   let nextState;
 
   if (action.type === MT_LIST_REMOVE_ITEM) {
-    const { id, reducer } = action;
+    const { id, reducer, key = 'id' } = action;
     let items = cloneDeep(state[reducer].items);
     items = items.map(partItems => {
       const newPartItems = cloneDeep(partItems);
-      const index = newPartItems.findIndex(elem => elem.id === id);
+      const index = newPartItems.findIndex(elem => elem[key] === id);
       if (index >= 0) {
         delete newPartItems[index];
       }
