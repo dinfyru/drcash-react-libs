@@ -79,7 +79,8 @@ export default class TBody extends Component {
       visibleColumns,
       afterLineTemplate,
       blockedItems,
-      afterLineData
+      afterLineData,
+      titleTemplate
     } = this.props;
 
     return (
@@ -95,6 +96,7 @@ export default class TBody extends Component {
             visibleColumns={visibleColumns}
             afterLineTemplate={afterLineTemplate}
             afterLineData={afterLineData}
+            titleTemplate={titleTemplate}
           />
         ))}
         {blockedItems.map(id => (

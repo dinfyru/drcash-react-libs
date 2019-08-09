@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import cloneDeep from 'lodash.clonedeep';
 
 const ORDER_BY_DESC = 'DESC';
 const ORDER_BY_ASC = 'ASC';
@@ -32,10 +33,9 @@ export default class THead extends Component {
   shouldComponentUpdate(nextProps) {
     const { props } = this;
 
-    // todo: need optimize for react elements JSON.stringify
-    // const tableTemplateNotEqual =
-    //   JSON.stringify(props.tableTemplate) !==
-    //   JSON.stringify(nextProps.tableTemplate);
+    const tableTemplateNotEqual =
+      JSON.stringify(props.tableTemplate) !==
+      JSON.stringify(nextProps.tableTemplate);
     const sortTypeNotEqual =
       JSON.stringify(props.sortType) !== JSON.stringify(nextProps.sortType);
     const sortByNotEqual =
@@ -45,7 +45,7 @@ export default class THead extends Component {
       JSON.stringify(nextProps.visibleColumns);
 
     return (
-      // tableTemplateNotEqual ||
+      tableTemplateNotEqual ||
       sortTypeNotEqual ||
       sortByNotEqual ||
       visibleColumnsNotEqual
@@ -67,15 +67,35 @@ export default class THead extends Component {
       getItems,
       sortType,
       sortBy,
-      visibleColumns
+      visibleColumns,
+      titleTemplate
     } = this.props;
     const headItems = [];
+
+
+    const titleIndexes = [];
+    if (titleTemplate && Array.isArray(titleTemplate)) {
+      titleTemplate.forEach(({ columns }, index) => {
+        const mappedColumns = columns.map(() => index);
+        titleIndexes.push(...mappedColumns);
+      });
+    }
 
     tableTemplate.forEach((column, index) => {
       if (!visibleColumns || visibleColumns[index]) {
         const {
-          thead: { className, value, title, sortKey }
+          thead: { className, value, title, sortKey, sortLtr },
+          thead
         } = column;
+        let resultValue = value;
+        if (typeof value === 'function') {
+          resultValue = value();
+        }
+
+        const props = thead.props ? cloneDeep(thead.props) : {};
+        if (titleIndexes.length) {
+          props['js-title-index'] = titleIndexes[index];
+        }
         const th = (
           <th
             key={index}
@@ -89,9 +109,19 @@ export default class THead extends Component {
                 reducer
               );
             }}
+            {...props}
           >
-            {value}
-            {sortKey ? (
+            {sortLtr && sortKey ? (
+              <span
+                className={`sorting ltr ${
+                  sortBy === sortKey ? sortType.toLowerCase() : ''
+                }`}
+              />
+            ) : (
+              false
+            )}
+            {resultValue}
+            {!sortLtr && sortKey ? (
               <span
                 className={`sorting fal ${
                   sortBy === sortKey ? sortType.toLowerCase() : ''

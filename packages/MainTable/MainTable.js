@@ -4,6 +4,7 @@ import cloneDeep from 'lodash.clonedeep';
 
 import TBody from './TBody/TBody';
 import THead from './THead/THead';
+import TTitle from './TTitle/TTitle';
 
 import { addEvent, removeEvent, elemOffset } from './utils';
 import TFoot from './TFoot/TFoot';
@@ -21,13 +22,15 @@ class MainTable extends Component {
     afterLineData: null,
     tfootItem: null,
     tfootDataForRender: null,
-    leftMenuWidth: 200
+    leftMenuWidth: 200,
+    titleTemplate: null
   };
 
   static propTypes = {
     url: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     tableTemplate: PropTypes.array.isRequired,
+    titleTemplate: PropTypes.array,
     reducer: PropTypes.string,
     data: PropTypes.object.isRequired,
     className: PropTypes.string,
@@ -56,6 +59,7 @@ class MainTable extends Component {
 
     this.table = {
       parent: React.createRef(),
+      ttitle: React.createRef(),
       theadVisible: React.createRef(),
       theadHidden: React.createRef(),
       tbody: React.createRef(),
@@ -146,9 +150,10 @@ class MainTable extends Component {
     const {
       parent: { current: parent },
       theadVisible: { current: theadVisible },
-      tfoot: { current: tfoot }
+      tfoot: { current: tfoot },
+      ttitle: {current: ttitle}
     } = this.table;
-    const { tfootItem, leftMenuWidth } = this.props;
+    const { tfootItem, leftMenuWidth, titleTemplate } = this.props;
 
     const html = document.getElementsByTagName('html')[0];
     const left = leftMenuWidth - parent.scrollLeft - html.scrollLeft;
@@ -158,10 +163,20 @@ class MainTable extends Component {
       tfoot.style.left = `${left}px`;
       tfoot.style.width = `${parent.clientWidth + parent.scrollLeft}px`;
     }
+    if (titleTemplate) {
+      ttitle.style.left = `${left}px`;
+      ttitle.style.width = `${parent.clientWidth + parent.scrollLeft}px`;
+    }
   };
 
   resizeTableColumns = () => {
-    const { data, reducer, tfootItem, tfootOtherTemplate } = this.props;
+    const {
+      data,
+      reducer,
+      tfootItem,
+      tfootOtherTemplate,
+      titleTemplate
+    } = this.props;
     const {
       [reducer]: { items, isLoading, isLastPage }
     } = data;
@@ -171,7 +186,8 @@ class MainTable extends Component {
       tbody: { current: tbody },
       theadHidden: { current: theadHidden },
       theadVisible: { current: theadVisible },
-      tfoot: { current: tfoot }
+      tfoot: { current: tfoot },
+      ttitle: { current: ttitle }
     } = this.table;
 
     const tableFilter = document.getElementsByClassName('table__filters')[0];
@@ -179,13 +195,18 @@ class MainTable extends Component {
     // get top table offset
     const tableFilterHeight = tableFilter ? tableFilter.offsetHeight : 0;
     let switchPagesHeight = switchPages ? switchPages.offsetHeight : 0;
+    const titleHeight = ttitle ? ttitle.offsetHeight : 0;
     if (switchPagesHeight && !tableFilterHeight) {
       switchPagesHeight += 20;
     }
     const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
     const offsetTopThead = 61 + tableFilterHeight + switchPagesHeight;
-    parent.style.top = `${offsetTopTable}px`;
-    theadVisible.style.top = `${offsetTopThead}px`;
+    // const offsetTopTitle = titleHeight;
+    parent.style.top = `${offsetTopTable + titleHeight}px`;
+    theadVisible.style.top = `${offsetTopThead + titleHeight}px`;
+    if (ttitle) {
+      ttitle.style.top = `${offsetTopThead}px`;
+    }
 
     // // get bottom table offset
     // if (tfootItem) {
@@ -200,6 +221,13 @@ class MainTable extends Component {
       (!isLoading && !items.length && isLastPage)
     ) {
       theadVisible.style.width = `${tbody.offsetWidth}px`;
+      if (titleTemplate) {
+        const html = document.getElementsByTagName('html')[0];
+        ttitle.style.width = `${parent.clientWidth +
+        parent.scrollLeft +
+        html.scrollLeft}px`;
+        // tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
+      }
       if (tfootItem || tfootOtherTemplate) {
         const html = document.getElementsByTagName('html')[0];
         tfoot.style.width = `${parent.clientWidth +
@@ -232,6 +260,35 @@ class MainTable extends Component {
           const width = Math.floor(targetItems[i].offsetWidth);
           footItems[i].style.width = `${width}px`;
         }
+      }
+
+      if (titleTemplate) {
+        const widths = {};
+        targetItems.forEach(el => {
+          const index = el.getAttribute('js-title-index');
+          if (index) {
+            if (!widths[index]) {
+              widths[index] = 0;
+            }
+            widths[index] += +Math.floor(el.offsetWidth);
+          }
+        });
+        ttitle.getElementsByTagName('th').forEach((el, i) => {
+          const index = el.getAttribute('js-title-index');
+          let width = 0;
+          if (!index) {
+            if (i === 0) {
+              width = +Math.floor(targetItems[i].offsetWidth);
+            } else {
+              width = +Math.floor(
+                targetItems[targetItems.length - 1].offsetWidth
+              );
+            }
+          } else {
+            width = widths[index];
+          }
+          el.style.width = `${width}px`;
+        });
       }
     }
 
@@ -285,7 +342,8 @@ class MainTable extends Component {
       afterLineData,
       afterLineTemplate,
       tfootItem,
-      tfootOtherTemplate
+      tfootOtherTemplate,
+      titleTemplate
     } = this.props;
     const {
       [reducer]: {
@@ -307,6 +365,17 @@ class MainTable extends Component {
         onWheel={this.lazyLoad}
         onTouchMove={this.lazyLoad}
       >
+        {titleTemplate ? (
+          <table className="table__title table-list">
+            <TTitle
+              setRef={this.table.ttitle}
+              titleTemplate={titleTemplate}
+              visibleColumns={visibleColumns}
+            />
+          </table>
+        ) : (
+          false
+        )}
         <table className="table__thead table-list">
           <THead
             setRef={this.table.theadVisible}
@@ -325,6 +394,7 @@ class MainTable extends Component {
           <THead
             setRef={this.table.theadHidden}
             tableTemplate={tableTemplate}
+            titleTemplate={titleTemplate}
             filtersValue={filtersValue}
             isLastPage={isLastPage}
             getItems={this.getItems}
@@ -338,6 +408,7 @@ class MainTable extends Component {
             <TBody
               items={cloneDeep(items)}
               tableTemplate={tableTemplate}
+              titleTemplate={titleTemplate}
               rerenderById={rerenderById}
               dataForRender={cloneDeep(dataForRender)}
               visibleColumns={visibleColumns}

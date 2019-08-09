@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import cloneDeep from 'lodash.clonedeep';
 
 export default class TBodyPart extends Component {
   static defaultProps = {
@@ -123,6 +124,7 @@ export default class TBodyPart extends Component {
   mainFabric = () => {
     const {
       tableTemplate: template,
+      titleTemplate,
       partItems: data,
       visibleColumns,
       afterLineTemplate
@@ -142,6 +144,13 @@ export default class TBodyPart extends Component {
           id: data[i].id,
           items: []
         };
+      }
+      const titleIndexes = [];
+      if (titleTemplate && Array.isArray(titleTemplate)) {
+        titleTemplate.forEach(({ columns }, index) => {
+          const mappedColumns = columns.map(() => index);
+          titleIndexes.push(...mappedColumns);
+        });
       }
       template.forEach((column, index) => {
         const { tbody } = column;
@@ -179,15 +188,18 @@ export default class TBodyPart extends Component {
             }
             className = tbody.className(keys);
           }
-          console.log(className)
+          const props = tbody.props ? cloneDeep(tbody.props) : {};
+          if (titleIndexes.length) {
+            props['js-title-index'] = titleIndexes[index];
+          }
           if (className) {
             items[i][index] = (
-              <td className={className} {...tbody.props}>
+              <td className={className} {...props}>
                 {result}
               </td>
             );
           } else {
-            items[i][index] = <td {...tbody.props}>{result}</td>;
+            items[i][index] = <td {...props}>{result}</td>;
           }
         }
       });
