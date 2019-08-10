@@ -3,9 +3,13 @@ import cloneDeep from 'lodash.clonedeep';
 import {
   MT_CHANGE_FILTERS_VALUE,
   MT_DISABLE_ITEM_SWITCHER,
+  MT_GET_SUBLINE_DATA_FAILURE,
+  MT_GET_SUBLINE_DATA_REQUEST,
+  MT_GET_SUBLINE_DATA_SUCCESS,
   MT_LIST_AUTO_UPDATE_ITEM,
   MT_LIST_REMOVE_ITEM,
   MT_LIST_UPDATE_ITEMS,
+  MT_REMOVE_SUBLINE_DATA,
   MT_SAVE_TABLE_SCROLL,
   MT_UPDATE_VISIBLE_COLUMNS
 } from './mainTableActions';
@@ -21,6 +25,7 @@ const tableExample = {
   isLastPage: null,
   isLoading: false,
   scroll: {},
+  subLineData: {},
   filtersValue: {},
   blockedItems: []
 };
@@ -28,8 +33,53 @@ const initialState = {
   filtersData: {}
 };
 
-const reducer = (state = initialState, action) => {
+const mainTableReducer = (state = initialState, action) => {
   let nextState;
+
+  if (action.type === MT_REMOVE_SUBLINE_DATA) {
+    const {
+      meta: { id, reducer }
+    } = action;
+    nextState = cloneDeep(state);
+    if (nextState[reducer].subLineData[id]) {
+      delete nextState[reducer].subLineData[id];
+    }
+  }
+
+  if (action.type === MT_GET_SUBLINE_DATA_REQUEST) {
+    const {
+      meta: { id, subLineKey, reducer }
+    } = action;
+    nextState = cloneDeep(state);
+    nextState[reducer].subLineData[id] = {
+      isLoading: true,
+      items: [],
+      key: subLineKey
+    };
+  }
+
+  if (action.type === MT_GET_SUBLINE_DATA_FAILURE) {
+    const {
+      meta: { id, reducer }
+    } = action;
+    nextState = cloneDeep(state);
+    nextState[reducer].subLineData[id].isLoading = false;
+    nextState[reducer].subLineData[id].items = [];
+  }
+
+  if (action.type === MT_GET_SUBLINE_DATA_SUCCESS) {
+    const {
+      meta: { id, reducer },
+      payload: { status, payload }
+    } = action;
+    nextState = cloneDeep(state);
+    if (status !== 'OK') {
+      nextState[reducer].subLineData[id].isLoading = false;
+    } else {
+      nextState[reducer].subLineData[id].isLoading = false;
+      nextState[reducer].subLineData[id].items = [...payload.items];
+    }
+  }
 
   if (action.type === MT_LIST_REMOVE_ITEM) {
     const { id, reducer, key = 'id' } = action;
@@ -194,5 +244,5 @@ export default (tableNames = []) => {
     initialState[tableName] = cloneDeep(tableExample);
   });
 
-  return reducer;
+  return mainTableReducer;
 };

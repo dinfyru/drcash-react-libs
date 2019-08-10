@@ -2,6 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 
+const getAfterLineObjs = (afterLineTemplate, afterLineData, partItems) => {
+  const objs = {};
+  if (afterLineTemplate && Object.keys(afterLineData).length) {
+    const keys = Object.keys(afterLineData);
+    let keyForSearch;
+    if (keys.length) {
+      keyForSearch = afterLineData[keys[0]].key;
+      const itemsFinded = partItems.filter(
+        el => keys.indexOf(el[keyForSearch].toString()) >= 0
+      );
+      if (itemsFinded.length) {
+        for (let i = 0; i < itemsFinded.length; i += 1) {
+          // const { id } = itemsFinded[i];
+          const id = itemsFinded[i][keyForSearch];
+          objs[id] = afterLineData[id];
+        }
+      }
+    }
+  }
+
+  return objs;
+};
+
 export default class TBodyPart extends Component {
   static defaultProps = {
     rerenderById: null,
@@ -36,19 +59,11 @@ export default class TBodyPart extends Component {
         rerenderByIdState = rerenderById;
       }
     }
-    const afterLineObjs = {};
-    if (afterLineTemplate && Object.keys(afterLineData).length) {
-      const keys = Object.keys(afterLineData);
-      const itemsFinded = props.partItems.filter(
-        el => keys.indexOf(el.id.toString()) >= 0
-      );
-      if (itemsFinded.length) {
-        for (let i = 0; i < itemsFinded.length; i += 1) {
-          const { id } = itemsFinded[i];
-          afterLineObjs[id] = afterLineData[id];
-        }
-      }
-    }
+    const afterLineObjs = getAfterLineObjs(
+      afterLineTemplate,
+      afterLineData,
+      props.partItems
+    );
 
     this.state = {
       rerenderById: rerenderByIdState,
@@ -67,17 +82,11 @@ export default class TBodyPart extends Component {
     }
 
     if (nextProps.afterLineTemplate) {
-      const afterLineObjs = {};
-      const keys = Object.keys(nextProps.afterLineData);
-      const itemsFinded = nextProps.partItems.filter(
-        el => keys.indexOf(el.id.toString()) >= 0
+      const afterLineObjs = getAfterLineObjs(
+        nextProps.afterLineTemplate,
+        nextProps.afterLineData,
+        nextProps.partItems
       );
-      if (itemsFinded.length) {
-        for (let i = 0; i < itemsFinded.length; i += 1) {
-          const { id } = itemsFinded[i];
-          afterLineObjs[id] = nextProps.afterLineData[id];
-        }
-      }
 
       return { afterLineObjs };
     }
@@ -127,23 +136,24 @@ export default class TBodyPart extends Component {
       titleTemplate,
       partItems: data,
       visibleColumns,
-      afterLineTemplate
+      afterLineTemplate,
+      afterLineData
     } = this.props;
     const { afterLineObjs } = this.state;
     const items = [];
     const afterLines = [];
-
+    const afterLineIndexes = [];
     // Generate main template
     for (let i = 0; i < data.length; i += 1) {
       const afterLineKeys = Object.keys(afterLineObjs);
-      if (
-        afterLineKeys.length &&
-        afterLineKeys.indexOf(data[i].id.toString()) >= 0
-      ) {
-        afterLines[i] = {
-          id: data[i].id,
-          items: []
-        };
+      if (afterLineKeys.length) {
+        const keyForSearch = afterLineData[afterLineKeys[0]].key;
+        if (afterLineKeys.indexOf(data[i][keyForSearch].toString()) >= 0) {
+          afterLines[i] = {
+            id: data[i][keyForSearch],
+            items: []
+          };
+        }
       }
       const titleIndexes = [];
       if (titleTemplate && Array.isArray(titleTemplate)) {
@@ -278,24 +288,35 @@ export default class TBodyPart extends Component {
       let prevLength = 0;
       afterLines.forEach((elem, index) => {
         items.splice(index + prevLength + 1, 0, ...elem.items);
+        for (let i = 0; i < elem.items.length; i++) {
+          afterLineIndexes.push(i + index + prevLength + 1);
+        }
         prevLength += elem.items.length;
       });
     }
 
-    return items;
+    return { items, afterLineIndexes };
   };
 
   render() {
-    const data = this.generateFromTemplate();
+    const { items, afterLineIndexes } = this.generateFromTemplate();
 
-    return data.map((item, index) => (
-      <tr key={index} data-id={item.id ? item.id : index}>
-        <td className="padding-table">&nbsp;</td>
-        {item.map((td, tdIndex) => (
-          <React.Fragment key={tdIndex}>{td}</React.Fragment>
-        ))}
-        <td className="padding-table">&nbsp;</td>
-      </tr>
-    ));
+    return items.map((item, index) => {
+      const className =
+        afterLineIndexes.indexOf(index) >= 0 ? 'mt_subline' : 'mt_line';
+      return (
+        <tr
+          key={index}
+          data-id={item.id ? item.id : index}
+          className={className}
+        >
+          <td className="padding-table">&nbsp;</td>
+          {item.map((td, tdIndex) => (
+            <React.Fragment key={tdIndex}>{td}</React.Fragment>
+          ))}
+          <td className="padding-table">&nbsp;</td>
+        </tr>
+      );
+    });
   }
 }

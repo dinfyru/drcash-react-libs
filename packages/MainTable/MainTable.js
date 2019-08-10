@@ -19,7 +19,6 @@ class MainTable extends Component {
     refreshTableOnPush: false,
     onInit: null,
     afterLineTemplate: null,
-    afterLineData: null,
     tfootItem: null,
     tfootDataForRender: null,
     leftMenuWidth: 200,
@@ -44,7 +43,6 @@ class MainTable extends Component {
     history: PropTypes.object.isRequired,
     onInit: PropTypes.func,
     afterLineTemplate: PropTypes.array,
-    afterLineData: PropTypes.object,
     tfootItem: PropTypes.object,
     tfootDataForRender: PropTypes.object,
     leftMenuWidth: PropTypes.number
@@ -339,7 +337,6 @@ class MainTable extends Component {
       changeFiltersValue,
       dataForRender,
       rerenderById,
-      afterLineData,
       afterLineTemplate,
       tfootItem,
       tfootOtherTemplate,
@@ -352,7 +349,8 @@ class MainTable extends Component {
         items,
         filtersValue,
         visibleColumns,
-        blockedItems
+        blockedItems,
+        subLineData: afterLineData
       }
     } = data;
     const { colsCount } = this.state;
