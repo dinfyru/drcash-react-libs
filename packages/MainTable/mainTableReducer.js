@@ -198,20 +198,23 @@ const mainTableReducer = (state = initialState, action) => {
   }
   if (SUCCESS_LIST_REGEXP.test(action.type)) {
     const reducer = action.type.match(SUCCESS_LIST_REGEXP)[1];
+    nextState = cloneDeep(state);
+    nextState[reducer].isLoading = false;
     if (action.payload.status === 'OK') {
       const {
         payload: { items },
         _meta: { is_last_page: isLastPage, total }
       } = action.payload;
 
-      nextState = cloneDeep(state);
-      nextState[reducer].isLoading = false;
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
 
       if (items.length) {
         nextState[reducer].items = [...nextState[reducer].items, items];
       }
+    } else {
+      nextState[reducer].isLastPage = true;
+      nextState[reducer].items = [...nextState[reducer].items];
     }
   }
   if (FAILURE_LIST_REGEXP.test(action.type)) {
