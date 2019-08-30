@@ -8,7 +8,8 @@ import { addEvent, removeEvent, findByValue, getParentNodes } from './utils';
 export default class FilterColumns extends Component {
   static defaultProps = {
     columnCategories: { 0: 'Колонки' },
-    mainTableName: null
+    mainTableName: null,
+    title: 'Настройка колонок'
   };
 
   static propTypes = {
@@ -16,6 +17,7 @@ export default class FilterColumns extends Component {
     columnCategories: PropTypes.object,
     settingsColumns: PropTypes.object.isRequired,
     mainTableName: PropTypes.string,
+    title: PropTypes.string,
     dispatch: PropTypes.func.isRequired
   };
 
@@ -123,7 +125,7 @@ export default class FilterColumns extends Component {
           className="select-multi__label"
           onClick={this.selectMultiOpener}
         >
-          Настройка колонок
+          {this.props.title}
         </div>
         <ul className="select-multi__list">
           {Object.keys(columnCategories).map(catId => (
