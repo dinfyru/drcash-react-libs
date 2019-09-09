@@ -22,7 +22,8 @@ class MainTable extends Component {
     tfootItem: null,
     tfootDataForRender: null,
     leftMenuWidth: 200,
-    titleTemplate: null
+    titleTemplate: null,
+    visibleColumnsMiddleware: visibleColumns => visibleColumns
   };
 
   static propTypes = {
@@ -45,7 +46,8 @@ class MainTable extends Component {
     afterLineTemplate: PropTypes.array,
     tfootItem: PropTypes.object,
     tfootDataForRender: PropTypes.object,
-    leftMenuWidth: PropTypes.number
+    leftMenuWidth: PropTypes.number,
+    visibleColumnsMiddleware: PropTypes.func
   };
 
   constructor(props) {
@@ -149,7 +151,7 @@ class MainTable extends Component {
       parent: { current: parent },
       theadVisible: { current: theadVisible },
       tfoot: { current: tfoot },
-      ttitle: {current: ttitle}
+      ttitle: { current: ttitle }
     } = this.table;
     const { tfootItem, leftMenuWidth, titleTemplate } = this.props;
 
@@ -222,8 +224,8 @@ class MainTable extends Component {
       if (titleTemplate) {
         const html = document.getElementsByTagName('html')[0];
         ttitle.style.width = `${parent.clientWidth +
-        parent.scrollLeft +
-        html.scrollLeft}px`;
+          parent.scrollLeft +
+          html.scrollLeft}px`;
         // tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
       }
       if (tfootItem || tfootOtherTemplate) {
@@ -340,7 +342,8 @@ class MainTable extends Component {
       afterLineTemplate,
       tfootItem,
       tfootOtherTemplate,
-      titleTemplate
+      titleTemplate,
+      visibleColumnsMiddleware
     } = this.props;
     const {
       [reducer]: {
@@ -348,12 +351,13 @@ class MainTable extends Component {
         isLastPage,
         items,
         filtersValue,
-        visibleColumns,
+        visibleColumns: originalVisibleColumns,
         blockedItems,
         subLineData: afterLineData
       }
     } = data;
     const { colsCount } = this.state;
+    const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
     return (
       <div
