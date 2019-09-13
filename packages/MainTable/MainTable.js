@@ -23,6 +23,7 @@ class MainTable extends Component {
     tfootDataForRender: null,
     leftMenuWidth: 200,
     titleTemplate: null,
+    disableLazyLoad: false,
     visibleColumnsMiddleware: visibleColumns => visibleColumns
   };
 
@@ -47,7 +48,8 @@ class MainTable extends Component {
     tfootItem: PropTypes.object,
     tfootDataForRender: PropTypes.object,
     leftMenuWidth: PropTypes.number,
-    visibleColumnsMiddleware: PropTypes.func
+    visibleColumnsMiddleware: PropTypes.func,
+    disableLazyLoad: PropTypes.bool
   };
 
   constructor(props) {
@@ -216,8 +218,8 @@ class MainTable extends Component {
 
     if (
       (!isLoading && items.length) ||
-      (isLoading && isLastPage === null) ||
-      (!isLoading && isLastPage === null) ||
+      (isLoading && (isLastPage === null || isLastPage === undefined)) ||
+      (!isLoading && (isLastPage === null || isLastPage === undefined)) ||
       (!isLoading && !items.length && isLastPage)
     ) {
       theadVisible.style.width = `${tbody.offsetWidth}px`;
@@ -296,7 +298,8 @@ class MainTable extends Component {
   };
 
   lazyLoad = () => {
-    const { data, reducer } = this.props;
+    const { data, reducer, disableLazyLoad } = this.props;
+    if (disableLazyLoad) return false;
     const {
       [reducer]: { isLastPage, isLoading }
     } = data;
