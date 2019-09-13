@@ -177,7 +177,8 @@ class MainTable extends Component {
       reducer,
       tfootItem,
       tfootOtherTemplate,
-      titleTemplate
+      titleTemplate,
+      disableLazyLoad
     } = this.props;
     const {
       [reducer]: { items, isLoading, isLastPage }
@@ -218,7 +219,9 @@ class MainTable extends Component {
 
     if (
       (!isLoading && items.length) ||
-      (isLoading && (isLastPage === null || isLastPage === undefined)) ||
+      (isLoading &&
+        (isLastPage === null ||
+          (isLastPage === undefined && !disableLazyLoad))) ||
       (!isLoading && (isLastPage === null || isLastPage === undefined)) ||
       (!isLoading && !items.length && isLastPage)
     ) {
