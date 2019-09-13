@@ -219,9 +219,7 @@ class MainTable extends Component {
 
     if (
       (!isLoading && items.length) ||
-      (isLoading &&
-        (isLastPage === null ||
-          (isLastPage === undefined && !disableLazyLoad))) ||
+      (isLoading && isLastPage === null) ||
       (!isLoading && (isLastPage === null || isLastPage === undefined)) ||
       (!isLoading && !items.length && isLastPage)
     ) {
