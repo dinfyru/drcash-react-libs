@@ -98,7 +98,10 @@ class SelectTemplate extends Component {
   setValueForFirst = () => {
     const { valueForFirst, async } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst).then(data => {
+      this.props.loadOptions(valueForFirst).then(originalData => {
+        const data = (originalData || []).filter(el =>
+          el.value.toString().includes(valueForFirst)
+        );
         const value = Array.isArray(data) && data[0] ? data[0] : false;
         this.setState({
           value
