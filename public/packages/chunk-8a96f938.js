@@ -1,1 +1,33 @@
-"use strict";function ___$insertStyle(e){if(e&&"undefined"!=typeof window){var o=document.createElement("style");return o.setAttribute("type","text/css"),o.innerHTML=e,document.head.appendChild(o),e}}var commonjsGlobal="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function unwrapExports(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}function createCommonjsModule(e,o){return e(o={exports:{}},o.exports),o.exports}exports.commonjsGlobal=commonjsGlobal,exports.createCommonjsModule=createCommonjsModule,exports.unwrapExports=unwrapExports;
+'use strict';
+
+
+
+function ___$insertStyle(css) {
+  if (!css) {
+    return;
+  }
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  var style = document.createElement('style');
+
+  style.setAttribute('type', 'text/css');
+  style.innerHTML = css;
+  document.head.appendChild(style);
+  return css;
+}
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function unwrapExports (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+exports.commonjsGlobal = commonjsGlobal;
+exports.createCommonjsModule = createCommonjsModule;
+exports.unwrapExports = unwrapExports;

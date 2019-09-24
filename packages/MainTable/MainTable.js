@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
+import iOS from 'is-ios';
 
 import TBody from './TBody/TBody';
 import THead from './THead/THead';
@@ -113,6 +114,7 @@ class MainTable extends Component {
     addEvent(window, 'resize', this.resizeTableColumns);
     addEvent(parent, 'scroll', this.scrollHeads);
     addEvent(window, 'scroll', this.scrollHeads);
+    addEvent(document.body, 'scroll', this.scrollHeads);
 
     this.resizeTableColumns();
     const {
@@ -146,6 +148,7 @@ class MainTable extends Component {
     removeEvent(window, 'resize', this.resizeTableColumns);
     removeEvent(parent, 'scroll', this.scrollHeads);
     removeEvent(html, 'scroll', this.scrollHeads);
+    removeEvent(document.body, 'scroll', this.scrollHeads);
   }
 
   scrollHeads = () => {
@@ -157,8 +160,10 @@ class MainTable extends Component {
     } = this.table;
     const { tfootItem, leftMenuWidth, titleTemplate } = this.props;
 
-    const html = document.getElementsByTagName('html')[0];
-    const left = leftMenuWidth - parent.scrollLeft - html.scrollLeft;
+    let left = leftMenuWidth - parent.scrollLeft;
+    if (!iOS) {
+      left -= document.body.scrollLeft;
+    }
     theadVisible.style.left = `${left}px`;
 
     if (tfootItem) {
