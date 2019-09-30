@@ -63,8 +63,9 @@ const mainTableReducer = (state = initialState, action) => {
       meta: { id, reducer }
     } = action;
     nextState = cloneDeep(state);
-    nextState[reducer].subLineData[id].isLoading = false;
-    nextState[reducer].subLineData[id].items = [];
+    if (nextState[reducer].subLineData[id]) {
+      delete nextState[reducer].subLineData[id];
+    }
   }
 
   if (action.type === MT_GET_SUBLINE_DATA_SUCCESS) {
@@ -73,11 +74,12 @@ const mainTableReducer = (state = initialState, action) => {
       payload: { status, payload }
     } = action;
     nextState = cloneDeep(state);
-    if (status !== 'OK') {
-      nextState[reducer].subLineData[id].isLoading = false;
-    } else {
+    const hasId = !!nextState[reducer].subLineData[id];
+    if (status === 'OK' && payload.items.length && hasId) {
       nextState[reducer].subLineData[id].isLoading = false;
       nextState[reducer].subLineData[id].items = [...payload.items];
+    } else if (hasId) {
+      delete nextState[reducer].subLineData[id];
     }
   }
 
