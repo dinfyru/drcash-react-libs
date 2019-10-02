@@ -42,7 +42,9 @@ class MainTable extends Component {
     leftMenuWidth: 200,
     titleTemplate: null,
     disableLazyLoad: false,
-    visibleColumnsMiddleware: visibleColumns => visibleColumns
+    requiredFilterValues: [],
+    visibleColumnsMiddleware: visibleColumns => visibleColumns,
+    requiredFilterValuesMessage: 'Empty required filters'
   };
 
   static propTypes = {
@@ -67,14 +69,17 @@ class MainTable extends Component {
     tfootDataForRender: PropTypes.object,
     leftMenuWidth: PropTypes.number,
     visibleColumnsMiddleware: PropTypes.func,
-    disableLazyLoad: PropTypes.bool
+    requiredFilterValues: PropTypes.array,
+    disableLazyLoad: PropTypes.bool,
+    requiredFilterValuesMessage: PropTypes.string
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      colsCount: props.tableTemplate.length + 2
+      colsCount: props.tableTemplate.length + 2,
+      canDoRequest: !props.requiredFilterValues.length
     };
 
     this.table = {
@@ -88,15 +93,44 @@ class MainTable extends Component {
     };
   }
 
-  componentWillMount() {
+  static getDerivedStateFromProps(props, state) {
+    if (props.requiredFilterValues.length && !state.canDoRequest) {
+      let canDoRequest = true;
+      const { reducer, data, listGet, url } = props;
+      const { filtersValue } = data[reducer];
+      props.requiredFilterValues.forEach(el => {
+        if (!filtersValue[el]) {
+          canDoRequest = false;
+        }
+      });
+      if (canDoRequest) {
+        listGet(reducer, url);
+      }
+
+      return { canDoRequest };
+    } else if (props.requiredFilterValues.length) {
+      let canDoRequest = true;
+      const { reducer, data } = props;
+      const { filtersValue } = data[reducer];
+      props.requiredFilterValues.forEach(el => {
+        if (!filtersValue[el]) {
+          canDoRequest = false;
+        }
+      });
+      if (!canDoRequest) {
+        return { canDoRequest };
+      }
+    }
+
+    return {};
+  }
+
+  componentDidMount() {
     const { onInit } = this.props;
 
     if (typeof onInit === 'function') {
       onInit(this.getItems);
     }
-  }
-
-  componentDidMount() {
     const {
       parent: { current: parent }
     } = this.table;
@@ -125,7 +159,9 @@ class MainTable extends Component {
       (refreshTableOnPush && action === 'PUSH') ||
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
-      listGet(reducer, url);
+      if (this.state.canDoRequest) {
+        listGet(reducer, url);
+      }
     }
 
     addEvent(window, 'resize', this.resizeTableColumns);
@@ -348,11 +384,24 @@ class MainTable extends Component {
     const { listGet, changeFiltersValue, reducer, url, data } = this.props;
     const {
       [reducer]: {
-        filtersValue: { offset, limit }
+        filtersValue: { offset, limit },
+        filtersValue
       }
     } = data;
 
     changeFiltersValue(params || { offset: offset + limit }, reducer);
+
+    let canDoRequest = true;
+    const newFilters = {
+      ...cloneDeep(filtersValue),
+      ...cloneDeep(params || {})
+    };
+    this.props.requiredFilterValues.forEach(el => {
+      if (!newFilters[el]) {
+        canDoRequest = false;
+      }
+    });
+    if (!this.state.canDoRequest || !canDoRequest) return false;
     listGet(reducer, url);
   };
 
@@ -370,7 +419,8 @@ class MainTable extends Component {
       tfootItem,
       tfootOtherTemplate,
       titleTemplate,
-      visibleColumnsMiddleware
+      visibleColumnsMiddleware,
+      requiredFilterValuesMessage
     } = this.props;
     const {
       [reducer]: {
@@ -383,7 +433,7 @@ class MainTable extends Component {
         subLineData: afterLineData
       }
     } = data;
-    const { colsCount } = this.state;
+    const { colsCount, canDoRequest } = this.state;
     const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
     return (
@@ -447,7 +497,16 @@ class MainTable extends Component {
               refs={this.table}
             />
 
-            {!items.length && isLastPage && !isLoading ? (
+            {!canDoRequest ? (
+              <tr className="no-border">
+                <td colSpan={colsCount}>
+                  <span className="no-data">{requiredFilterValuesMessage}</span>
+                </td>
+              </tr>
+            ) : (
+              false
+            )}
+            {!items.length && isLastPage && !isLoading && canDoRequest ? (
               <tr className="no-border">
                 <td colSpan={colsCount}>
                   <span className="no-data">No data</span>
