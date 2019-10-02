@@ -99,8 +99,12 @@ class SelectTemplate extends Component {
     const { valueForFirst, async } = this.props;
     if (async && valueForFirst) {
       this.props.loadOptions(valueForFirst).then(originalData => {
-        const data = (originalData || []).filter(el =>
-          el.value.toString().includes(valueForFirst)
+        const data = (originalData || []).filter(
+          el =>
+            el.value &&
+            el.value.toString &&
+            valueForFirst.toString &&
+            el.value.toString() === valueForFirst.toString()
         );
         const value = Array.isArray(data) && data[0] ? data[0] : false;
         this.setState({
