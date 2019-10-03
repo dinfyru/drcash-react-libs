@@ -190,13 +190,7 @@ export default class TBodyPart extends Component {
 
           // generate className if function
           if (typeof tbody.className === 'function') {
-            const keys = {};
-            const tbodyKeys =
-              typeof tbody.key === 'string' ? [tbody.key] : tbody.key;
-            for (let b = 0; b < tbodyKeys.length; b += 1) {
-              keys[tbodyKeys[b]] = item[tbodyKeys[b]];
-            }
-            className = tbody.className(keys);
+            className = tbody.className(item);
           }
           const props = tbody.props ? cloneDeep(tbody.props) : {};
           if (titleIndexes.length) {

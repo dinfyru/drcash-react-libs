@@ -484,19 +484,6 @@ class MainTable extends Component {
             visibleColumns={visibleColumns}
           />
           <tbody ref={this.table.tbody}>
-            <TBody
-              items={cloneDeep(items)}
-              tableTemplate={tableTemplate}
-              titleTemplate={titleTemplate}
-              rerenderById={rerenderById}
-              dataForRender={cloneDeep(dataForRender)}
-              visibleColumns={visibleColumns}
-              afterLineTemplate={afterLineTemplate}
-              afterLineData={afterLineData}
-              blockedItems={blockedItems}
-              refs={this.table}
-            />
-
             {!canDoRequest ? (
               <tr className="no-border">
                 <td colSpan={colsCount}>
@@ -504,7 +491,18 @@ class MainTable extends Component {
                 </td>
               </tr>
             ) : (
-              false
+              <TBody
+                items={cloneDeep(items)}
+                tableTemplate={tableTemplate}
+                titleTemplate={titleTemplate}
+                rerenderById={rerenderById}
+                dataForRender={cloneDeep(dataForRender)}
+                visibleColumns={visibleColumns}
+                afterLineTemplate={afterLineTemplate}
+                afterLineData={afterLineData}
+                blockedItems={blockedItems}
+                refs={this.table}
+              />
             )}
             {!items.length && isLastPage && !isLoading && canDoRequest ? (
               <tr className="no-border">
