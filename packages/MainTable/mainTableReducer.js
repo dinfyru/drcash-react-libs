@@ -103,15 +103,12 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_LIST_AUTO_UPDATE_ITEM) {
-    const {
-      item,
-      item: { id },
-      reducer
-    } = action;
+    const { item, reducer, key = 'id' } = action;
+    const id = item[key];
     let items = cloneDeep(state[reducer].items);
     items = items.map(partItems => {
       const newPartItems = cloneDeep(partItems);
-      const index = newPartItems.findIndex(elem => elem.id === id);
+      const index = newPartItems.findIndex(elem => elem[key] === id);
       if (index >= 0) {
         newPartItems[index] = item;
       }

@@ -92,10 +92,11 @@ const MTupdateItemsAction = (items, reducer) => ({
 });
 
 export const MT_LIST_AUTO_UPDATE_ITEM = 'MT_LIST_AUTO_UPDATE_ITEM';
-const MTautoUpdateItemAction = (item, reducer) => ({
+const MTautoUpdateItemAction = (item, reducer, key) => ({
   type: MT_LIST_AUTO_UPDATE_ITEM,
   item,
-  reducer
+  reducer,
+  key
 });
 
 export const MT_LIST_AUTO_UPDATE_ITEMS = 'MT_LIST_AUTO_UPDATE_ITEMS';
