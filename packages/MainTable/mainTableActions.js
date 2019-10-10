@@ -154,8 +154,8 @@ export const MTupdateItems = (items, reducer) => dispatch =>
   dispatch(MTupdateItemsAction(items, reducer));
 export const MTupdateVisibleColumns = (data, reducer) => dispatch =>
   dispatch(updateVisibleColumnsAction(data, reducer));
-export const MTautoUpdateItem = (item, reducer) => dispatch =>
-  dispatch(MTautoUpdateItemAction(item, reducer));
+export const MTautoUpdateItem = (item, reducer, key) => dispatch =>
+  dispatch(MTautoUpdateItemAction(item, reducer, key));
 export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
   dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
