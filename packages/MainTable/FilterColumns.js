@@ -3,7 +3,7 @@ import cloneDeep from 'lodash.clonedeep';
 import PropTypes from 'prop-types';
 
 import { MTupdateVisibleColumns } from './mainTableActions';
-import { addEvent, removeEvent, findByValue, getParentNodes } from './utils';
+import { addEvent, removeEvent, findByValue, getParentNodes } from '../../utils';
 
 export default class FilterColumns extends Component {
   static defaultProps = {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import TBodyPart from './TBodyPart';
-import { addEvent, elemOffset, removeEvent } from '../utils';
+import { addEvent, elemOffset, removeEvent } from '../../../utils';
 
 export default class TBody extends Component {
   componentDidMount() {

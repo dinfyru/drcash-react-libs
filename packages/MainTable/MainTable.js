@@ -7,7 +7,7 @@ import TBody from './TBody/TBody';
 import THead from './THead/THead';
 import TTitle from './TTitle/TTitle';
 
-import { addEvent, removeEvent, elemOffset } from './utils';
+import { addEvent, removeEvent, elemOffset } from '../../utils';
 import TFoot from './TFoot/TFoot';
 
 const mobileAndTabletcheck = () => {
@@ -59,7 +59,7 @@ class MainTable extends Component {
     rerenderById: PropTypes.number,
     initFiltersValue: PropTypes.object,
     refreshTableOnPush: PropTypes.bool,
-    listGet: PropTypes.func.isRequired,
+    crud: PropTypes.func.isRequired,
     saveTableScroll: PropTypes.func.isRequired,
     changeFiltersValue: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
@@ -96,7 +96,7 @@ class MainTable extends Component {
   static getDerivedStateFromProps(props, state) {
     if (props.requiredFilterValues.length && !state.canDoRequest) {
       let canDoRequest = true;
-      const { reducer, data, listGet, url } = props;
+      const { reducer, data, crud, url } = props;
       const { filtersValue } = data[reducer];
       props.requiredFilterValues.forEach(el => {
         if (!filtersValue[el]) {
@@ -104,7 +104,15 @@ class MainTable extends Component {
         }
       });
       if (canDoRequest) {
-        listGet(reducer, url);
+        crud({
+          endpoint: url,
+          meta: { reducer },
+          crudTypes: {
+            request: `MT_LIST@${reducer}_REQUEST`,
+            success: `MT_LIST@${reducer}_SUCCESS`,
+            failure: `MT_LIST@${reducer}_FAILURE`
+          }
+        });
       }
 
       return { canDoRequest };

@@ -22,41 +22,44 @@ const RSAA = '@@redux-api-middleware/RSAA';
  * @param {Object} params.headers
  * @returns {Promise} request result
  */
-export const crud = (
-  {
-    method = 'GET',
-    endpoint,
-    keys,
-    query = {},
-    body,
-    meta = {},
-    name = 'base_',
-    headers = {
-      'Content-Type': 'application/json'
-    },
-    needToken = true
+export const crud = ({
+  method = 'GET',
+  endpoint,
+  keys,
+  query = {},
+  body,
+  meta = {},
+  name = 'base_',
+  headers = {},
+  needToken = true,
+  crudTypes = {
+    request: CRUD_ACTION_REQUEST,
+    success: CRUD_ACTION_SUCCESS,
+    failure: CRUD_ACTION_FAILURE
   },
-  { validStatuses = ['OK'], errorsByStatuses = {} }
-) => {
+  validateStatuses = {}
+}) => {
+  const metaObj = { query, ...meta, validateStatuses };
   const action = {
     needToken,
+    isCrud: true,
     [RSAA]: {
       endpoint,
       method,
       types: [
-        { type: `${name}_${CRUD_ACTION_REQUEST}`, meta: { query, ...meta } },
-        {
-          type: `${name}_${CRUD_ACTION_SUCCESS}`,
-          meta: { query, validStatuses, errorsByStatuses, ...meta }
-        },
-        { type: `${name}_${CRUD_ACTION_FAILURE}`, meta: { query, ...meta } }
+        { type: `${name}_${crudTypes.request}`, meta: metaObj },
+        { type: `${name}_${crudTypes.success}`, meta: metaObj },
+        { type: `${name}_${crudTypes.failure}`, meta: metaObj }
       ]
     }
   };
 
-  if (Object.keys(headers).length) {
-    action[RSAA].headers = headers;
-  }
+  action[RSAA].headers = {
+    'Content-Type': 'application/json',
+    'Cache-Control':
+      'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+    ...headers
+  };
 
   if (keys) {
     Object.keys(keys).forEach(key => {

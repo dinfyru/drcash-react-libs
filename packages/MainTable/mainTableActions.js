@@ -23,23 +23,6 @@ const updateVisibleColumnsAction = (data, reducer) => ({
   reducer
 });
 
-const listGetAction = (reducer, url) => ({
-  needToken: true,
-  reducer,
-  [RSAA]: {
-    endpoint: url,
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    types: [
-      `MT_LIST@${reducer}_REQUEST`,
-      `MT_LIST@${reducer}_SUCCESS`,
-      `MT_LIST@${reducer}_FAILURE`
-    ]
-  }
-});
-
 export const MT_GET_SUBLINE_DATA_REQUEST = 'MT_GET_SUBLINE_DATA_REQUEST';
 export const MT_GET_SUBLINE_DATA_SUCCESS = 'MT_GET_SUBLINE_DATA_SUCCESS';
 export const MT_GET_SUBLINE_DATA_FAILURE = 'MT_GET_SUBLINE_DATA_FAILURE';
@@ -146,8 +129,6 @@ export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
   dispatch(saveTableScrollAction(scroll, reducer));
 export const MTchangeFiltersValue = (data, reducer) => dispatch =>
   dispatch(changeFiltersValueAction(data, reducer));
-export const MTlistGet = (reducer, url) => dispatch =>
-  dispatch(listGetAction(reducer, url));
 export const MTfiltersDataGet = (reducer, url, params) => dispatch =>
   dispatch(filtersDataGetAction(reducer, url, params));
 export const MTupdateItems = (items, reducer) => dispatch =>

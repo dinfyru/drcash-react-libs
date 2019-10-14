@@ -8,6 +8,7 @@ export default {
   input: [
     'packages/SelectTemplate/SelectTemplate.js',
     'packages/crud/crud.js',
+    'packages/crud/crudBeforeMiddleware.js',
     'packages/flat/flat.js',
     'packages/MainTable/MainTable.js',
     'packages/MainTable/mainTableActions.js',
@@ -24,6 +25,11 @@ export default {
     },
     {
       name: 'crud',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'crudBeforeMiddleware',
       dir: 'public/packages',
       format: 'cjs'
     },

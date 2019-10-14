@@ -34,8 +34,14 @@ export const elemOffset = elem => {
   const win = window;
 
   return {
-    top: box.top  + ( win.pageYOffset || docElem.scrollTop )  - ( docElem.clientTop  || 0 ),
-    left: box.left + ( win.pageXOffset || docElem.scrollLeft ) - ( docElem.clientLeft || 0 )
+    top:
+      box.top +
+      (win.pageYOffset || docElem.scrollTop) -
+      (docElem.clientTop || 0),
+    left:
+      box.left +
+      (win.pageXOffset || docElem.scrollLeft) -
+      (docElem.clientLeft || 0)
   };
 };
 
@@ -61,4 +67,17 @@ export const getParentNodes = (className, parent) => {
   }
 
   return arr;
+};
+
+export const getCookie = name => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts
+      .pop()
+      .split(';')
+      .shift();
+  }
+
+  return undefined;
 };
