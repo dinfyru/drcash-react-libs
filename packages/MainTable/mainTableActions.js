@@ -1,4 +1,5 @@
 import queryBuilder from 'query-string';
+import { crud } from '../crud/crud';
 
 const RSAA = '@@redux-api-middleware/RSAA';
 
@@ -100,22 +101,16 @@ const MTlistRemoveItemAction = (id, reducer, key = 'id') => ({
 const filtersDataGetAction = (reducer, url, params) => {
   const query = queryBuilder.stringify(params);
   const endpoint = `${url}${query && query.length ? `?${query}` : ''}`;
-  return {
-    needToken: true,
-    isCrud: true,
-    [RSAA]: {
-      endpoint,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      types: [
-        `MT_FILTERS_DATA@${reducer}_REQUEST`,
-        `MT_FILTERS_DATA@${reducer}_SUCCESS`,
-        `MT_FILTERS_DATA@${reducer}_FAILURE`
-      ]
+
+  return crud({
+    endpoint: url,
+    query,
+    crudTypes: {
+      request: `MT_FILTERS_DATA@${reducer}_REQUEST`,
+      success: `MT_FILTERS_DATA@${reducer}_SUCCESS`,
+      failure: `MT_FILTERS_DATA@${reducer}_FAILURE`
     }
-  };
+  });
 };
 
 export const MT_DISABLE_ITEM_SWITCHER = 'MT_DISABLE_ITEM_SWITCH';
