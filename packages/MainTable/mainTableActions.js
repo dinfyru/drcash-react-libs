@@ -102,6 +102,7 @@ const filtersDataGetAction = (reducer, url, params) => {
   const endpoint = `${url}${query && query.length ? `?${query}` : ''}`;
   return {
     needToken: true,
+    isCrud: true,
     [RSAA]: {
       endpoint,
       method: 'GET',

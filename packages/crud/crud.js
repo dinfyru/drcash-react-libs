@@ -33,9 +33,9 @@ export const crud = ({
   headers = {},
   needToken = true,
   crudTypes = {
-    request: CRUD_ACTION_REQUEST,
-    success: CRUD_ACTION_SUCCESS,
-    failure: CRUD_ACTION_FAILURE
+    request: `${name}_${CRUD_ACTION_REQUEST}`,
+    success: `${name}_${CRUD_ACTION_SUCCESS}`,
+    failure: `${name}_${CRUD_ACTION_FAILURE}`
   },
   validateStatuses = {}
 }) => {
@@ -47,9 +47,9 @@ export const crud = ({
       endpoint,
       method,
       types: [
-        { type: `${name}_${crudTypes.request}`, meta: metaObj },
-        { type: `${name}_${crudTypes.success}`, meta: metaObj },
-        { type: `${name}_${crudTypes.failure}`, meta: metaObj }
+        { type: crudTypes.request, meta: metaObj },
+        { type: crudTypes.success, meta: metaObj },
+        { type: crudTypes.failure, meta: metaObj }
       ]
     }
   };
