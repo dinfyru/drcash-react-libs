@@ -59,7 +59,7 @@ class MainTable extends Component {
     rerenderById: PropTypes.number,
     initFiltersValue: PropTypes.object,
     refreshTableOnPush: PropTypes.bool,
-    crud: PropTypes.func.isRequired,
+    listGet: PropTypes.func.isRequired,
     saveTableScroll: PropTypes.func.isRequired,
     changeFiltersValue: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,

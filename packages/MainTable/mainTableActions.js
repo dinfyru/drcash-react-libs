@@ -98,12 +98,9 @@ const MTlistRemoveItemAction = (id, reducer, key = 'id') => ({
   key
 });
 
-const filtersDataGetAction = (reducer, url, params) => {
-  const query = queryBuilder.stringify(params);
-  const endpoint = `${url}${query && query.length ? `?${query}` : ''}`;
-
-  return crud({
-    endpoint: url,
+const filtersDataGetAction = (reducer, endpoint, query) =>
+  crud({
+    endpoint,
     query,
     crudTypes: {
       request: `MT_FILTERS_DATA@${reducer}_REQUEST`,
@@ -111,7 +108,6 @@ const filtersDataGetAction = (reducer, url, params) => {
       failure: `MT_FILTERS_DATA@${reducer}_FAILURE`
     }
   });
-};
 
 export const MT_DISABLE_ITEM_SWITCHER = 'MT_DISABLE_ITEM_SWITCH';
 const disableItemSwitcherAction = (data, reducer, byIndex) => ({
@@ -120,6 +116,16 @@ const disableItemSwitcherAction = (data, reducer, byIndex) => ({
   reducer,
   byIndex
 });
+
+const listGetAction = (reducer, endpoint) =>
+  crud({
+    endpoint,
+    crudTypes: {
+      request: `MT_LIST@${reducer}_REQUEST`,
+      success: `MT_LIST@${reducer}_SUCCESS`,
+      failure: `MT_LIST@${reducer}_FAILURE`
+    }
+  });
 
 export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
   dispatch(saveTableScrollAction(scroll, reducer));
@@ -137,3 +143,5 @@ export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
   dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
   dispatch(disableItemSwitcherAction(data, reducer, byIndex));
+export const MTlistGet = (reducer, url) => dispatch =>
+  dispatch(listGetAction(reducer, url));
