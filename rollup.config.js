@@ -12,7 +12,7 @@ export default {
     'packages/crud/crudAfterMiddleware.js',
     'packages/crud/crudReducer.js',
     'packages/flat/flat.js',
-    'packages/NotificationTemplate/index.js',
+    'packages/NotificationTemplate/notification.js',
     'packages/MainTable/MainTable.js',
     'packages/MainTable/mainTableActions.js',
     'packages/MainTable/mainTableReducer.js',
