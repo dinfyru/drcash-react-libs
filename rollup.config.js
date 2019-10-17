@@ -9,7 +9,10 @@ export default {
     'packages/SelectTemplate/SelectTemplate.js',
     'packages/crud/crud.js',
     'packages/crud/crudBeforeMiddleware.js',
+    'packages/crud/crudAfterMiddleware.js',
+    'packages/crud/crudReducer.js',
     'packages/flat/flat.js',
+    'packages/NotificationTemplate/index.js',
     'packages/MainTable/MainTable.js',
     'packages/MainTable/mainTableActions.js',
     'packages/MainTable/mainTableReducer.js',
@@ -34,7 +37,22 @@ export default {
       format: 'cjs'
     },
     {
+      name: 'crudAfterMiddleware',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'crudReducer',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
       name: 'flat',
+      dir: 'public/packages',
+      format: 'cjs'
+    },
+    {
+      name: 'notification',
       dir: 'public/packages',
       format: 'cjs'
     },

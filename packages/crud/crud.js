@@ -37,9 +37,10 @@ export const crud = ({
     success: `${name}_${CRUD_ACTION_SUCCESS}`,
     failure: `${name}_${CRUD_ACTION_FAILURE}`
   },
-  validateStatuses = {}
+  validStatuses = [],
+  errorMessagesByStatus = {}
 }) => {
-  const metaObj = { query, ...meta, validateStatuses };
+  const metaObj = { query, ...meta, validStatuses, errorMessagesByStatus };
   const action = {
     needToken,
     isCrud: true,
