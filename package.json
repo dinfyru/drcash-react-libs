@@ -1,6 +1,6 @@
 {
   "name": "drcash-react-libs",
-  "version": "0.7.0-beta-2",
+  "version": "0.7.0-beta-3",
   "description": "Dr cash react libs",
   "deprecated": false,
   "main": "packages/index.js",
