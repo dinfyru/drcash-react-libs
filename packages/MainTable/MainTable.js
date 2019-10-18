@@ -1,5 +1,5 @@
 export MainTable from './MainTableComponent';
-export mainTableMiddleware from './mainTableMiddleware';
+export mainTableBeforeMiddleware from './mainTableBeforeMiddleware';
 export mainTableReducer from './mainTableReducer';
 export FilterColumns from './FilterColumns';
 

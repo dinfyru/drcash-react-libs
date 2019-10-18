@@ -202,8 +202,9 @@ const mainTableReducer = (state = initialState, action) => {
     if (action.payload.status === 'OK') {
       const {
         payload: { items },
-        _meta: { is_last_page: isLastPage, total }
+        _meta = {}
       } = action.payload;
+      const { is_last_page: isLastPage = true, total = 0 } = _meta;
 
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;

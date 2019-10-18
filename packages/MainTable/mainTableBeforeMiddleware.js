@@ -3,7 +3,6 @@ import queryBuilder from 'query-string';
 import compact from 'lodash.compact';
 
 const REQUEST_REGEXP = /^MT_LIST@(.+)_REQUEST$/;
-const CRUD_ACTION_SUCCESS = /^(.+)_CRUD_ACTION_SUCCESS$/;
 const RSAA = '@@redux-api-middleware/RSAA';
 
 export default store => next => action => {
@@ -44,9 +43,6 @@ export default store => next => action => {
     }
 
     return next(newAction);
-  }
-
-  if (CRUD_ACTION_SUCCESS.test(action.status)) {
   }
 
   return next(action);
