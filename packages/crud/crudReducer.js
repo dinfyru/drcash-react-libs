@@ -17,7 +17,7 @@ export default (state = initialState, action) => {
     action.type.includes('CRUD_ACTION_SUCCESS') ||
     action.type.includes('CRUD_ACTION_FAILURE')
   ) {
-    const crudName = action.split('_')[0];
+    const crudName = action.type.split('_')[0];
     nextState = cloneDeep(state);
     nextState.isLoading[crudName] = false;
   }
