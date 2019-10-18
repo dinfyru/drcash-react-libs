@@ -24,21 +24,21 @@ export default store => next => action => {
       if (isLoading) {
         return false;
       }
-      // if (filtersValue && Object.keys(filtersValue).length) {
-      //   const compactedQuery = cloneDeep(filtersValue);
-      //   Object.entries(compactedQuery).forEach(([key, value]) => {
-      //     const arr = Array.isArray(value) ? value : [value];
-      //     compactedQuery[key] = compact(arr);
-      //   });
-      //   const queryString = queryBuilder.stringify(compactedQuery);
-      //
-      //   if (queryString.length) {
-      //     newAction[RSAA].endpoint = `${
-      //       newAction[RSAA].endpoint
-      //     }?${queryString}`;
-      //
-      //   }
-      // }
+      if (filtersValue && Object.keys(filtersValue).length) {
+        const compactedQuery = cloneDeep(filtersValue);
+        Object.entries(compactedQuery).forEach(([key, value]) => {
+          const arr = Array.isArray(value) ? value : [value];
+          compactedQuery[key] = compact(arr);
+        });
+        const queryString = queryBuilder.stringify(compactedQuery);
+
+        if (queryString.length) {
+          newAction[RSAA].endpoint = `${
+            newAction[RSAA].endpoint
+          }?${queryString}`;
+
+        }
+      }
 
       return next(newAction);
     }

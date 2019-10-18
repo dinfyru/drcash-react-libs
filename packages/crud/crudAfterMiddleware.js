@@ -31,7 +31,7 @@ export default store => next => action => {
       if (status !== 'OK' && validStatuses.indexOf(status) < 0) {
         const message = errorMessagesByStatus[status]
           ? errorMessagesByStatus[status]
-          : 'Error';
+          : 'Something went wrong. Try again later.';
 
         next({
           type: 'ADD_NOTIFICATION',
@@ -42,7 +42,7 @@ export default store => next => action => {
                 .split('.')[1],
               10
             ),
-            duration: 100000,
+            duration: 7000,
             message,
             type: 'NOTIFICATION_TYPE_ERROR',
             canDismiss: true
