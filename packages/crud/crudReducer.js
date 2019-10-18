@@ -8,7 +8,7 @@ export default (state = initialState, action) => {
   let nextState;
 
   if (action.type.includes('CRUD_ACTION_REQUEST')) {
-    const crudName = action.split('_')[0];
+    const crudName = action.type.split('_')[0];
     nextState = cloneDeep(state);
     nextState.isLoading[crudName] = true;
   }
