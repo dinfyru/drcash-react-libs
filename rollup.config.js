@@ -8,16 +8,8 @@ export default {
   input: [
     'packages/SelectTemplate/SelectTemplate.js',
     'packages/crud/crud.js',
-    'packages/crud/crudBeforeMiddleware.js',
-    'packages/crud/crudAfterMiddleware.js',
-    'packages/crud/crudReducer.js',
-    'packages/flat/flat.js',
-    'packages/NotificationTemplate/notification.js',
+    'packages/Notification/notification.js',
     'packages/MainTable/MainTable.js',
-    'packages/MainTable/mainTableActions.js',
-    'packages/MainTable/mainTableReducer.js',
-    'packages/MainTable/mainTableMiddleware.js',
-    'packages/MainTable/FilterColumns.js',
     'packages/Checkbox/Checkbox.js'
   ],
   output: [
@@ -32,52 +24,12 @@ export default {
       format: 'cjs'
     },
     {
-      name: 'crudBeforeMiddleware',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'crudAfterMiddleware',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'crudReducer',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'flat',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
       name: 'notification',
       dir: 'public/packages',
       format: 'cjs'
     },
     {
       name: 'MainTable',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'mainTableActions',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'mainTableReducer',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'mainTableMiddleware',
-      dir: 'public/packages',
-      format: 'cjs'
-    },
-    {
-      name: 'FilterColumns',
       dir: 'public/packages',
       format: 'cjs'
     },

@@ -5,9 +5,7 @@ import { getCookie } from '../../utils';
 const RSAA = '@@redux-api-middleware/RSAA';
 const listRegexp = /^LIST_(.*)_REQUEST$/;
 
-export const crudBeforeMiddleware = (
-  tokenName = 'dr-pa-token'
-) => store => next => action => {
+export default (tokenName = 'dr-pa-token') => store => next => action => {
   if (action.isCrud) {
     const newAction = cloneDeep(action);
     delete newAction.isCrud;

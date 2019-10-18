@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 
-export const crudAfterMiddleware = store => next => action => {
+export default store => next => action => {
   if (/.*_SUCCESS$/gi.test(action.type)) {
     const cloneAction = cloneDeep(action);
     // validate response crud data

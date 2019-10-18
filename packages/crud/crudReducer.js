@@ -4,7 +4,7 @@ const initialState = {
   isLoading: {}
 };
 
-export const crudReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   let nextState;
 
   if (action.type.includes('CRUD_ACTION_REQUEST')) {
