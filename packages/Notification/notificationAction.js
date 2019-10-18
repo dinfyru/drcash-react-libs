@@ -1,11 +1,11 @@
 export default (notificationType, message, duration = 7000) => {
   let type;
-  if (notificationType === 'NOTIFICATION_TYPE_ERROR') {
-    type = 'error';
-  } else if (notificationType === 'NOTIFICATION_TYPE_WARNING') {
-    type = 'warning';
-  } else if (notificationType === 'NOTIFICATION_TYPE_SUCCESS') {
-    type = 'success';
+  if (notificationType === 'error') {
+    type = 'NOTIFICATION_TYPE_ERROR';
+  } else if (notificationType === 'warning') {
+    type = 'NOTIFICATION_TYPE_WARNING';
+  } else if (notificationType === 'success') {
+    type = 'NOTIFICATION_TYPE_SUCCESS';
   }
   return {
     type: 'ADD_NOTIFICATION',
