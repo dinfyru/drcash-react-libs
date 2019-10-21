@@ -1,6 +1,25 @@
 import cloneDeep from 'lodash.clonedeep';
 
 export default store => next => action => {
+  if (/.*_FAILURE$/gi.test(action.type)) {
+    next({
+      type: 'ADD_NOTIFICATION',
+      notification: {
+        id: parseInt(
+          Math.random()
+            .toString()
+            .split('.')[1],
+          10
+        ),
+        duration: 7000,
+        message: 'Something went wrong. Try again later.',
+        type: 'NOTIFICATION_TYPE_ERROR',
+        canDismiss: true
+      }
+    });
+    return Promise.reject(next(action));
+  }
+
   if (/.*_SUCCESS$/gi.test(action.type)) {
     const cloneAction = cloneDeep(action);
     // validate response crud data
