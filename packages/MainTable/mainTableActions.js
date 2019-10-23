@@ -33,37 +33,17 @@ export const MTgetSubLineData = ({
   query = {},
   url,
   reducer
-}) => dispatch => {
-  const queryString = queryBuilder.stringify({ ...query, [subLineKey]: id });
-  let endpoint = url;
-  if (queryString.length) {
-    endpoint = `${endpoint}?${queryString}`;
-  }
-  return dispatch({
-    needToken: true,
-    [RSAA]: {
-      endpoint,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      types: [
-        {
-          type: MT_GET_SUBLINE_DATA_REQUEST,
-          meta: { reducer, subLineKey, id }
-        },
-        {
-          type: MT_GET_SUBLINE_DATA_SUCCESS,
-          meta: { reducer, subLineKey, id }
-        },
-        {
-          type: MT_GET_SUBLINE_DATA_FAILURE,
-          meta: { reducer, subLineKey, id }
-        }
-      ]
-    }
+}) =>
+  crud({
+    endpoint: url,
+    query: { ...query, [subLineKey]: id },
+    crudTypes: {
+      request: MT_GET_SUBLINE_DATA_REQUEST,
+      success: MT_GET_SUBLINE_DATA_SUCCESS,
+      failure: MT_GET_SUBLINE_DATA_FAILURE
+    },
+    meta: { reducer, subLineKey, id }
   });
-};
 export const MT_REMOVE_SUBLINE_DATA = 'MT_REMOVE_SUBLINE_DATA';
 export const MTremoveSubLineData = ({ id, reducer }) => dispatch =>
   dispatch({ type: MT_REMOVE_SUBLINE_DATA, id, reducer });
