@@ -37,9 +37,7 @@ const mainTableReducer = (state = initialState, action) => {
   let nextState;
 
   if (action.type === MT_REMOVE_SUBLINE_DATA) {
-    const {
-      meta: { id, reducer }
-    } = action;
+    const { id, reducer } = action;
     nextState = cloneDeep(state);
     if (nextState[reducer].subLineData[id]) {
       delete nextState[reducer].subLineData[id];
