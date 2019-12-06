@@ -96,7 +96,7 @@ class MainTableComponent extends Component {
   static getDerivedStateFromProps(props, state) {
     if (props.requiredFilterValues.length && !state.canDoRequest) {
       let canDoRequest = true;
-      const { reducer, data, crud, url } = props;
+      const { reducer, data, listGet, url } = props;
       const { filtersValue } = data[reducer];
       props.requiredFilterValues.forEach(el => {
         if (!filtersValue[el]) {
@@ -104,15 +104,7 @@ class MainTableComponent extends Component {
         }
       });
       if (canDoRequest) {
-        crud({
-          endpoint: url,
-          meta: { reducer },
-          crudTypes: {
-            request: `MT_LIST@${reducer}_REQUEST`,
-            success: `MT_LIST@${reducer}_SUCCESS`,
-            failure: `MT_LIST@${reducer}_FAILURE`
-          }
-        });
+        listGet(reducer, url);
       }
 
       return { canDoRequest };
