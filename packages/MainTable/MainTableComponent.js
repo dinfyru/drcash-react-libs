@@ -214,8 +214,8 @@ class MainTableComponent extends Component {
     const { tfootItem, leftMenuWidth, titleTemplate } = this.props;
     if (parent) {
       let left = leftMenuWidth - parent.scrollLeft;
-      if (!iOS && !mobileAndTabletcheck) {
-        left -= document.body.scrollLeft;
+      if (!iOS && !mobileAndTabletcheck()) {
+        left -= document.body.scrollLeft || document.documentElement.scrollLeft;
       }
       theadVisible.style.left = `${left}px`;
 
