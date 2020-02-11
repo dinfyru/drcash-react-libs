@@ -32,6 +32,7 @@ export default ({
   name = 'base_',
   headers = {},
   needToken = true,
+  uploadFile = false,
   crudTypes = {
     request: `${name}_${CRUD_ACTION_REQUEST}`,
     success: `${name}_${CRUD_ACTION_SUCCESS}`,
@@ -55,12 +56,18 @@ export default ({
     }
   };
 
-  action[RSAA].headers = {
-    'Content-Type': 'application/json',
-    'Cache-Control':
-      'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-    ...headers
-  };
+  if (!uploadFile) {
+    action[RSAA].headers = {
+      'Content-Type': 'application/json',
+      'Cache-Control':
+        'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      ...headers
+    };
+  } else {
+    action[RSAA].headers = {
+      ...headers
+    };
+  }
 
   if (keys) {
     Object.keys(keys).forEach(key => {
@@ -84,7 +91,7 @@ export default ({
     }
   }
 
-  if (body && headers['Content-Type'] === 'application/json') {
+  if (body && action[RSAA].headers['Content-Type'] === 'application/json') {
     action[RSAA].body = JSON.stringify(body);
   } else if (body) {
     action[RSAA].body = body;
