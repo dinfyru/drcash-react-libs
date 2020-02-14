@@ -29,6 +29,7 @@ const isMobileOrTablet = mobileAndTabletcheck();
 
 class MainTableComponent extends Component {
   static defaultProps = {
+    url: null,
     reducer: '',
     className: '',
     dataForRender: {},
@@ -48,7 +49,7 @@ class MainTableComponent extends Component {
   };
 
   static propTypes = {
-    url: PropTypes.string.isRequired,
+    url: PropTypes.string,
     id: PropTypes.string.isRequired,
     tableTemplate: PropTypes.array.isRequired,
     titleTemplate: PropTypes.array,
@@ -94,6 +95,8 @@ class MainTableComponent extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    if (!props.url) return {};
+
     if (props.requiredFilterValues.length && !state.canDoRequest) {
       let canDoRequest = true;
       const { reducer, data, listGet, url } = props;
@@ -159,7 +162,7 @@ class MainTableComponent extends Component {
       (refreshTableOnPush && action === 'PUSH') ||
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
-      if (this.state.canDoRequest) {
+      if (this.state.canDoRequest && url) {
         listGet(reducer, url);
       }
     }
@@ -211,7 +214,12 @@ class MainTableComponent extends Component {
       tfoot: { current: tfoot },
       ttitle: { current: ttitle }
     } = this.table;
-    const { tfootItem, leftMenuWidth, titleTemplate, tfootOtherTemplate } = this.props;
+    const {
+      tfootItem,
+      leftMenuWidth,
+      titleTemplate,
+      tfootOtherTemplate
+    } = this.props;
     if (parent) {
       let left = leftMenuWidth - parent.scrollLeft;
       if (!iOS && !mobileAndTabletcheck()) {

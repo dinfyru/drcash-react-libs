@@ -78,6 +78,13 @@ const MTlistRemoveItemAction = (id, reducer, key = 'id') => ({
   key
 });
 
+export const MT_SET_ITEMS = 'MT_SET_ITEMS';
+export const MTsetItems = (items, reducer) => ({
+  type: MT_SET_ITEMS,
+  items,
+  reducer
+});
+
 const filtersDataGetAction = (reducer, endpoint, query) =>
   crud({
     endpoint,

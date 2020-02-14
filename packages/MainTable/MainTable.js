@@ -10,6 +10,7 @@ export {
   MTlistRemoveItem,
   MTdisableItemSwitcher,
   MTautoUpdateItems,
+  MTsetItems,
   MTupdateItems,
   MTsaveTableScroll,
   MTlistGet,

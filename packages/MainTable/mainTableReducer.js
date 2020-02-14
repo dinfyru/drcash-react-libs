@@ -11,6 +11,7 @@ import {
   MT_LIST_UPDATE_ITEMS,
   MT_REMOVE_SUBLINE_DATA,
   MT_SAVE_TABLE_SCROLL,
+  MT_SET_ITEMS,
   MT_UPDATE_VISIBLE_COLUMNS
 } from './mainTableActions';
 
@@ -185,6 +186,13 @@ const mainTableReducer = (state = initialState, action) => {
     nextState[reducer].blockedItems = nextState[reducer].blockedItems.filter(
       elem => elem
     );
+  }
+
+  if (action.type === MT_SET_ITEMS) {
+    const { items, reducer } = action;
+    nextState = cloneDeep(state);
+
+    nextState[reducer].items = [cloneDeep(items)];
   }
 
   // table request
