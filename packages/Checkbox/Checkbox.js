@@ -41,7 +41,8 @@ class Checkbox extends PureComponent {
   }
 
   onChange = () => {
-    const { trackValue, active: activeProps } = this.props;
+    const { trackValue, active: activeProps, disabled } = this.props;
+    if (disabled) return;
     if (trackValue) {
       this.props.onChange(this.state.active);
       return;
