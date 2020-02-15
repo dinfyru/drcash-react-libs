@@ -536,6 +536,7 @@ class MainTableComponent extends Component {
           {tfootItem ? (
             <TFoot
               tableTemplate={tableTemplate}
+              dataForRender={cloneDeep(dataForRender)}
               tfootItem={tfootItem}
               isHidden
               setRef={this.table.tfootHidden}
@@ -549,6 +550,7 @@ class MainTableComponent extends Component {
           <table className="table__thead table-list">
             <TFoot
               tableTemplate={tableTemplate}
+              dataForRender={cloneDeep(dataForRender)}
               tfootItem={tfootItem}
               items={cloneDeep(items)}
               tfootDataForRender={this.props.tfootDataForRender}

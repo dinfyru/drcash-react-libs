@@ -5,6 +5,7 @@ export default class TFoot extends Component {
   static defaultProps = {
     visibleColumns: null,
     tfootItem: null,
+    dataForRender: {},
     items: [],
     tfootDataForRender: null
   };
@@ -12,6 +13,7 @@ export default class TFoot extends Component {
   static propTypes = {
     tableTemplate: PropTypes.array.isRequired,
     setRef: PropTypes.object.isRequired,
+    dataForRender: PropTypes.object,
     visibleColumns: PropTypes.array,
     tfootItem: PropTypes.object,
     items: PropTypes.array,
@@ -27,6 +29,9 @@ export default class TFoot extends Component {
     const visibleColumnsNotEqual =
       JSON.stringify(props.visibleColumns) !==
       JSON.stringify(nextProps.visibleColumns);
+    const dataForRenderNotEqual =
+      JSON.stringify(props.dataForRender) !==
+      JSON.stringify(nextProps.dataForRender);
     const tfootItemNotEqual =
       JSON.stringify(props.tfootItem) !== JSON.stringify(nextProps.tfootItem);
     const itemsNotEqual =
@@ -38,6 +43,7 @@ export default class TFoot extends Component {
     return (
       tableTemplateNotEqual ||
       visibleColumnsNotEqual ||
+      dataForRenderNotEqual ||
       tfootItemNotEqual ||
       itemsNotEqual ||
       tfootDataForRenderNotEqual
