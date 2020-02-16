@@ -40,6 +40,7 @@ class MainTableComponent extends Component {
     afterLineTemplate: null,
     tfootItem: null,
     tfootDataForRender: null,
+    reloadItemsOnRequest: false,
     leftMenuWidth: 200,
     titleTemplate: null,
     disableLazyLoad: false,
@@ -61,6 +62,7 @@ class MainTableComponent extends Component {
     initFiltersValue: PropTypes.object,
     refreshTableOnPush: PropTypes.bool,
     listGet: PropTypes.func.isRequired,
+    reloadItemsOnRequest: PropTypes.bool,
     saveTableScroll: PropTypes.func.isRequired,
     changeFiltersValue: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
@@ -99,7 +101,7 @@ class MainTableComponent extends Component {
 
     if (props.requiredFilterValues.length && !state.canDoRequest) {
       let canDoRequest = true;
-      const { reducer, data, listGet, url } = props;
+      const { reducer, data, listGet, url, reloadItemsOnRequest } = props;
       const { filtersValue } = data[reducer];
       props.requiredFilterValues.forEach(el => {
         if (!filtersValue[el]) {
@@ -107,7 +109,7 @@ class MainTableComponent extends Component {
         }
       });
       if (canDoRequest) {
-        listGet(reducer, url);
+        listGet(reducer, url, reloadItemsOnRequest);
       }
 
       return { canDoRequest };
@@ -145,7 +147,8 @@ class MainTableComponent extends Component {
       history: { action },
       initFiltersValue,
       changeFiltersValue,
-      refreshTableOnPush
+      refreshTableOnPush,
+      reloadItemsOnRequest
     } = this.props;
 
     // init filtersValue for first request
@@ -163,7 +166,7 @@ class MainTableComponent extends Component {
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
       if (this.state.canDoRequest && url) {
-        listGet(reducer, url);
+        listGet(reducer, url, reloadItemsOnRequest);
       }
     }
 
@@ -389,7 +392,7 @@ class MainTableComponent extends Component {
   };
 
   getItems = params => {
-    const { listGet, changeFiltersValue, reducer, url, data } = this.props;
+    const { listGet, changeFiltersValue, reducer, url, data, reloadItemsOnRequest } = this.props;
     const {
       [reducer]: {
         filtersValue: { offset, limit },
@@ -410,7 +413,7 @@ class MainTableComponent extends Component {
       }
     });
     if (!this.state.canDoRequest || !canDoRequest) return false;
-    listGet(reducer, url);
+    listGet(reducer, url, reloadItemsOnRequest);
   };
 
   render() {

@@ -104,14 +104,15 @@ const disableItemSwitcherAction = (data, reducer, byIndex) => ({
   byIndex
 });
 
-const listGetAction = (reducer, endpoint) =>
+const listGetAction = (reducer, endpoint, reloadItemsOnRequest) =>
   crud({
     endpoint,
     crudTypes: {
       request: `MT_LIST@${reducer}_REQUEST`,
       success: `MT_LIST@${reducer}_SUCCESS`,
       failure: `MT_LIST@${reducer}_FAILURE`
-    }
+    },
+    meta: { reloadItemsOnRequest }
   });
 
 export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
