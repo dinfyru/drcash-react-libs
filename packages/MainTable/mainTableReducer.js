@@ -214,7 +214,7 @@ const mainTableReducer = (state = initialState, action) => {
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
 
-      if (items.length || item) {
+      if ((items && items.length) || item) {
         nextState[reducer].items = [
           ...nextState[reducer].items,
           items || [item]
