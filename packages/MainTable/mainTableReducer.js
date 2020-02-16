@@ -156,11 +156,21 @@ const mainTableReducer = (state = initialState, action) => {
     const reducer = action.type.match(SUCCESS_FILTERS_DATA_REGEXP)[1];
     if (action.payload.status === 'OK') {
       const {
-        payload: { items }
-      } = action.payload;
+        payload: {
+          payload: { items }
+        },
+        meta: { modifyResponse }
+      } = action;
 
       nextState = cloneDeep(state);
-      nextState.filtersData[reducer] = items;
+      if (modifyResponse) {
+        nextState.filtersData[reducer] = items.map(item => ({
+          label: item[modifyResponse.label],
+          value: item[modifyResponse.value]
+        }));
+      } else {
+        nextState.filtersData[reducer] = items;
+      }
     }
   }
 

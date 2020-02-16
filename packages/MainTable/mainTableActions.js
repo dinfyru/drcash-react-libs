@@ -85,10 +85,11 @@ export const MTsetItems = (items, reducer) => ({
   reducer
 });
 
-const filtersDataGetAction = (reducer, endpoint, query) =>
+const filtersDataGetAction = (reducer, endpoint, query, modifyResponse) =>
   crud({
     endpoint,
     query,
+    meta: { modifyResponse },
     crudTypes: {
       request: `MT_FILTERS_DATA@${reducer}_REQUEST`,
       success: `MT_FILTERS_DATA@${reducer}_SUCCESS`,
@@ -119,8 +120,13 @@ export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
   dispatch(saveTableScrollAction(scroll, reducer));
 export const MTchangeFiltersValue = (data, reducer) => dispatch =>
   dispatch(changeFiltersValueAction(data, reducer));
-export const MTfiltersDataGet = (reducer, url, params) => dispatch =>
-  dispatch(filtersDataGetAction(reducer, url, params));
+export const MTfiltersDataGet = (
+  reducer,
+  url,
+  params,
+  modifyResponse
+) => dispatch =>
+  dispatch(filtersDataGetAction(reducer, url, params, modifyResponse));
 export const MTupdateItems = (items, reducer) => dispatch =>
   dispatch(MTupdateItemsAction(items, reducer));
 export const MTupdateVisibleColumns = (data, reducer) => dispatch =>
