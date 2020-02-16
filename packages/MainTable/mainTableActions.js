@@ -131,5 +131,5 @@ export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
   dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
   dispatch(disableItemSwitcherAction(data, reducer, byIndex));
-export const MTlistGet = (reducer, url) => dispatch =>
-  dispatch(listGetAction(reducer, url));
+export const MTlistGet = (reducer, url, reloadItemsOnRequest) => dispatch =>
+  dispatch(listGetAction(reducer, url, reloadItemsOnRequest));
