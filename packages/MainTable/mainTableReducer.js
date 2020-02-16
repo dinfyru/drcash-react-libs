@@ -207,15 +207,18 @@ const mainTableReducer = (state = initialState, action) => {
     nextState[reducer].isLoading = false;
     if (action.payload.status === 'OK') {
       const {
-        payload: { items },
+        payload: { items, item },
         _meta: { is_last_page: isLastPage, total }
       } = action.payload;
 
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
 
-      if (items.length) {
-        nextState[reducer].items = [...nextState[reducer].items, items];
+      if (items.length || item) {
+        nextState[reducer].items = [
+          ...nextState[reducer].items,
+          items || [item]
+        ];
       }
     } else {
       nextState[reducer].isLastPage = true;
