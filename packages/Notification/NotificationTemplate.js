@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 import './NotificationTemplate.sass';
 
 class Notification extends React.PureComponent {
+  static defaultProps = {
+    duration: 0,
+    message: ''
+  };
+
   static propTypes = {
     id: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired,
+    message: PropTypes.string,
     duration: PropTypes.number,
     handleDismiss: PropTypes.func.isRequired
-  };
-
-  static defaultProps = {
-    duration: 0
   };
 
   componentDidMount() {
@@ -24,15 +26,23 @@ class Notification extends React.PureComponent {
     }
   }
 
+  notificationParams = (type, message) => {
+    if (type === 'NOTIFICATION_TYPE_WARNING') {
+      return { classType: 'warning', message };
+    }
+    if (type === 'NOTIFICATION_TYPE_SUCCESS') {
+      return { classType: 'success', message };
+    }
+
+    return { classType: 'error', message };
+  };
+
   render() {
-    const { handleDismiss, message, type, id } = this.props;
-    let classType;
-    if (type === 'NOTIFICATION_TYPE_ERROR') {
-      classType = 'error';
-    } else if (type === 'NOTIFICATION_TYPE_WARNING') {
-      classType = 'warning';
-    } else if (type === 'NOTIFICATION_TYPE_SUCCESS') {
-      classType = 'success';
+    const { handleDismiss, message: propsMessage, type, id } = this.props;
+    const { classType, message } = this.notificationParams(type, propsMessage);
+
+    if ('onLine' in navigator && !navigator.onLine) {
+      return false;
     }
 
     return (

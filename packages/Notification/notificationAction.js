@@ -1,12 +1,11 @@
-export default (notificationType, message, duration = 7000) => {
-  let type;
-  if (notificationType === 'error') {
-    type = 'NOTIFICATION_TYPE_ERROR';
-  } else if (notificationType === 'warning') {
-    type = 'NOTIFICATION_TYPE_WARNING';
-  } else if (notificationType === 'success') {
-    type = 'NOTIFICATION_TYPE_SUCCESS';
-  }
+export default ({ type, message, duration = 7000 }) => {
+  const types = {
+    error: 'NOTIFICATION_TYPE_ERROR',
+    warning: 'NOTIFICATION_TYPE_WARNING',
+    success: 'NOTIFICATION_TYPE_SUCCESS',
+    noInternet: 'NOTIFICATION_TYPE_NO_INTERNET'
+  };
+
   return {
     type: 'ADD_NOTIFICATION',
     notification: {
@@ -18,7 +17,7 @@ export default (notificationType, message, duration = 7000) => {
       ),
       duration,
       message,
-      type,
+      type: types[type] || types.error,
       canDismiss: true
     }
   };
