@@ -1,4 +1,4 @@
-export default ({ type, message, duration = 7000 }) => {
+export default (type, message, duration = 7000) => {
   const types = {
     error: 'NOTIFICATION_TYPE_ERROR',
     warning: 'NOTIFICATION_TYPE_WARNING',
