@@ -30,6 +30,7 @@ class SelectTemplate extends Component {
     onInputChange: false,
     valueForFirst: false
   };
+
   static propTypes = {
     nameParams: PropTypes.string,
     options: PropTypes.array,
@@ -116,7 +117,7 @@ class SelectTemplate extends Component {
 
   setValue = () => {
     const { setValue, options } = this.props;
-    if (setValue) {
+    if (setValue && options && options.length) {
       const random = Math.floor(Math.random() * (options.length - 0));
       const value = setValue === 2 ? options[random].value : options[0].value;
       this.handleOnChange(value);

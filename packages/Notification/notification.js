@@ -1,2 +1,2 @@
-export notificationAction from './notificationAction';
+export notification from './notificationAction';
 export NotificationTemplate from './NotificationTemplate';
