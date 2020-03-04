@@ -12,7 +12,7 @@ class Notification extends React.PureComponent {
   static propTypes = {
     id: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired,
-    message: PropTypes.any(PropTypes.string, PropTypes.object),
+    message: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     duration: PropTypes.number,
     handleDismiss: PropTypes.func.isRequired
   };
