@@ -113,7 +113,7 @@ const listGetAction = (reducer, endpoint, reloadItemsOnRequest) =>
       success: `MT_LIST@${reducer}_SUCCESS`,
       failure: `MT_LIST@${reducer}_FAILURE`
     },
-    meta: { reloadItemsOnRequest }
+    meta: { reloadItemsOnRequest, mainTableRequest: true }
   });
 
 export const MTsaveTableScroll = (scroll, reducer) => dispatch =>

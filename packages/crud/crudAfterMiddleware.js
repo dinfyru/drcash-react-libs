@@ -1,7 +1,9 @@
 import cloneDeep from 'lodash.clonedeep';
 
+const ignoreStatuses = ['OK', 'NO_ROWS'];
+
 export default store => next => action => {
-  if (/.*_FAILURE$/gi.test(action.type)) {
+  if (/.*_FAILURE$/gi.test(action.type) && action.meta.status !== 401) {
     next({
       type: 'ADD_NOTIFICATION',
       notification: {
@@ -47,7 +49,10 @@ export default store => next => action => {
         meta: { validStatuses = [], errorMessagesByStatus = {} }
       } = cloneAction;
       const { status } = payload;
-      if (status !== 'OK' && validStatuses.indexOf(status) < 0) {
+      if (
+        ignoreStatuses.indexOf(status) < 0 &&
+        validStatuses.indexOf(status) < 0
+      ) {
         const message = errorMessagesByStatus[status]
           ? errorMessagesByStatus[status]
           : 'Something went wrong. Try again later.';

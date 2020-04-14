@@ -236,10 +236,11 @@ const mainTableReducer = (state = initialState, action) => {
             items || [item]
           ];
         }
+      } else {
+        nextState[reducer].isLastPage = true;
       }
     } else {
       nextState[reducer].isLastPage = true;
-      nextState[reducer].items = [...nextState[reducer].items];
     }
   }
   if (FAILURE_LIST_REGEXP.test(action.type)) {

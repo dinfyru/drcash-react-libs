@@ -51,7 +51,21 @@ export default ({
       types: [
         { type: crudTypes.request, meta: metaObj },
         { type: crudTypes.success, meta: metaObj },
-        { type: crudTypes.failure, meta: metaObj }
+        {
+          type: crudTypes.failure,
+          meta: (actionFailure, state, res) => {
+            if (res) {
+              return {
+                status: res.status,
+                statusText: res.statusText,
+                ...metaObj
+              };
+            }
+            return {
+              status: 'network'
+            };
+          }
+        }
       ]
     }
   };
