@@ -46,7 +46,8 @@ class MainTableComponent extends Component {
     disableLazyLoad: false,
     requiredFilterValues: [],
     visibleColumnsMiddleware: visibleColumns => visibleColumns,
-    requiredFilterValuesMessage: 'Empty required filters'
+    requiredFilterValuesMessage: 'Empty required filters',
+    noDataContent: 'No data'
   };
 
   static propTypes = {
@@ -74,7 +75,8 @@ class MainTableComponent extends Component {
     visibleColumnsMiddleware: PropTypes.func,
     requiredFilterValues: PropTypes.array,
     disableLazyLoad: PropTypes.bool,
-    requiredFilterValuesMessage: PropTypes.string
+    requiredFilterValuesMessage: PropTypes.string,
+    noDataContent: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
   };
 
   constructor(props) {
@@ -431,7 +433,8 @@ class MainTableComponent extends Component {
       tfootOtherTemplate,
       titleTemplate,
       visibleColumnsMiddleware,
-      requiredFilterValuesMessage
+      requiredFilterValuesMessage,
+      noDataContent
     } = this.props;
     const {
       [reducer]: {
@@ -518,7 +521,7 @@ class MainTableComponent extends Component {
             {!items.length && isLastPage && !isLoading && canDoRequest ? (
               <tr className="no-border">
                 <td colSpan={colsCount}>
-                  <span className="no-data">No data</span>
+                  <span className="no-data">{noDataContent}</span>
                 </td>
               </tr>
             ) : (
