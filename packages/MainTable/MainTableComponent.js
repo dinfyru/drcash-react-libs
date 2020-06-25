@@ -484,7 +484,7 @@ class MainTableComponent extends Component {
             visibleColumns={visibleColumns}
           />
         </table>
-        <table className={`table__tbody table-list${isNoData ? ' no-data' : ''}`}>
+        <table className={`table__tbody table-list${isNoData ? ' table__no-data' : ''}`}>
           <THead
             setRef={this.table.theadHidden}
             tableTemplate={tableTemplate}
