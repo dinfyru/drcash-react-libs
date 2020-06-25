@@ -449,6 +449,7 @@ class MainTableComponent extends Component {
     } = data;
     const { colsCount, canDoRequest } = this.state;
     const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
+    const isNoData = !items.length && isLastPage && !isLoading && canDoRequest;
 
     return (
       <div
@@ -483,7 +484,7 @@ class MainTableComponent extends Component {
             visibleColumns={visibleColumns}
           />
         </table>
-        <table className="table__tbody table-list">
+        <table className={`table__tbody table-list${isNoData ? ' no-data' : ''}`}>
           <THead
             setRef={this.table.theadHidden}
             tableTemplate={tableTemplate}
@@ -518,7 +519,7 @@ class MainTableComponent extends Component {
                 refs={this.table}
               />
             )}
-            {!items.length && isLastPage && !isLoading && canDoRequest ? (
+            {isNoData ? (
               <tr className="no-border">
                 <td colSpan={colsCount}>
                   <span className="no-data">{noDataContent}</span>
