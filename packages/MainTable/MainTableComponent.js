@@ -455,7 +455,7 @@ class MainTableComponent extends Component {
       <div
         id={id}
         ref={this.table.parent}
-        className={`table-list__parent ${className}`}
+        className={`table-list__parent ${className}${isNoData ? ' table__no-data' : ''}`}
         onWheel={this.lazyLoad}
         onTouchMove={this.lazyLoad}
       >
@@ -484,7 +484,7 @@ class MainTableComponent extends Component {
             visibleColumns={visibleColumns}
           />
         </table>
-        <table className={`table__tbody table-list${isNoData ? ' table__no-data' : ''}`}>
+        <table className="table__tbody table-list">
           <THead
             setRef={this.table.theadHidden}
             tableTemplate={tableTemplate}
