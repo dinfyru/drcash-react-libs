@@ -42,6 +42,7 @@ class MainTableComponent extends Component {
     tfootDataForRender: null,
     reloadItemsOnRequest: false,
     leftMenuWidth: 200,
+    offsetHeight: 0,
     titleTemplate: null,
     disableLazyLoad: false,
     requiredFilterValues: [],
@@ -60,6 +61,7 @@ class MainTableComponent extends Component {
     className: PropTypes.string,
     dataForRender: PropTypes.object,
     rerenderById: PropTypes.number,
+    offsetHeight: PropTypes.number,
     initFiltersValue: PropTypes.object,
     refreshTableOnPush: PropTypes.bool,
     listGet: PropTypes.func.isRequired,
@@ -172,10 +174,14 @@ class MainTableComponent extends Component {
       }
     }
 
+    const pageContent = document.getElementsByClassName('page__content');
     addEvent(window, 'resize', this.resizeTableColumns);
     addEvent(parent, 'scroll', this.scrollHeads);
     addEvent(window, 'scroll', this.scrollHeads);
     addEvent(document.body, 'scroll', this.scrollHeads);
+    if (pageContent.length) {
+      addEvent(pageContent[0], 'scroll', this.scrollHeads);
+    }
 
     this.resizeTableColumns();
     const {
@@ -205,11 +211,15 @@ class MainTableComponent extends Component {
     const { saveTableScroll, reducer } = this.props;
     const html = document.getElementsByTagName('html')[0];
 
+    const pageContent = document.getElementsByClassName('page__content');
     saveTableScroll({ scrollTop, scrollLeft }, reducer);
     removeEvent(window, 'resize', this.resizeTableColumns);
     removeEvent(parent, 'scroll', this.scrollHeads);
     removeEvent(html, 'scroll', this.scrollHeads);
     removeEvent(document.body, 'scroll', this.scrollHeads);
+    if (pageContent.length) {
+      removeEvent(pageContent[0], 'scroll', this.scrollHeads);
+    }
   }
 
   scrollHeads = () => {
@@ -220,10 +230,13 @@ class MainTableComponent extends Component {
       ttitle: { current: ttitle }
     } = this.table;
     const {
+      id,
       tfootItem,
       leftMenuWidth,
       titleTemplate,
-      tfootOtherTemplate
+      tfootOtherTemplate,
+      offsetHeight,
+      fixedFooter
     } = this.props;
     if (parent) {
       let left = leftMenuWidth - parent.scrollLeft;
@@ -241,7 +254,53 @@ class MainTableComponent extends Component {
         ttitle.style.width = `${parent.clientWidth + parent.scrollLeft}px`;
       }
     }
+
+    const pageContent = document.getElementsByClassName('page__content');
+    if (pageContent.length) {
+      const {
+        theadVisible: { current: theadVisible },
+        ttitle: { current: ttitle }
+      } = this.table;
+
+      const tableFilter = document.getElementsByClassName('table__filters')[0];
+      const switchPages = document.getElementsByClassName('switch__pages')[0];
+      // get top table offset
+      const tableFilterHeight = tableFilter ? tableFilter.offsetHeight : 0;
+      let switchPagesHeight = switchPages ? switchPages.offsetHeight : 0;
+      const titleHeight = ttitle ? ttitle.offsetHeight : 0;
+      if (switchPagesHeight && !tableFilterHeight) {
+        switchPagesHeight += 20;
+      }
+      const offsetTopThead = 61 + tableFilterHeight + switchPagesHeight;
+
+      let topOffset = theadVisible.getAttribute('js-data-top');
+      if (!topOffset) {
+        const styles = window.getComputedStyle(theadVisible)
+        topOffset = +styles.top.split('px')[0];
+        theadVisible.setAttribute('js-data-top', topOffset);
+      }
+      this.addNewStyle(`.page__content #${id} .table__thead thead { top: ${offsetTopThead + titleHeight + offsetHeight - pageContent[0].scrollTop}px !important }`);
+      // theadVisible.style.top = `${topOffset - pageContent[0].scrollTop}px !important`;
+
+      if (tfoot && fixedFooter) {
+        const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
+        tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop}px`;
+        tfoot.style.bottom = 'initial';
+      }
+    }
   };
+
+  addNewStyle = newStyle => {
+    const { id } = this.props;
+    let styleElement = document.getElementById(`${id}_js`);
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.type = 'text/css';
+      styleElement.id = `${id}_js`;
+      document.getElementsByTagName('body')[0].appendChild(styleElement);
+    }
+    styleElement.innerHTML = newStyle;
+  }
 
   resizeTableColumns = () => {
     const {
@@ -250,7 +309,9 @@ class MainTableComponent extends Component {
       tfootItem,
       tfootOtherTemplate,
       titleTemplate,
-      disableLazyLoad
+      disableLazyLoad,
+      offsetHeight,
+      fixedFooter
     } = this.props;
     const {
       [reducer]: { items, isLoading, isLastPage }
@@ -277,17 +338,11 @@ class MainTableComponent extends Component {
     const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
     const offsetTopThead = 61 + tableFilterHeight + switchPagesHeight;
     // const offsetTopTitle = titleHeight;
-    parent.style.top = `${offsetTopTable + titleHeight}px`;
-    theadVisible.style.top = `${offsetTopThead + titleHeight}px`;
+    parent.style.top = `${offsetTopTable + titleHeight + offsetHeight}px`;
+    theadVisible.style.top = `${offsetTopThead + titleHeight + offsetHeight}px`;
     if (ttitle) {
       ttitle.style.top = `${offsetTopThead}px`;
     }
-
-    // // get bottom table offset
-    // if (tfootItem) {
-    //   const tfootHeight = tfoot.offsetHeight;
-    //   parent.style.bottom = `${tfootHeight}px`;
-    // }
 
     if (
       (!isLoading && items.length) ||
@@ -304,11 +359,17 @@ class MainTableComponent extends Component {
         // tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
       }
       if (tfootItem || tfootOtherTemplate) {
+        const pageContent = document.getElementsByClassName('page__content');
         const html = document.getElementsByTagName('html')[0];
         tfoot.style.width = `${parent.clientWidth +
           parent.scrollLeft +
           html.scrollLeft}px`;
-        tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
+        if (fixedFooter) {
+          tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop}px`;
+          tfoot.style.bottom = 'initial';
+        } else {
+          tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
+        }
       }
 
       let targetLine;
@@ -328,9 +389,7 @@ class MainTableComponent extends Component {
         setHeightItems[i].style.width = `${width}px`;
       }
       if (tfootItem && !tfoot.getElementsByClassName('no-border').length) {
-        const footItems = document
-          .getElementById('tfoot-data')
-          .getElementsByTagName('td');
+        const footItems = tfoot.getElementsByTagName('td');
         for (let i = 0; i < targetItems.length; i += 1) {
           const width = Math.floor(targetItems[i].offsetWidth);
           footItems[i].style.width = `${width}px`;
