@@ -284,7 +284,7 @@ class MainTableComponent extends Component {
 
       if (tfoot && fixedFooter) {
         const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
-        tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop}px`;
+        tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop - (parent.offsetHeight - parent.clientHeight)}px`;
         tfoot.style.bottom = 'initial';
       }
     }
@@ -365,7 +365,7 @@ class MainTableComponent extends Component {
           parent.scrollLeft +
           html.scrollLeft}px`;
         if (fixedFooter) {
-          tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop}px`;
+          tfoot.style.top = `${offsetTopTable + titleHeight + offsetHeight + parent.offsetHeight - pageContent[0].scrollTop - (parent.offsetHeight - parent.clientHeight)}px`;
           tfoot.style.bottom = 'initial';
         } else {
           tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
