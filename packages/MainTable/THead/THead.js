@@ -33,6 +33,8 @@ export default class THead extends Component {
   shouldComponentUpdate(nextProps) {
     const { props } = this;
 
+    const itemsNotEqual =
+      JSON.stringify(props.items) !== JSON.stringify(nextProps.items);
     const tableTemplateNotEqual =
       JSON.stringify(props.tableTemplate) !==
       JSON.stringify(nextProps.tableTemplate);
@@ -43,12 +45,17 @@ export default class THead extends Component {
     const visibleColumnsNotEqual =
       JSON.stringify(props.visibleColumns) !==
       JSON.stringify(nextProps.visibleColumns);
+    const dataForRenderNotEqual =
+      JSON.stringify(props.dataForRender) !==
+      JSON.stringify(nextProps.dataForRender);
 
     return (
       tableTemplateNotEqual ||
       sortTypeNotEqual ||
       sortByNotEqual ||
-      visibleColumnsNotEqual
+      visibleColumnsNotEqual ||
+      dataForRenderNotEqual ||
+      itemsNotEqual
     );
   }
 

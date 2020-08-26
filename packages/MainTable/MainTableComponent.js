@@ -541,6 +541,8 @@ class MainTableComponent extends Component {
             sortType={filtersValue.sort_type}
             sortBy={filtersValue.sort_by}
             visibleColumns={visibleColumns}
+            dataForRender={cloneDeep(dataForRender)}
+            items={cloneDeep(items)}
           />
         </table>
         <table className="table__tbody table-list">
@@ -556,6 +558,8 @@ class MainTableComponent extends Component {
             sortType={filtersValue.sort_type}
             sortBy={filtersValue.sort_by}
             visibleColumns={visibleColumns}
+            dataForRender={cloneDeep(dataForRender)}
+            items={cloneDeep(items)}
           />
           <tbody ref={this.table.tbody}>
             {!canDoRequest ? (
