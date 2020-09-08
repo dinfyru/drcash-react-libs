@@ -91,13 +91,13 @@ class SelectTemplate extends Component {
 
   componentDidUpdate() {
     const { value: stateValue, isFetching, valueForFirst } = this.state;
-    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps } = this.props;
+    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions } = this.props;
 
     if (isFetching && Object.keys(options).length) {
       this.setValue();
       this.completeAsyncLoading();
     }
-    if (stateValue !== propsValue && trackValue) {
+    if (stateValue !== propsValue && trackValue && !loadOptions) {
       this.setState({
         value: propsValue
       });
