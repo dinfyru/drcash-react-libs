@@ -169,7 +169,7 @@ const mainTableReducer = (state = initialState, action) => {
           value: item[modifyResponse.value]
         }));
       } else {
-        nextState.filtersData[reducer] = items;
+        nextState.filtersData[reducer] = items || [];
       }
     }
   }
