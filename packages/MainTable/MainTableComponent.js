@@ -398,7 +398,7 @@ class MainTableComponent extends Component {
 
       if (titleTemplate) {
         const widths = {};
-        targetItems.forEach(el => {
+        Array.prototype.forEach.call(targetItems, el => {
           const index = el.getAttribute('js-title-index');
           if (index) {
             if (!widths[index]) {
@@ -407,7 +407,7 @@ class MainTableComponent extends Component {
             widths[index] += +Math.floor(el.offsetWidth);
           }
         });
-        ttitle.getElementsByTagName('th').forEach((el, i) => {
+        Array.prototype.forEach.call(ttitle.getElementsByTagName('th'), (el, i) => {
           const index = el.getAttribute('js-title-index');
           let width = 0;
           if (!index) {
