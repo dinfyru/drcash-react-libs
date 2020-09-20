@@ -45,6 +45,7 @@ class MainTableComponent extends Component {
     offsetHeight: 0,
     titleTemplate: null,
     disableLazyLoad: false,
+    softSort: false,
     requiredFilterValues: [],
     visibleColumnsMiddleware: visibleColumns => visibleColumns,
     requiredFilterValuesMessage: 'Empty required filters',
@@ -70,6 +71,8 @@ class MainTableComponent extends Component {
     changeFiltersValue: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
     onInit: PropTypes.func,
+    softSort: PropTypes.bool,
+    setItems: PropTypes.func.isRequired,
     afterLineTemplate: PropTypes.array,
     tfootItem: PropTypes.object,
     tfootDataForRender: PropTypes.object,
@@ -493,7 +496,9 @@ class MainTableComponent extends Component {
       titleTemplate,
       visibleColumnsMiddleware,
       requiredFilterValuesMessage,
-      noDataContent
+      noDataContent,
+      setItems,
+      softSort
     } = this.props;
     const {
       [reducer]: {
@@ -538,6 +543,8 @@ class MainTableComponent extends Component {
             isLastPage={isLastPage}
             getItems={this.getItems}
             reducer={reducer}
+            softSort={softSort}
+            setItems={setItems}
             sortType={filtersValue.sort_type}
             sortBy={filtersValue.sort_by}
             visibleColumns={visibleColumns}
@@ -548,12 +555,15 @@ class MainTableComponent extends Component {
         <table className="table__tbody table-list">
           <THead
             setRef={this.table.theadHidden}
+            changeFiltersValue={changeFiltersValue}
             tableTemplate={tableTemplate}
             titleTemplate={titleTemplate}
             filtersValue={filtersValue}
             isLastPage={isLastPage}
             getItems={this.getItems}
             reducer={reducer}
+            softSort={softSort}
+            setItems={setItems}
             isHidden
             sortType={filtersValue.sort_type}
             sortBy={filtersValue.sort_by}
