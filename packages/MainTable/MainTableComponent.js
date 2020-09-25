@@ -212,13 +212,12 @@ class MainTableComponent extends Component {
       }
     } = this.table;
     const { saveTableScroll, reducer } = this.props;
-    const html = document.getElementsByTagName('html')[0];
 
     const pageContent = document.getElementsByClassName('page__content');
     saveTableScroll({ scrollTop, scrollLeft }, reducer);
     removeEvent(window, 'resize', this.resizeTableColumns);
     removeEvent(parent, 'scroll', this.scrollHeads);
-    removeEvent(html, 'scroll', this.scrollHeads);
+    removeEvent(window, 'scroll', this.scrollHeads);
     removeEvent(document.body, 'scroll', this.scrollHeads);
     if (pageContent.length) {
       removeEvent(pageContent[0], 'scroll', this.scrollHeads);
