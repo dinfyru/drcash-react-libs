@@ -131,8 +131,8 @@ class SelectTemplate extends Component {
     const { setValue, options } = this.props;
     if (setValue && options && options.length) {
       const random = Math.floor(Math.random() * (options.length - 0));
-      const { value, label } = setValue === 2 ? options[random] : options[0];
-      this.handleOnChange(value, label);
+      const value = setValue === 2 ? options[random].value : options[0].value;
+      this.handleOnChange(value);
     }
   };
 
@@ -143,10 +143,11 @@ class SelectTemplate extends Component {
     });
   };
 
-  handleOnChange = (value, label) => {
+  handleOnChange = value => {
     const { nameParams, async } = this.props;
     const { multi } = this.state;
     let newValue = value;
+    let newLabel;
 
     if (multi) {
       if (value && value.length) {
@@ -156,13 +157,14 @@ class SelectTemplate extends Component {
       }
     } else if (value && (value.value || value.value === 0)) {
       newValue = value.value;
+      newLabel = value.label;
     }
 
     this.setState({
       value: async ? value : newValue,
       valueForFirst: null
     });
-    this.props.onChange(newValue, nameParams, label);
+    this.props.onChange(newValue, nameParams, newLabel);
   };
 
   handleInputChange = (filter = '', { action }) => {
