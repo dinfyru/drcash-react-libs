@@ -29,7 +29,8 @@ class SelectTemplate extends Component {
     loadOptions: null,
     onInit: false,
     onInputChange: false,
-    valueForFirst: false
+    valueForFirst: false,
+    mustUpdate: false
   };
 
   static propTypes = {
@@ -59,7 +60,8 @@ class SelectTemplate extends Component {
       PropTypes.number,
       PropTypes.string,
       PropTypes.bool
-    ])
+    ]),
+    mustUpdate: PropTypes.bool
   };
 
   constructor(props) {
@@ -91,7 +93,7 @@ class SelectTemplate extends Component {
 
   componentDidUpdate() {
     const { value: stateValue, isFetching, valueForFirst } = this.state;
-    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions } = this.props;
+    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions, mustUpdate } = this.props;
 
     if (isFetching && Object.keys(options).length) {
       this.setValue();
@@ -102,7 +104,7 @@ class SelectTemplate extends Component {
         value: propsValue
       });
     }
-    if (valueForFirst !== valueForFirstProps && valueForFirstProps !== false) {
+    if (valueForFirst !== valueForFirstProps && valueForFirstProps !== false && mustUpdate) {
       this.setValueForFirst();
     }
   }
