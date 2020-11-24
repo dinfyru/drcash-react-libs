@@ -105,7 +105,13 @@ const disableItemSwitcherAction = (data, reducer, byIndex) => ({
   byIndex
 });
 
-const listGetAction = (reducer, endpoint, reloadItemsOnRequest) =>
+const listGetAction = (
+  reducer,
+  endpoint,
+  reloadItemsOnRequest,
+  disableFilters,
+  requiredFilters
+) =>
   crud({
     endpoint,
     crudTypes: {
@@ -113,7 +119,12 @@ const listGetAction = (reducer, endpoint, reloadItemsOnRequest) =>
       success: `MT_LIST@${reducer}_SUCCESS`,
       failure: `MT_LIST@${reducer}_FAILURE`
     },
-    meta: { reloadItemsOnRequest, mainTableRequest: true }
+    meta: {
+      reloadItemsOnRequest,
+      mainTableRequest: true,
+      disableFilters,
+      requiredFilters
+    }
   });
 
 export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
@@ -137,5 +148,19 @@ export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
   dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
   dispatch(disableItemSwitcherAction(data, reducer, byIndex));
-export const MTlistGet = (reducer, url, reloadItemsOnRequest) => dispatch =>
-  dispatch(listGetAction(reducer, url, reloadItemsOnRequest));
+export const MTlistGet = (
+  reducer,
+  url,
+  reloadItemsOnRequest,
+  disableFilters,
+  requiredFilters
+) => dispatch =>
+  dispatch(
+    listGetAction(
+      reducer,
+      url,
+      reloadItemsOnRequest,
+      disableFilters,
+      requiredFilters
+    )
+  );

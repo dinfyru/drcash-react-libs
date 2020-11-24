@@ -41,6 +41,7 @@ export default ({
   validStatuses = [],
   errorMessagesByStatus = {}
 }) => {
+  const { disableFilters, requiredFilters = [] } = meta;
   const metaObj = { query, ...meta, validStatuses, errorMessagesByStatus };
   const action = {
     needToken,
@@ -98,8 +99,16 @@ export default ({
       const arr = Array.isArray(value) ? value : [value];
       compactedQuery[key] = compact(arr);
     });
-    const queryString = queryBuilder.stringify(compactedQuery);
 
+    if (disableFilters && requiredFilters && requiredFilters.length) {
+      Object.keys(compactedQuery).forEach(key => {
+        if (!requiredFilters[key]) {
+          delete compactedQuery[key];
+        }
+      });
+    }
+
+    const queryString = queryBuilder.stringify(compactedQuery);
     if (queryString.length) {
       action[RSAA].endpoint = `${action[RSAA].endpoint}?${queryString}`;
     }
