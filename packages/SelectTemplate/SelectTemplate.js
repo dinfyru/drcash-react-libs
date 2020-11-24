@@ -27,8 +27,10 @@ class SelectTemplate extends Component {
     multi: false,
     async: false,
     loadOptions: null,
+    onInit: false,
     onInputChange: false,
-    valueForFirst: false
+    valueForFirst: false,
+    mustUpdate: false
   };
 
   static propTypes = {
@@ -52,12 +54,14 @@ class SelectTemplate extends Component {
     multi: PropTypes.bool,
     async: PropTypes.bool,
     loadOptions: PropTypes.func,
+    onInit: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     valueForFirst: PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.string,
       PropTypes.bool
-    ])
+    ]),
+    mustUpdate: PropTypes.bool
   };
 
   constructor(props) {
@@ -69,30 +73,39 @@ class SelectTemplate extends Component {
       options: [...props.options],
       value,
       filteredOptions: [],
-      isFetching: props.isFetching && (!props.options || !props.options.length)
+      isFetching: props.isFetching && (!props.options || !props.options.length),
+      valueForFirst: null
     };
     this.debounceLoadOptions = props.async
       ? debounce(props.loadOptions, 300)
       : null;
   }
 
+  static getDerrivedStateFromProps
+
   componentDidMount() {
     this.setValueForFirst();
     this.setValue();
+    if (typeof this.props.onInit === 'function') {
+      this.props.onInit({ setValueForFirst: this.setValueForFirst });
+    }
   }
 
   componentDidUpdate() {
-    const { value: stateValue, isFetching } = this.state;
-    const { value: propsValue, trackValue, options } = this.props;
+    const { value: stateValue, isFetching, valueForFirst } = this.state;
+    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions, mustUpdate } = this.props;
 
     if (isFetching && Object.keys(options).length) {
       this.setValue();
       this.completeAsyncLoading();
     }
-    if (stateValue !== propsValue && trackValue) {
+    if (stateValue !== propsValue && trackValue && !loadOptions) {
       this.setState({
         value: propsValue
       });
+    }
+    if (valueForFirst !== valueForFirstProps && valueForFirstProps !== false && mustUpdate) {
+      this.setValueForFirst();
     }
   }
 
@@ -109,7 +122,8 @@ class SelectTemplate extends Component {
         );
         const value = Array.isArray(data) && data[0] ? data[0] : false;
         this.setState({
-          value
+          value,
+          valueForFirst
         });
       });
     }
@@ -135,6 +149,7 @@ class SelectTemplate extends Component {
     const { nameParams, async } = this.props;
     const { multi } = this.state;
     let newValue = value;
+    let newLabel;
 
     if (multi) {
       if (value && value.length) {
@@ -144,12 +159,14 @@ class SelectTemplate extends Component {
       }
     } else if (value && (value.value || value.value === 0)) {
       newValue = value.value;
+      newLabel = value.label;
     }
 
     this.setState({
-      value: async ? value : newValue
+      value: async ? value : newValue,
+      valueForFirst: null
     });
-    this.props.onChange(newValue, nameParams);
+    this.props.onChange(newValue, nameParams, newLabel);
   };
 
   handleInputChange = (filter = '', { action }) => {

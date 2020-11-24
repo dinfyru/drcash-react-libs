@@ -15,6 +15,7 @@ export default class THead extends Component {
     sortType: null,
     sortBy: null,
     isHidden: false,
+    softSort: false,
     visibleColumns: null
   };
 
@@ -27,12 +28,17 @@ export default class THead extends Component {
     sortBy: PropTypes.string,
     isHidden: PropTypes.bool,
     setRef: PropTypes.object.isRequired,
+    changeFiltersValue: PropTypes.func.isRequired,
+    setItems: PropTypes.func.isRequired,
+    softSort: PropTypes.bool,
     visibleColumns: PropTypes.array
   };
 
   shouldComponentUpdate(nextProps) {
     const { props } = this;
 
+    const itemsNotEqual =
+      JSON.stringify(props.items) !== JSON.stringify(nextProps.items);
     const tableTemplateNotEqual =
       JSON.stringify(props.tableTemplate) !==
       JSON.stringify(nextProps.tableTemplate);
@@ -43,12 +49,17 @@ export default class THead extends Component {
     const visibleColumnsNotEqual =
       JSON.stringify(props.visibleColumns) !==
       JSON.stringify(nextProps.visibleColumns);
+    const dataForRenderNotEqual =
+      JSON.stringify(props.dataForRender) !==
+      JSON.stringify(nextProps.dataForRender);
 
     return (
       tableTemplateNotEqual ||
       sortTypeNotEqual ||
       sortByNotEqual ||
-      visibleColumnsNotEqual
+      visibleColumnsNotEqual ||
+      dataForRenderNotEqual ||
+      itemsNotEqual
     );
   }
 
@@ -65,10 +76,14 @@ export default class THead extends Component {
       filtersValue,
       reducer,
       getItems,
+      items,
+      changeFiltersValue,
+      softSort,
       sortType,
       sortBy,
       visibleColumns,
-      titleTemplate
+      titleTemplate,
+      setItems
     } = this.props;
     const headItems = [];
 
@@ -104,10 +119,29 @@ export default class THead extends Component {
             onClick={() => {
               if (!sortKey) return false;
               const newSortType = this.changeSortType(sortKey, filtersValue);
-              getItems(
-                { sort_type: newSortType, sort_by: sortKey, offset: 0 },
-                reducer
-              );
+              if (softSort) {
+                changeFiltersValue({ sort_type: newSortType, sort_by: sortKey }, reducer);
+                let newItems = [];
+                items.forEach(itemsPart => {newItems.push(...cloneDeep(itemsPart))});
+                newItems = newItems.sort((a, b) => {
+                  const bandA = a[sortKey];
+                  const bandB = b[sortKey];
+
+                  let comparison = 0;
+                  if (bandA > bandB) {
+                    comparison = newSortType === 'DESC' ? -1 : 1;
+                  } else if (bandA < bandB) {
+                    comparison = newSortType === 'DESC' ? 1 : -1;
+                  }
+                  return comparison;
+                });
+                setItems(newItems, reducer);
+              } else {
+                getItems(
+                  { sort_type: newSortType, sort_by: sortKey, offset: 0 },
+                  reducer
+                );
+              }
             }}
             {...props}
           >
