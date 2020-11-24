@@ -102,7 +102,7 @@ export default ({
 
     if (disableFilters && requiredFilters && requiredFilters.length) {
       Object.keys(compactedQuery).forEach(key => {
-        if (!requiredFilters[key]) {
+        if (requiredFilters.indexOf(key) < 0) {
           delete compactedQuery[key];
         }
       });
