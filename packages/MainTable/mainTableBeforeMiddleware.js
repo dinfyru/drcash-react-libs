@@ -23,12 +23,22 @@ export default store => next => action => {
       if (isLoading) {
         return false;
       }
+
       if (filtersValue && Object.keys(filtersValue).length) {
         const compactedQuery = cloneDeep(filtersValue);
         Object.entries(compactedQuery).forEach(([key, value]) => {
           const arr = Array.isArray(value) ? value : [value];
           compactedQuery[key] = compact(arr);
         });
+
+        const { disableFilters, requiredFilters } = newAction[RSAA].types[0].meta;
+        if (disableFilters && requiredFilters && requiredFilters.length) {
+          Object.keys(compactedQuery).forEach(key => {
+            if (requiredFilters.indexOf(key) < 0) {
+              delete compactedQuery[key];
+            }
+          });
+        }
         const queryString = queryBuilder.stringify(compactedQuery);
 
         if (queryString.length) {
