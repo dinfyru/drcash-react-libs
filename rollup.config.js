@@ -56,7 +56,11 @@ export default {
       exclude: 'node_modules/**',
       runtimeHelpers: true
     }),
-    commonjs(),
-    uglify()
+    commonjs({
+      namedExports: {
+        "react-dom": ["createPortal", "findDOMNode"],
+      },
+    }),
+    // uglify()
   ]
 };

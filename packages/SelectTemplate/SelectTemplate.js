@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import AsyncSelect from 'react-select/lib/Async';
+import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 
 import './index.sass';
@@ -53,12 +53,13 @@ class SelectTemplate extends Component {
     inputValue: PropTypes.string,
     multi: PropTypes.bool,
     async: PropTypes.bool,
-    loadOptions: PropTypes.func,
+    loadOptions: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onInit: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onInputChange: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     valueForFirst: PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.string,
+      PropTypes.array,
       PropTypes.bool
     ]),
     mustUpdate: PropTypes.bool
@@ -76,9 +77,9 @@ class SelectTemplate extends Component {
       isFetching: props.isFetching && (!props.options || !props.options.length),
       valueForFirst: null
     };
-    this.debounceLoadOptions = props.async
-      ? debounce(props.loadOptions, 300)
-      : null;
+    if (props.loadOptions && props.async) {
+      this.debounceLoadOptions = debounce(props.loadOptions, 300);
+    }
   }
 
   static getDerrivedStateFromProps
@@ -93,7 +94,9 @@ class SelectTemplate extends Component {
 
   componentDidUpdate() {
     const { value: stateValue, isFetching, valueForFirst } = this.state;
-    const { value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions, mustUpdate } = this.props;
+    const {
+      value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions, mustUpdate
+    } = this.props;
 
     if (isFetching && Object.keys(options).length) {
       this.setValue();
@@ -104,7 +107,7 @@ class SelectTemplate extends Component {
         value: propsValue
       });
     }
-    if (valueForFirst !== valueForFirstProps && valueForFirstProps !== false && mustUpdate) {
+    if (JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) && valueForFirstProps !== false && mustUpdate) {
       this.setValueForFirst();
     }
   }
@@ -115,10 +118,10 @@ class SelectTemplate extends Component {
       this.props.loadOptions(valueForFirst).then(originalData => {
         const data = (originalData || []).filter(
           el =>
-            el.value &&
-            el.value.toString &&
-            valueForFirst.toString &&
-            el.value.toString() === valueForFirst.toString()
+            el.value
+            && el.value.toString
+            && valueForFirst.toString
+            && el.value.toString() === valueForFirst.toString()
         );
         const value = Array.isArray(data) && data[0] ? data[0] : false;
         this.setState({
@@ -153,9 +156,7 @@ class SelectTemplate extends Component {
 
     if (multi) {
       if (value && value.length) {
-        newValue = value.map(el => {
-          return el.value;
-        });
+        newValue = value.map(el => el.value);
       }
     } else if (value && (value.value || value.value === 0)) {
       newValue = value.value;
@@ -184,37 +185,27 @@ class SelectTemplate extends Component {
   filterOptions = (options, filter) => {
     let newOptions = null;
     if (filter !== '') {
-      const regexpStart = new RegExp('^' + filter, 'i');
-      const regexpStartWord = new RegExp('\\b' + filter, 'i');
+      const regexpStart = new RegExp(`^${filter}`, 'i');
+      const regexpStartWord = new RegExp(`\\b${filter}`, 'i');
       const regexpGlobal = new RegExp(filter, 'gi');
 
       // Ищем по value в начале строки
-      newOptions = options.filter(option => {
-        return regexpStart.test(option.label);
-      });
+      newOptions = options.filter(option => regexpStart.test(option.label));
       // Ищем по label в начале слова
       newOptions = [
         ...newOptions,
-        ...options.filter(option => {
-          return (
-            regexpStartWord.test(option.label) &&
-            !newOptions.find(elem => {
-              return elem.value === option.value;
-            })
-          );
-        })
+        ...options.filter(option => (
+          regexpStartWord.test(option.label)
+            && !newOptions.find(elem => elem.value === option.value)
+        ))
       ];
       // Ищем по label в начале строки
       newOptions = [
         ...newOptions,
-        ...options.filter(option => {
-          return (
-            regexpGlobal.test(option.label) &&
-            !newOptions.find(elem => {
-              return elem.value === option.value;
-            })
-          );
-        })
+        ...options.filter(option => (
+          regexpGlobal.test(option.label)
+            && !newOptions.find(elem => elem.value === option.value)
+        ))
       ];
     }
     return newOptions || options;
@@ -222,7 +213,7 @@ class SelectTemplate extends Component {
 
   render() {
     const { multi, value, isFetching } = this.state;
-    let { options: optionsState, filteredOptions } = this.state;
+    const { options: optionsState, filteredOptions } = this.state;
     const {
       changeable,
       noOptionsMessage,
@@ -235,22 +226,21 @@ class SelectTemplate extends Component {
       async,
       onInputChange
     } = this.props;
-    let options =
-      Array.isArray(filteredOptions) && filteredOptions.length
-        ? filteredOptions
-        : optionsState;
+    let options = Array.isArray(filteredOptions) && filteredOptions.length
+      ? filteredOptions
+      : optionsState;
     if (Object.keys(changeable).length) {
       options = options.filter(
         obj =>
-          obj[changeable.key] !==
-          this.props[changeable.storeName][changeable.storeField]
+          obj[changeable.key]
+          !== this.props[changeable.storeName][changeable.storeField]
       );
     }
     options = options.filter(this.props.filterFunc);
 
     let curValue = value;
     if (multi && value) {
-      if (value.length) {
+      if (value.length && !this.debounceLoadOptions) {
         curValue = options.filter(
           option => value.filter(valOption => option.value === valOption).length
         );
@@ -274,9 +264,12 @@ class SelectTemplate extends Component {
       onOpen: this.onOpenSelect,
       noOptionsMessage
     };
+
     if (async) {
       props.defaultOptions = defaultOptions;
-      props.loadOptions = this.debounceLoadOptions;
+      if (this.debounceLoadOptions) {
+        props.loadOptions = this.debounceLoadOptions;
+      }
     }
 
     return (
