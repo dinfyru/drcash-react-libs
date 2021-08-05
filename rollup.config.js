@@ -58,9 +58,9 @@ export default {
     }),
     commonjs({
       namedExports: {
-        "react-dom": ["createPortal", "findDOMNode"],
-      },
+        'react-dom': ['createPortal', 'findDOMNode']
+      }
     }),
-    // uglify()
+    uglify()
   ]
 };

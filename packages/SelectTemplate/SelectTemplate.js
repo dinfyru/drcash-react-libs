@@ -241,7 +241,7 @@ class SelectTemplate extends Component {
     let curValue = value;
     if (multi && value) {
       if (value.length && !this.debounceLoadOptions) {
-        curValue = options.filter(
+        curValue = optionsState.filter(
           option => value.filter(valOption => option.value === valOption).length
         );
       }
