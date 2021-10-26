@@ -272,17 +272,15 @@ class SelectTemplate extends Component {
       }
     }
 
-    return (
-      <>
-        {this.props.creatable ? (
-          <Select.Creatable {...props} />
-        ) : this.props.async ? (
-          <AsyncSelect cacheOptions debounceInterval={300} {...props} />
-        ) : (
-          <Select {...props} />
-        )}
-      </>
-    );
+
+    if (this.props.creatable) {
+      return <Select.Creatable {...props} />
+    }
+    if (async) {
+      return <AsyncSelect cacheOptions debounceInterval={300} {...props} />
+    }
+
+    return <Select {...props} />
   }
 }
 

@@ -41,6 +41,7 @@ export default {
   ],
   external: [
     'react',
+    'react-router-dom',
     'redux',
     'react-redux',
     'react-router-dom',
@@ -53,7 +54,7 @@ export default {
     }),
     resolve(),
     babel({
-      exclude: 'node_modules/**',
+      exclude: /node_modules/,
       runtimeHelpers: true
     }),
     commonjs({
