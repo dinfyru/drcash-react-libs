@@ -1,6 +1,6 @@
 {
   "name": "drcash-react-libs",
-  "version": "0.7.43",
+  "version": "0.7.44",
   "description": "Dr cash react libs",
   "deprecated": false,
   "main": "packages/index.js",
@@ -77,12 +77,16 @@
     "react-redux": "6.0.1",
     "react-select": "^4.3.1",
     "redux": "^4.0.4",
-    "rollup": "1.9.2",
+    "rollup": "^2.60.1",
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-commonjs": "9.3.4",
     "rollup-plugin-node-resolve": "4.2.2",
     "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-uglify": "^6.0.4"
   },
-  "peerDependencies": {}
+  "peerDependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-babel": "^5.3.0",
+    "babel-core": "^6.26.3"
+  }
 }

@@ -116,14 +116,23 @@ class SelectTemplate extends Component {
     const { valueForFirst, async } = this.props;
     if (async && valueForFirst) {
       this.props.loadOptions(valueForFirst).then(originalData => {
-        const data = (originalData || []).filter(
-          el =>
-            el.value
-            && el.value.toString
-            && valueForFirst.toString
-            && el.value.toString() === valueForFirst.toString()
-        );
-        const value = Array.isArray(data) && data[0] ? data[0] : false;
+        const data = (originalData || []).filter(el => {
+          if (el.value && el.value.toString) {
+            if (Array.isArray(valueForFirst)) {
+              if (valueForFirst.map(item => (item.toString ? item.toString() : '')).indexOf(el.value.toString()) >= 0) {
+                return true;
+              }
+            } else if (valueForFirst.toString && el.value.toString() === valueForFirst.toString()) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        let value = data;
+        if (!Array.isArray(valueForFirst)) {
+          value = data[0] ? data[0] : false;
+        }
         this.setState({
           value,
           valueForFirst
@@ -196,7 +205,7 @@ class SelectTemplate extends Component {
         ...newOptions,
         ...options.filter(option => (
           regexpStartWord.test(option.label)
-            && !newOptions.find(elem => elem.value === option.value)
+          && !newOptions.find(elem => elem.value === option.value)
         ))
       ];
       // Ищем по label в начале строки
@@ -204,7 +213,7 @@ class SelectTemplate extends Component {
         ...newOptions,
         ...options.filter(option => (
           regexpGlobal.test(option.label)
-            && !newOptions.find(elem => elem.value === option.value)
+          && !newOptions.find(elem => elem.value === option.value)
         ))
       ];
     }
