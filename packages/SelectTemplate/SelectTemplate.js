@@ -5,6 +5,7 @@ import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 
 import './index.sass';
+import cloneDeep from "lodash.clonedeep";
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -113,10 +114,14 @@ class SelectTemplate extends Component {
   }
 
   setValueForFirst = () => {
-    const { valueForFirst, async } = this.props;
+    const { valueForFirst, async, generateOptions } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst).then(originalData => {
-        const data = (originalData || []).filter(
+      this.props.loadOptions(valueForFirst).then(responseData => {
+        let formattedData = cloneDeep(responseData || []);
+        if (generateOptions) {
+          formattedData = formattedData.map(generateOptions)
+        }
+        const data = formattedData.filter(
           el =>
             el.value
             && el.value.toString
