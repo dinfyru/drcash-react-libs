@@ -1,5 +1,5 @@
 import resolve from 'rollup-plugin-node-resolve';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import { uglify } from 'rollup-plugin-uglify';
 import sass from 'rollup-plugin-sass';
@@ -16,35 +16,50 @@ export default {
     {
       name: 'SelectTemplate',
       dir: 'public/packages',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
     },
     {
       name: 'crud',
       dir: 'public/packages',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
     },
     {
       name: 'notification',
       dir: 'public/packages',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
     },
     {
       name: 'MainTable',
       dir: 'public/packages',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
     },
     {
       name: 'Checkbox',
       dir: 'public/packages',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
     }
   ],
   external: [
     'react',
+    'react-dom',
     'react-router-dom',
     'redux',
     'react-redux',
-    'react-router-dom',
     'react-select',
     'react-proptypes'
   ],
@@ -54,8 +69,8 @@ export default {
     }),
     resolve(),
     babel({
-      exclude: /node_modules/,
-      runtimeHelpers: true
+      exclude: 'node_modules/**',
+      babelHelpers: 'runtime'
     }),
     commonjs({
       namedExports: {
