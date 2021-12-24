@@ -141,7 +141,7 @@ class SelectTemplate extends Component {
       generateOptions
     } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst)
+      this.props.loadOptions(valueForFirst, "true")
         .then(responseData => {
           let formattedData = cloneDeep(responseData || []);
           if (generateOptions) {
