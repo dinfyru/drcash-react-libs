@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Select from "react-select";
-import AsyncSelect from "react-select/async";
-import debounce from "debounce-promise";
-import cloneDeep from "lodash.clonedeep";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
+import debounce from 'debounce-promise';
+import cloneDeep from 'lodash.clonedeep';
 
-import "./index.sass";
+import './index.sass';
 
 class SelectTemplate extends Component {
   static defaultProps = {
     nameParams: undefined,
     setValue: 0,
     options: [],
-    placeholder: "Выберите значение",
-    className: "select",
+    placeholder: 'Выберите значение',
+    className: 'select',
     isFetching: false,
     changeable: {},
     clearable: true,
@@ -24,7 +24,7 @@ class SelectTemplate extends Component {
     trackValue: false,
     defaultOptions: false,
     inputValue: null,
-    noOptionsMessage: () => "No data",
+    noOptionsMessage: () => 'No data',
     multi: false,
     async: false,
     loadOptions: null,
@@ -79,7 +79,7 @@ class SelectTemplate extends Component {
       valueForFirst: null
     };
     if (props.loadOptions && props.async) {
-      const loadOptions = (inputValue = "") => {
+      const loadOptions = (inputValue = '') => {
         return props.loadOptions(inputValue)
           .then(items => {
             let formattedData = cloneDeep(items || []);
@@ -100,7 +100,7 @@ class SelectTemplate extends Component {
   componentDidMount() {
     this.setValueForFirst();
     this.setValue();
-    if (typeof this.props.onInit === "function") {
+    if (typeof this.props.onInit === 'function') {
       this.props.onInit({ setValueForFirst: this.setValueForFirst });
     }
   }
@@ -141,20 +141,30 @@ class SelectTemplate extends Component {
       generateOptions
     } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst, "true")
+      this.props.loadOptions(valueForFirst, 'true')
         .then(responseData => {
           let formattedData = cloneDeep(responseData || []);
           if (generateOptions) {
             formattedData = generateOptions(formattedData);
           }
-          const data = formattedData.filter(
-            el =>
-              el.value
-              && el.value.toString
-              && valueForFirst.toString
-              && el.value.toString() === valueForFirst.toString()
-          );
-          const value = Array.isArray(data) && data[0] ? data[0] : false;
+          const data = formattedData.filter(el => {
+            if (el.value && el.value.toString) {
+              if (Array.isArray(valueForFirst)) {
+                if (valueForFirst.map(item => (item.toString ? item.toString() : ''))
+                  .indexOf(el.value.toString()) >= 0) {
+                  return true;
+                }
+              } else if (valueForFirst.toString && el.value.toString() === valueForFirst.toString()) {
+                return true;
+              }
+            }
+            return false;
+          });
+
+          let value = data;
+          if (!Array.isArray(valueForFirst)) {
+            value = data[0] ? data[0] : false;
+          }
           this.setState({
             value,
             valueForFirst
@@ -207,9 +217,9 @@ class SelectTemplate extends Component {
     this.props.onChange(newValue, nameParams, newLabel);
   };
 
-  handleInputChange = (filter = "", { action }) => {
+  handleInputChange = (filter = '', { action }) => {
     if (!this.props.async) {
-      if (action === "input-change") {
+      if (action === 'input-change') {
         this.setState(prevState => {
           const { options } = prevState;
           const filteredOptions = this.filterOptions(options, filter);
@@ -221,10 +231,10 @@ class SelectTemplate extends Component {
 
   filterOptions = (options, filter) => {
     let newOptions = null;
-    if (filter !== "") {
-      const regexpStart = new RegExp(`^${filter}`, "i");
-      const regexpStartWord = new RegExp(`\\b${filter}`, "i");
-      const regexpGlobal = new RegExp(filter, "gi");
+    if (filter !== '') {
+      const regexpStart = new RegExp(`^${filter}`, 'i');
+      const regexpStartWord = new RegExp(`\\b${filter}`, 'i');
+      const regexpGlobal = new RegExp(filter, 'gi');
 
       // Ищем по value в начале строки
       newOptions = options.filter(option => regexpStart.test(option.label));
@@ -293,7 +303,7 @@ class SelectTemplate extends Component {
       curValue = options.filter(option => option.value === value);
     }
     const props = {
-      classNamePrefix: "select",
+      classNamePrefix: 'select',
       isMulti: multi,
       options,
       isLoading: isFetching,
