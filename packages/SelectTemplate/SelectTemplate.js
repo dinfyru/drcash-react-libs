@@ -6,7 +6,6 @@ import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
 
 import './index.sass';
-import { stat } from '@babel/core/lib/gensync-utils/fs';
 
 class SelectTemplate extends Component {
   static defaultProps = {
