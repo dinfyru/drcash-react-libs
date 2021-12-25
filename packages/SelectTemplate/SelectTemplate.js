@@ -6,6 +6,7 @@ import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
 
 import './index.sass';
+import { stat } from '@babel/core/lib/gensync-utils/fs';
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -74,6 +75,7 @@ class SelectTemplate extends Component {
       multi: props.multi,
       options: [...props.options],
       value,
+      disabled: false,
       filteredOptions: [],
       isFetching: props.isFetching && (!props.options || !props.options.length),
       valueForFirst: null
@@ -94,8 +96,6 @@ class SelectTemplate extends Component {
       this.debounceLoadOptions = debounce(loadOptions, 300);
     }
   }
-
-  static getDerrivedStateFromProps;
 
   componentDidMount() {
     this.setValueForFirst();
@@ -141,35 +141,41 @@ class SelectTemplate extends Component {
       generateOptions
     } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst, 'true')
-        .then(responseData => {
-          let formattedData = cloneDeep(responseData || []);
-          if (generateOptions) {
-            formattedData = generateOptions(formattedData);
-          }
-          const data = formattedData.filter(el => {
-            if (el.value && el.value.toString) {
-              if (Array.isArray(valueForFirst)) {
-                if (valueForFirst.map(item => (item.toString ? item.toString() : ''))
-                  .indexOf(el.value.toString()) >= 0) {
+      this.setState({ disabled: true }, () => {
+        this.props.loadOptions(valueForFirst, 'true')
+          .then(responseData => {
+            let formattedData = cloneDeep(responseData || []);
+            if (generateOptions) {
+              formattedData = generateOptions(formattedData);
+            }
+            const data = formattedData.filter(el => {
+              if (el.value && el.value.toString) {
+                if (Array.isArray(valueForFirst)) {
+                  if (valueForFirst.map(item => (item.toString ? item.toString() : ''))
+                    .indexOf(el.value.toString()) >= 0) {
+                    return true;
+                  }
+                } else if (valueForFirst.toString && el.value.toString() === valueForFirst.toString()) {
                   return true;
                 }
-              } else if (valueForFirst.toString && el.value.toString() === valueForFirst.toString()) {
-                return true;
               }
-            }
-            return false;
-          });
+              return false;
+            });
 
-          let value = data;
-          if (!Array.isArray(valueForFirst)) {
-            value = data[0] ? data[0] : false;
-          }
-          this.setState({
-            value,
-            valueForFirst
+            let value = data;
+            if (!Array.isArray(valueForFirst)) {
+              value = data[0] ? data[0] : false;
+            }
+            this.setState({
+              value,
+              valueForFirst,
+              disabled: false
+            });
+          })
+          .catch(() => {
+            this.setState({ disabled: false });
           });
-        });
+      });
     }
   };
 
@@ -266,13 +272,14 @@ class SelectTemplate extends Component {
     } = this.state;
     const {
       options: optionsState,
+      disabled: disabledState,
       filteredOptions
     } = this.state;
     const {
       changeable,
       noOptionsMessage,
       className,
-      disabled,
+      disabled: disabledProps,
       searchable,
       clearable,
       placeholder,
@@ -311,7 +318,7 @@ class SelectTemplate extends Component {
       value: curValue,
       className,
       onInputChange: onInputChange || this.handleInputChange,
-      isDisabled: disabled,
+      isDisabled: disabledProps || disabledState,
       isSearchable: searchable,
       isClearable: clearable,
       placeholder,
