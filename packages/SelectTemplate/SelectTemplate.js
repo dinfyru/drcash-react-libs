@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -92,7 +92,7 @@ class SelectTemplate extends Component {
             return formattedData;
           });
       };
-      this.debounceLoadOptions = debounce(loadOptions, 300);
+      this.debounceLoadOptions = useMemo(debounce(loadOptions, 300), []);
     }
   }
 
