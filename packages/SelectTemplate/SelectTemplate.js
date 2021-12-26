@@ -79,6 +79,10 @@ class SelectTemplate extends Component {
       isFetching: props.isFetching && (!props.options || !props.options.length),
       valueForFirst: null
     };
+  }
+
+  componentDidMount() {
+    const { props } = this;
     if (props.loadOptions && props.async) {
       const loadOptions = (inputValue = '') => {
         return props.loadOptions(inputValue)
@@ -94,9 +98,7 @@ class SelectTemplate extends Component {
       };
       this.debounceLoadOptions = useMemo(() => debounce(loadOptions, 300), []);
     }
-  }
 
-  componentDidMount() {
     this.setValueForFirst();
     this.setValue();
     if (typeof this.props.onInit === 'function') {
