@@ -92,7 +92,7 @@ class SelectTemplate extends Component {
             return formattedData;
           });
       };
-      this.debounceLoadOptions = useMemo(debounce(loadOptions, 300), []);
+      this.debounceLoadOptions = useMemo(() => debounce(loadOptions, 300), []);
     }
   }
 
