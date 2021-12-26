@@ -1,4 +1,4 @@
-Dr cash react templates v0.8.16
+Dr cash react templates v0.8.17
 =
 React библиотки, шаблоны для переиспользования в проектах
 
