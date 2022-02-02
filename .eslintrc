@@ -8,19 +8,70 @@
   "plugins": ["react"],
   "rules": {
     "jsx-a11y/href-no-hash": "off",
-    "jsx-a11y/anchor-is-valid": [ "error", {
-      "components": [ "Link" ],
-      "specialLink": [ "to", "hrefLeft", "hrefRight" ],
-      "aspects": [ "noHref", "invalidHref", "preferButton" ]
-    }],
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": [
+          "Link"
+        ],
+        "specialLink": [
+          "to",
+          "hrefLeft",
+          "hrefRight"
+        ],
+        "aspects": [
+          "noHref",
+          "invalidHref",
+          "preferButton"
+        ]
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
     "react/prefer-stateless-function": 0,
-    "comma-dangle": ["error", "never"],
-    "react/forbid-prop-types": [0],
-    "linebreak-style": ["error", "unix"],
-    "react/button-has-type": [0],
-    "arrow-parens": ["error", "as-needed"],
-    "camelcase": ["error", { "properties": "never", "ignoreDestructuring": true }],
-    "implicit-arrow-linebreak": [0]
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "only-multiline",
+        "imports": "only-multiline",
+        "exports": "only-multiline",
+        "functions": "never"
+      }
+    ],
+    "object-curly-newline": "off",
+    "react/forbid-prop-types": [
+      0
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "react/button-has-type": [
+      0
+    ],
+    "arrow-parens": [
+      "error",
+      "always"
+    ],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never"
+      }
+    ],
+    "implicit-arrow-linebreak": [
+      0
+    ]
+  },
+  "settings": {
+    "import/resolver": "node"
   }
 }

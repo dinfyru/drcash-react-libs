@@ -10,6 +10,7 @@ export default {
     'packages/crud/crud.js',
     'packages/Notification/notification.js',
     'packages/MainTable/MainTable.js',
+    'packages/Table/Table.js',
     'packages/Checkbox/Checkbox.js'
   ],
   output: [
@@ -46,6 +47,14 @@ export default {
       strict: false
     },
     {
+      name: 'Table',
+      dir: 'public/packages',
+      format: 'cjs',
+      exports: 'named',
+      sourcemap: false,
+      strict: false
+    },
+    {
       name: 'Checkbox',
       dir: 'public/packages',
       format: 'cjs',
@@ -70,7 +79,8 @@ export default {
     resolve(),
     babel({
       exclude: 'node_modules/**',
-      babelHelpers: 'runtime'
+      babelHelpers: 'runtime',
+      skipPreflightCheck: true
     }),
     commonjs({
       namedExports: {
