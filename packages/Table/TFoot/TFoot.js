@@ -12,40 +12,55 @@ const TFoot = props => {
     const tfootItem = item ? item.item : null;
     if (!item) return false;
 
+    let cellCounter = 0;
+
     template.forEach((column, index) => {
       const { tfoot } = column;
+      if (cellCounter >= template.length) {
+        return;
+      }
+      if (!tfoot) {
+        footItems[index] = <td key={index} />;
+        return;
+      }
 
       let result;
-      if (tfoot) {
-        // generate cell
-        if (typeof tfoot.value === 'function') {
-          try {
-            result = tfoot.value(tfootItem);
-          } catch (e) {
-            result = 'n/a';
-          }
-        } else if (typeof tfoot.value === 'string') {
-          result = tfoot.value;
-        } else if (!tfoot.value && tfoot.key) {
-          result = tfootItem[tfoot.key];
+
+      // generate cell
+      if (typeof tfoot.value === 'function') {
+        try {
+          result = tfoot.value(tfootItem);
+        } catch (e) {
+          result = 'n/a';
         }
-
-        const itemProps = tfoot.props ? cloneDeep(tfoot.props) : {};
-        Object.keys(itemProps)
-          .forEach(key => {
-            if (typeof itemProps[key] === 'function') {
-              itemProps[key] = itemProps[key](item);
-            }
-          });
-
-        footItems[index] = (
-          <td key={index} {...itemProps}>
-            {result}
-          </td>
-        );
-      } else {
-        footItems[index] = <td key={index} />;
+      } else if (typeof tfoot.value === 'string') {
+        result = tfoot.value;
+      } else if (!tfoot.value && tfoot.key) {
+        result = tfootItem[tfoot.key];
       }
+
+      const itemProps = tfoot.props ? cloneDeep(tfoot.props) : {};
+
+      // переименовать isWholeLine
+      if (tfoot.isWholeLine) {
+        cellCounter += template.length;
+        itemProps.colSpan = template.length;
+      } else {
+        cellCounter++;
+      }
+
+      Object.keys(itemProps)
+        .forEach(key => {
+          if (typeof itemProps[key] === 'function') {
+            itemProps[key] = itemProps[key](item);
+          }
+        });
+
+      footItems[index] = (
+        <td key={index} {...itemProps}>
+          {result}
+        </td>
+      );
     });
 
     return footItems;

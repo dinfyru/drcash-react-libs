@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import THead from './THead/THead';
@@ -24,6 +24,7 @@ const TableComponent = (props) => {
     refreshTableOnPush,
     initFiltersValue,
     tfootItem,
+    visibleColumnsMiddleware,
     messages
   } = props;
 
@@ -32,10 +33,12 @@ const TableComponent = (props) => {
       isLoading,
       isLastPage,
       items,
+      visibleColumns: originalVisibleColumns,
       blockedItems,
       filtersValue
     }
   } = data;
+  const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
   const getItems = params => {
     const {
@@ -59,10 +62,12 @@ const TableComponent = (props) => {
     );
   };
 
-  const debounceGetItems = debounce(getItems, 500);
-
   useEffect(() => {
-    onInit({ getItems, debounceGetItems });
+    const debounceGetItems = debounce(getItems, 500);
+    onInit({
+      getItems,
+      debounceGetItems
+    });
     const {
       listGet,
       changeFiltersValue,
@@ -110,6 +115,11 @@ const TableComponent = (props) => {
     }
   };
 
+  const filteredTemplate = useMemo(() => {
+    if (!visibleColumns) return template;
+    return template.filter((item, index) => visibleColumns[index]);
+  }, [visibleColumns]);
+
   return (
     <div
       ref={tableRefs.parent}
@@ -119,10 +129,10 @@ const TableComponent = (props) => {
       onTouchMove={lazyLoad}
     >
       <table>
-        <THead template={template} />
-        <TFoot tfootItem={tfootItem} template={template} forwardedRef={tableRefs.tfoot} />
+        <THead template={filteredTemplate} />
+        <TFoot tfootItem={tfootItem} template={filteredTemplate} forwardedRef={tableRefs.tfoot} />
         <TBody
-          template={template}
+          template={filteredTemplate}
           items={items}
           tableRefs={tableRefs}
           forwardedRef={tableRefs.tbody}
@@ -139,8 +149,11 @@ TableComponent.defaultProps = {
   id: null,
   url: null,
   reducer: '',
-  onInit: () => {},
+  onInit: () => {
+  },
+  tfootItem: null,
   initFiltersValue: null,
+  visibleColumnsMiddleware: visibleColumns => visibleColumns,
   refreshTableOnPush: false,
   messages: {
     noDataContent: 'No content'
@@ -153,7 +166,9 @@ TableComponent.propTypes = {
   template: PropTypes.array.isRequired,
   reducer: PropTypes.string,
   onInit: PropTypes.func,
+  visibleColumnsMiddleware: PropTypes.func,
   data: PropTypes.object.isRequired,
+  tfootItem: PropTypes.object,
   initFiltersValue: PropTypes.object,
   refreshTableOnPush: PropTypes.bool,
   listGet: PropTypes.func.isRequired,
