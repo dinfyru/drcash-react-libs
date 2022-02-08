@@ -75,6 +75,7 @@ class SelectTemplate extends Component {
       options: [...props.options],
       value,
       disabled: false,
+      inputValue: '',
       filteredOptions: [],
       isFetching: props.isFetching && (!props.options || !props.options.length),
       valueForFirst: null
@@ -234,6 +235,8 @@ class SelectTemplate extends Component {
         });
       }
     }
+
+    this.setState({ inputValue: filter });
   };
 
   filterOptions = (options, filter) => {
@@ -274,7 +277,8 @@ class SelectTemplate extends Component {
     const {
       options: optionsState,
       disabled: disabledState,
-      filteredOptions
+      filteredOptions,
+      inputValue
     } = this.state;
     const {
       changeable,
@@ -339,7 +343,12 @@ class SelectTemplate extends Component {
       return <Select.Creatable {...props} />;
     }
     if (async) {
-      return <AsyncSelect cacheOptions debounceInterval={300} {...props} />;
+      return <AsyncSelect
+        inputValue={inputValue}
+        cacheOptions
+        debounceInterval={300}
+        {...props}
+      />;
     }
 
     return <Select {...props} />;
