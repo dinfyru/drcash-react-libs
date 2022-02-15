@@ -229,20 +229,15 @@ class SelectTemplate extends Component {
   handleOnChange = value => {
     const {
       nameParams,
-      async,
-      creatable
+      async
     } = this.props;
     const { multi } = this.state;
     let newValue = value;
     let newLabel;
 
 
-    if (creatable && multi) {
-      newValue = value;
-    } else if (multi) {
-      if (value && value.length) {
-        newValue = value.map(el => el.value);
-      }
+    if (multi && value && value.length) {
+      newValue = value.map(el => el.value);
     } else if (value && (value.value || value.value === 0)) {
       newValue = value.value;
       newLabel = value.label;
@@ -344,6 +339,13 @@ class SelectTemplate extends Component {
       }
     } else if ((value || value === 0) && !async && !creatable) {
       curValue = options.filter(option => option.value === value);
+    }
+
+    if (creatable && Array.isArray(value)) {
+      curValue = value.map(element => ({
+        label: element,
+        value: element
+      }));
     }
     const props = {
       classNamePrefix: 'select',
