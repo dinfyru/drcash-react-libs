@@ -84,7 +84,8 @@ export default {
     }),
     commonjs({
       namedExports: {
-        'react-dom': ['createPortal', 'findDOMNode']
+        'react-dom': ['createPortal', 'findDOMNode'],
+        'react-is': Object.keys(require('react-is')),
       }
     }),
     uglify()

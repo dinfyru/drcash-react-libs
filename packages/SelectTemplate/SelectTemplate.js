@@ -1,11 +1,37 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import Creatable from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
+import styled from 'styled-components';
 
 import './index.sass';
+
+const Label = styled.label`
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  color: #bababa;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+  z-index: 2;
+
+  top: ${(props) => (props.isFloating ? '5px' : '10px')};
+  font-size: ${(props) => (props.isFloating ? '8px' : '14px')};
+`;
+
+const Control = (props) => {
+  console.log(props);
+  return (
+    <>
+      <Label isFloating={props.isFocused || props.hasValue}>{props.selectProps.placeholder}</Label>
+      <components.Control {...props} />
+    </>
+  );
+};
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -203,13 +229,17 @@ class SelectTemplate extends Component {
   handleOnChange = value => {
     const {
       nameParams,
-      async
+      async,
+      creatable
     } = this.props;
     const { multi } = this.state;
     let newValue = value;
     let newLabel;
 
-    if (multi) {
+
+    if (creatable && multi) {
+      newValue = value;
+    } else if (multi) {
       if (value && value.length) {
         newValue = value.map(el => el.value);
       }
@@ -290,6 +320,7 @@ class SelectTemplate extends Component {
       placeholder,
       defaultOptions,
       async,
+      creatable,
       onInputChange
     } = this.props;
     let options = Array.isArray(filteredOptions) && filteredOptions.length
@@ -305,13 +336,13 @@ class SelectTemplate extends Component {
     options = options.filter(this.props.filterFunc);
 
     let curValue = value;
-    if (multi && value) {
+    if (multi && async && value) {
       if (value.length && !this.debounceLoadOptions) {
         curValue = optionsState.filter(
           option => value.filter(valOption => option.value === valOption).length
         );
       }
-    } else if ((value || value === 0) && !async) {
+    } else if ((value || value === 0) && !async && !creatable) {
       curValue = options.filter(option => option.value === value);
     }
     const props = {
@@ -329,6 +360,7 @@ class SelectTemplate extends Component {
       placeholder,
       onOpen: this.onOpenSelect,
       noOptionsMessage
+      // components: { Control }
     };
 
     if (async) {
@@ -338,9 +370,8 @@ class SelectTemplate extends Component {
       }
     }
 
-
-    if (this.props.creatable) {
-      return <Select.Creatable {...props} />;
+    if (creatable) {
+      return <Creatable {...props} />;
     }
     if (async) {
       return <AsyncSelect
