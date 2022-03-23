@@ -182,14 +182,14 @@ class MainTableComponent extends Component {
     if (initFiltersValue) {
       if (
         !Object.keys(data[reducer].filtersValue).length ||
-        (refreshTableOnPush && action === 'PUSH')
+        (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))
       ) {
         changeFiltersValue(initFiltersValue, reducer);
       }
     }
     // init get items for table
     if (
-      (refreshTableOnPush && action === 'PUSH') ||
+      (refreshTableOnPush && (action === 'PUSH' || action === 'POP')) ||
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
       if (this.state.canDoRequest && url) {
