@@ -331,7 +331,7 @@ class SelectTemplate extends Component {
     options = options.filter(this.props.filterFunc);
 
     let curValue = value;
-    if (multi && async && value) {
+    if (multi && value && !creatable) {
       if (value.length && !this.debounceLoadOptions) {
         curValue = optionsState.filter(
           option => value.filter(valOption => option.value === valOption).length
@@ -341,7 +341,7 @@ class SelectTemplate extends Component {
       curValue = options.filter(option => option.value === value);
     }
 
-    if (creatable && Array.isArray(value)) {
+    if (creatable && multi && Array.isArray(value)) {
       curValue = value.map(element => ({
         label: element,
         value: element
