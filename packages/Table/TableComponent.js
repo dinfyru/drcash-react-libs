@@ -77,14 +77,14 @@ const TableComponent = (props) => {
     if (initFiltersValue) {
       if (
         !Object.keys(data[reducer].filtersValue).length ||
-        (refreshTableOnPush && action === 'PUSH')
+        (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))
       ) {
         changeFiltersValue(initFiltersValue, reducer);
       }
     }
     // init get items for table
     if (
-      (refreshTableOnPush && action === 'PUSH') ||
+      (refreshTableOnPush && (action === 'PUSH' || action === 'POP')) ||
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
       if (url) {
