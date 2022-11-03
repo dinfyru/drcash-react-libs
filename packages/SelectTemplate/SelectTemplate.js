@@ -384,7 +384,7 @@ class SelectTemplate extends Component {
       />;
     }
 
-    return <Select {...props} />;
+    return <Select {...props} components={Control} />;
   }
 }
 
