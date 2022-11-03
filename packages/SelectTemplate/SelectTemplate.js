@@ -373,18 +373,25 @@ class SelectTemplate extends Component {
     }
 
     if (creatable) {
-      return <Creatable {...props} />;
+      return <Creatable
+        {...props}
+        components={{ Control }}
+      />;
     }
     if (async) {
       return <AsyncSelect
         inputValue={inputValue}
         cacheOptions
         debounceInterval={300}
+        components={{ Control }}
         {...props}
       />;
     }
 
-    return <Select {...props} />;
+    return <Select
+      {...props}
+      components={{ Control }}
+    />;
   }
 }
 
