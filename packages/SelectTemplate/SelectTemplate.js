@@ -23,15 +23,22 @@ const Label = styled.label`
   font-size: ${(props) => (props.isFloating ? '8px' : '14px')};
 `;
 
-const Control = (props) => {
-  console.log(props);
-  return (
-    <>
-      <Label isFloating={props.isFocused || props.hasValue}>{props.selectProps.placeholder}</Label>
-      <components.Control {...props} />
-    </>
-  );
-};
+// const Control = (props) => {
+//   console.log(props);
+//   return (
+//     <>
+//
+//       <components.Control {...props} />
+//     </>
+//   );
+// };
+
+const Control = ({ children, ...props }) => (
+  <components.Control {...props}>
+    <Label isFloating={props.isFocused || props.hasValue}>{props.selectProps.placeholder}</Label>
+    {children}
+  </components.Control>
+);
 
 class SelectTemplate extends Component {
   static defaultProps = {
