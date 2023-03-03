@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
+import classname from 'classnames';
 
 const ORDER_BY_DESC = 'DESC';
 const ORDER_BY_ASC = 'ASC';
@@ -45,7 +46,8 @@ const THead = props => {
         thead: {
           value,
           sortKey,
-          sortLtr
+          sortLtr,
+          className
         },
         thead
       } = column;
@@ -56,7 +58,7 @@ const THead = props => {
 
       const itemProps = thead.props ? cloneDeep(thead.props) : {};
       itemProps.title = itemProps.title || value;
-      itemProps.className = classname();
+      itemProps.className = classname([className, sortKey && 'cup']);
 
       const th = (
         <th
@@ -111,8 +113,6 @@ THead.propTypes = {
 };
 
 THead.defaultProps = {
-  reducer: '',
-  filtersValue: {},
   sortType: null,
   sortBy: null,
   isHidden: false,

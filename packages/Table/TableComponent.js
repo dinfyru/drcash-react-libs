@@ -130,7 +130,7 @@ const TableComponent = (props) => {
       onTouchMove={lazyLoad}
     >
       <table>
-        <THead template={filteredTemplate} />
+        <THead template={filteredTemplate} getItems={getItems} reducer={reducer} />
         <TFoot tfootItem={tfootItem} template={filteredTemplate} forwardedRef={tableRefs.tfoot} />
         <TBody
           template={filteredTemplate}
