@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
+import debounce from 'debounce-promise';
 
 import THead from './THead/THead';
 import TBody from './TBody/TBody';
 import TFoot from './TFoot/TFoot';
 import { elemOffset } from '../../utils';
-import debounce from 'debounce-promise';
 
 const TableComponent = (props) => {
   const tableRefs = {
@@ -25,7 +25,8 @@ const TableComponent = (props) => {
     initFiltersValue,
     tfootItem,
     visibleColumnsMiddleware,
-    messages
+    messages,
+    disableLazyLoad
   } = props;
 
   const {
@@ -98,7 +99,7 @@ const TableComponent = (props) => {
 
 
   const lazyLoad = () => {
-    if (isLastPage || isLoading) return false;
+    if (disableLazyLoad || isLastPage || isLoading) return false;
 
     const { current: parent } = tableRefs.parent;
     const { current: tbody } = tableRefs.tbody;
@@ -155,6 +156,7 @@ TableComponent.defaultProps = {
   initFiltersValue: null,
   visibleColumnsMiddleware: visibleColumns => visibleColumns,
   refreshTableOnPush: false,
+  disableLazyLoad: false,
   messages: {
     noDataContent: 'No content'
   }
@@ -171,6 +173,7 @@ TableComponent.propTypes = {
   tfootItem: PropTypes.object,
   initFiltersValue: PropTypes.object,
   refreshTableOnPush: PropTypes.bool,
+  disableLazyLoad: PropTypes.bool,
   listGet: PropTypes.func.isRequired,
   changeFiltersValue: PropTypes.func.isRequired,
   messages: PropTypes.object

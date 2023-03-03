@@ -2,13 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 
-// const ORDER_BY_DESC = 'DESC';
-// const ORDER_BY_ASC = 'ASC';
+const ORDER_BY_DESC = 'DESC';
+const ORDER_BY_ASC = 'ASC';
 
 const THead = props => {
   const {
-    template
+    template,
+    getItems,
+    sortType,
+    sortBy,
+    filtersValue,
+    reducer
   } = props;
+
+  const changeSortType = () =>
+    filtersValue.sort_by !== sortBy
+      ? ORDER_BY_DESC
+      : filtersValue.sort_type === ORDER_BY_DESC
+        ? ORDER_BY_ASC
+        : ORDER_BY_DESC;
+
+  const sortOnClick = ({
+    sortKey
+  }) => {
+    if (!sortKey) return false;
+
+    getItems(
+      {
+        sort_type: changeSortType(),
+        sort_by: sortKey,
+        offset: 0
+      },
+      reducer
+    );
+  };
 
   const generateItemsByTemplate = () => {
     const items = [];
@@ -16,7 +43,9 @@ const THead = props => {
     template.forEach((column, index) => {
       const {
         thead: {
-          value
+          value,
+          sortKey,
+          sortLtr
         },
         thead
       } = column;
@@ -27,13 +56,31 @@ const THead = props => {
 
       const itemProps = thead.props ? cloneDeep(thead.props) : {};
       itemProps.title = itemProps.title || value;
+      itemProps.className = classname();
 
       const th = (
         <th
           key={index}
           {...itemProps}
+          onClick={() => sortOnClick({
+            sortKey
+          })}
         >
+          {sortLtr && sortKey && (
+            <span
+              className={`sorting ltr ${
+                sortBy === sortKey ? sortType.toLowerCase() : ''
+              }`}
+            />
+          )}
           {resultValue}
+          {!sortLtr && sortKey && (
+            <span
+              className={`sorting fal ${
+                sortBy === sortKey ? sortType.toLowerCase() : ''
+              }`}
+            />
+          )}
         </th>
       );
       items.push(th);
@@ -55,7 +102,22 @@ const THead = props => {
 };
 
 THead.propTypes = {
-  template: PropTypes.array.isRequired
+  template: PropTypes.array.isRequired,
+  getItems: PropTypes.func.isRequired,
+  reducer: PropTypes.string.isRequired,
+  filtersValue: PropTypes.object.isRequired,
+  sortType: PropTypes.string,
+  sortBy: PropTypes.string
+};
+
+THead.defaultProps = {
+  reducer: '',
+  filtersValue: {},
+  sortType: null,
+  sortBy: null,
+  isHidden: false,
+  softSort: false,
+  visibleColumns: null
 };
 
 export default THead;
