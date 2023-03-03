@@ -54,22 +54,21 @@ export default class FilterColumns extends Component {
     removeEvent(window, 'click', this.clickOut);
   }
 
-  changeColumnState = column => {
+  changeColumnState = (column) => {
     this.setState(
-      prevState => {
+      (prevState) => {
         const settingsColumns = cloneDeep(prevState.settingsColumns);
         settingsColumns[column].active = !settingsColumns[column].active;
         const lengthActive = [];
-        Object.keys(settingsColumns).forEach(elemIndex => {
+        Object.keys(settingsColumns).forEach((elemIndex) => {
           if (settingsColumns[elemIndex].active) {
             lengthActive.push(settingsColumns[elemIndex].active);
           }
         });
         if (lengthActive.length) {
           return { settingsColumns };
-        } else {
-          return null;
         }
+        return null;
       },
       () => {
         this.updateSettingsColumnsStorage();
@@ -78,7 +77,7 @@ export default class FilterColumns extends Component {
     );
   };
 
-  updateSettingsColumnsStorage = settingsColumns => {
+  updateSettingsColumnsStorage = (settingsColumns) => {
     const { tableName } = this.props;
     const stringifySettingsColumns = JSON.stringify(
       settingsColumns || this.state.settingsColumns
@@ -90,24 +89,22 @@ export default class FilterColumns extends Component {
     const { settingsColumns } = this.state;
     const { mainTableName, dispatch } = this.props;
     const visibleColumns = [];
-    Object.keys(settingsColumns).forEach(elemIndex => {
+    Object.keys(settingsColumns).forEach((elemIndex) => {
       visibleColumns.push(settingsColumns[elemIndex].active);
     });
     dispatch(MTupdateVisibleColumns(visibleColumns, mainTableName));
   };
 
   selectMultiOpener = () => {
-    this.setState(prevState => {
-      return { selectMultiOpened: !prevState.selectMultiOpened };
-    });
+    this.setState((prevState) => ({ selectMultiOpened: !prevState.selectMultiOpened }));
   };
 
-  clickOut = event => {
+  clickOut = (event) => {
     const { target } = event;
     if (
-      document.querySelector('.select-multi').classList.contains('active') &&
-      !target.classList.contains('select-multi') &&
-      !target.closest('.select-multi')
+      document.querySelector('.select-multi').classList.contains('active')
+      && !target.classList.contains('select-multi')
+      && !target.closest('.select-multi')
     ) {
       this.setState({ selectMultiOpened: false });
     }
@@ -128,10 +125,10 @@ export default class FilterColumns extends Component {
           {this.props.title}
         </div>
         <ul className="select-multi__list">
-          {Object.keys(columnCategories).map(catId => (
+          {Object.keys(columnCategories).map((catId) => (
             <li key={catId}>
               <span className="cat">{columnCategories[catId]}</span>
-              {findByValue(settingsColumns, catId, 'cat').map(columnId => {
+              {findByValue(settingsColumns, catId, 'cat').map((columnId) => {
                 const column = settingsColumns[columnId];
                 return (
                   <span
