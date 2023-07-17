@@ -38,7 +38,10 @@ const mainTableReducer = (state = initialState, action) => {
   let nextState;
 
   if (action.type === MT_REMOVE_SUBLINE_DATA) {
-    const { id, reducer } = action;
+    const {
+      id,
+      reducer
+    } = action;
     nextState = cloneDeep(state);
     if (nextState[reducer].subLineData[id]) {
       delete nextState[reducer].subLineData[id];
@@ -47,7 +50,11 @@ const mainTableReducer = (state = initialState, action) => {
 
   if (action.type === MT_GET_SUBLINE_DATA_REQUEST) {
     const {
-      meta: { id, subLineKey, reducer }
+      meta: {
+        id,
+        subLineKey,
+        reducer
+      }
     } = action;
     nextState = cloneDeep(state);
     nextState[reducer].subLineData[id] = {
@@ -59,7 +66,10 @@ const mainTableReducer = (state = initialState, action) => {
 
   if (action.type === MT_GET_SUBLINE_DATA_FAILURE) {
     const {
-      meta: { id, reducer }
+      meta: {
+        id,
+        reducer
+      }
     } = action;
     nextState = cloneDeep(state);
     if (nextState[reducer].subLineData[id]) {
@@ -69,8 +79,14 @@ const mainTableReducer = (state = initialState, action) => {
 
   if (action.type === MT_GET_SUBLINE_DATA_SUCCESS) {
     const {
-      meta: { id, reducer },
-      payload: { status, payload }
+      meta: {
+        id,
+        reducer
+      },
+      payload: {
+        status,
+        payload
+      }
     } = action;
     nextState = cloneDeep(state);
     const hasId = !!nextState[reducer].subLineData[id];
@@ -83,7 +99,11 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_LIST_REMOVE_ITEM) {
-    const { id, reducer, key = 'id' } = action;
+    const {
+      id,
+      reducer,
+      key = 'id'
+    } = action;
     let items = cloneDeep(state[reducer].items);
     items = items.map(partItems => {
       const newPartItems = cloneDeep(partItems);
@@ -102,8 +122,18 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_LIST_AUTO_UPDATE_ITEM) {
-    const { item, reducer, key = 'id' } = action;
-    const id = item[key];
+    const {
+      item,
+      reducer,
+      key
+    } = action;
+    let itemKey = key || 'id';
+    let id = item[itemKey];
+    if (!id && !key) {
+      itemKey = 'uuid';
+      id = item[itemKey];
+    }
+
     let items = cloneDeep(state[reducer].items);
     items = items.map(partItems => {
       const newPartItems = cloneDeep(partItems);
@@ -118,7 +148,10 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_SAVE_TABLE_SCROLL) {
-    const { reducer, scroll } = action;
+    const {
+      reducer,
+      scroll
+    } = action;
     const prevState = cloneDeep(state);
     nextState = {
       ...prevState,
@@ -130,17 +163,21 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_CHANGE_FILTERS_VALUE) {
-    const { reducer, data } = action;
+    const {
+      reducer,
+      data
+    } = action;
     const prevState = cloneDeep(state);
     const props = {
       ...prevState[reducer],
       filtersValue: { ...prevState[reducer].filtersValue, ...data }
     };
-    Object.entries(props.filtersValue).forEach(([key, value]) => {
-      if (value === false || value === undefined) {
-        delete props.filtersValue[key];
-      }
-    });
+    Object.entries(props.filtersValue)
+      .forEach(([key, value]) => {
+        if (value === false || value === undefined) {
+          delete props.filtersValue[key];
+        }
+      });
 
     if (data.offset === 0) {
       props.items = [];
@@ -175,23 +212,28 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_DISABLE_ITEM_SWITCHER) {
-    const { data, reducer, byIndex } = action;
+    const {
+      data,
+      reducer,
+      byIndex
+    } = action;
     nextState = cloneDeep(state);
     if (!byIndex) {
-      Object.keys(data).forEach(id => {
-        const val = data[id];
-        if (!val) {
-          const index = nextState[reducer].blockedItems.indexOf(id);
-          if (index >= 0) {
-            delete nextState[reducer].blockedItems[index];
+      Object.keys(data)
+        .forEach(id => {
+          const val = data[id];
+          if (!val) {
+            const index = nextState[reducer].blockedItems.indexOf(id);
+            if (index >= 0) {
+              delete nextState[reducer].blockedItems[index];
+            }
+          } else {
+            const index = nextState[reducer].blockedItems.indexOf(id);
+            if (index < 0) {
+              nextState[reducer].blockedItems.push(id);
+            }
           }
-        } else {
-          const index = nextState[reducer].blockedItems.indexOf(id);
-          if (index < 0) {
-            nextState[reducer].blockedItems.push(id);
-          }
-        }
-      });
+        });
     }
     nextState[reducer].blockedItems = nextState[reducer].blockedItems.filter(
       elem => elem
@@ -199,7 +241,10 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_SET_ITEMS) {
-    const { items, reducer } = action;
+    const {
+      items,
+      reducer
+    } = action;
     nextState = cloneDeep(state);
 
     nextState[reducer].items = [cloneDeep(items)];
@@ -218,12 +263,21 @@ const mainTableReducer = (state = initialState, action) => {
     if (action.payload.status === 'OK') {
       const {
         payload: {
-          payload: { items, item },
-          _meta = { is_last_page: false, total: 0 }
+          payload: {
+            items,
+            item
+          },
+          _meta = {
+            is_last_page: false,
+            total: 0
+          }
         },
         meta: { reloadItemsOnRequest }
       } = action;
-      const { is_last_page: isLastPage, total } = _meta;
+      const {
+        is_last_page: isLastPage,
+        total
+      } = _meta;
 
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
@@ -252,14 +306,20 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_LIST_UPDATE_ITEMS) {
-    const { items, reducer } = action;
+    const {
+      items,
+      reducer
+    } = action;
 
     nextState = cloneDeep(state);
     nextState[reducer].items = items;
   }
 
   if (action.type === MT_UPDATE_VISIBLE_COLUMNS) {
-    const { data, reducer } = action;
+    const {
+      data,
+      reducer
+    } = action;
 
     nextState = cloneDeep(state);
     nextState[reducer].visibleColumns = data;
