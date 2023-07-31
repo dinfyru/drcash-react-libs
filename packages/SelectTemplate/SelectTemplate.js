@@ -33,7 +33,10 @@ const Label = styled.label`
 //   );
 // };
 
-const Control = ({ children, ...props }) => (
+const Control = ({
+  children,
+  ...props
+}) => (
   <components.Control {...props}>
     <Label isFloating={props.isFocused || props.hasValue}>{props.selectProps.placeholder}</Label>
     {children}
@@ -382,7 +385,7 @@ class SelectTemplate extends Component {
     if (creatable) {
       return <Creatable
         {...props}
-        components={{ Control }}
+        // components={{ Control }}
       />;
     }
     if (async) {
@@ -390,14 +393,14 @@ class SelectTemplate extends Component {
         inputValue={inputValue}
         cacheOptions
         debounceInterval={300}
-        components={{ Control }}
+        // components={{ Control }}
         {...props}
       />;
     }
 
     return <Select
       {...props}
-      components={{ Control }}
+      // components={{ Control }}
     />;
   }
 }

@@ -137,7 +137,7 @@ const mainTableReducer = (state = initialState, action) => {
     let items = cloneDeep(state[reducer].items);
     items = items.map(partItems => {
       const newPartItems = cloneDeep(partItems);
-      const index = newPartItems.findIndex(elem => elem[key] === id);
+      const index = newPartItems.findIndex(elem => elem[itemKey] === id);
       if (index >= 0) {
         newPartItems[index] = item;
       }

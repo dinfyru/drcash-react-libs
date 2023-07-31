@@ -3067,7 +3067,7 @@ __metadata:
     react-is: ^17.0.2
     react-modal: ^3.14.4
     react-redux: ^7.2.6
-    react-select: ^5.2.1
+    react-select: 5.2.1
     redux: ^4.0.4
     rollup: ^2.60.1
     rollup-plugin-babel: 4.3.2
@@ -5361,7 +5361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:^5.2.1":
+"react-select@npm:5.2.1":
   version: 5.2.1
   resolution: "react-select@npm:5.2.1"
   dependencies:
