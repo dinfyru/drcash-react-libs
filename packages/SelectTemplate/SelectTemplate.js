@@ -30,7 +30,7 @@ class SelectTemplate extends Component {
     onInit: false,
     onInputChange: false,
     valueForFirst: false,
-    mustUpdate: false
+    mustUpdate: true
   };
 
   static propTypes = {
@@ -82,7 +82,7 @@ class SelectTemplate extends Component {
     }
   }
 
-  static getDerrivedStateFromProps
+  static getDerrivedStateFromProps;
 
   componentDidMount() {
     this.setValueForFirst();
@@ -95,7 +95,12 @@ class SelectTemplate extends Component {
   componentDidUpdate() {
     const { value: stateValue, isFetching, valueForFirst } = this.state;
     const {
-      value: propsValue, trackValue, options, valueForFirst: valueForFirstProps, loadOptions, mustUpdate
+      value: propsValue,
+      trackValue,
+      options,
+      valueForFirst: valueForFirstProps,
+      loadOptions,
+      mustUpdate
     } = this.props;
 
     if (isFetching && Object.keys(options).length) {
@@ -107,7 +112,16 @@ class SelectTemplate extends Component {
         value: propsValue
       });
     }
-    if (JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) && valueForFirstProps !== false && mustUpdate) {
+    if (
+      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
+      valueForFirstProps !== false &&
+      mustUpdate
+    ) {
+      console.log(
+        JSON.stringify(valueForFirst),
+        JSON.stringify(valueForFirstProps),
+        JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps)
+      );
       this.setValueForFirst();
     }
   }
@@ -119,10 +133,17 @@ class SelectTemplate extends Component {
         const data = (originalData || []).filter(el => {
           if (el.value && el.value.toString) {
             if (Array.isArray(valueForFirst)) {
-              if (valueForFirst.map(item => (item.toString ? item.toString() : '')).indexOf(el.value.toString()) >= 0) {
+              if (
+                valueForFirst
+                  .map(item => (item.toString ? item.toString() : ''))
+                  .indexOf(el.value.toString()) >= 0
+              ) {
                 return true;
               }
-            } else if (valueForFirst.toString && el.value.toString() === valueForFirst.toString()) {
+            } else if (
+              valueForFirst.toString &&
+              el.value.toString() === valueForFirst.toString()
+            ) {
               return true;
             }
           }
@@ -203,18 +224,20 @@ class SelectTemplate extends Component {
       // Ищем по label в начале слова
       newOptions = [
         ...newOptions,
-        ...options.filter(option => (
-          regexpStartWord.test(option.label)
-          && !newOptions.find(elem => elem.value === option.value)
-        ))
+        ...options.filter(
+          option =>
+            regexpStartWord.test(option.label) &&
+            !newOptions.find(elem => elem.value === option.value)
+        )
       ];
       // Ищем по label в начале строки
       newOptions = [
         ...newOptions,
-        ...options.filter(option => (
-          regexpGlobal.test(option.label)
-          && !newOptions.find(elem => elem.value === option.value)
-        ))
+        ...options.filter(
+          option =>
+            regexpGlobal.test(option.label) &&
+            !newOptions.find(elem => elem.value === option.value)
+        )
       ];
     }
     return newOptions || options;
@@ -235,14 +258,15 @@ class SelectTemplate extends Component {
       async,
       onInputChange
     } = this.props;
-    let options = Array.isArray(filteredOptions) && filteredOptions.length
-      ? filteredOptions
-      : optionsState;
+    let options =
+      Array.isArray(filteredOptions) && filteredOptions.length
+        ? filteredOptions
+        : optionsState;
     if (Object.keys(changeable).length) {
       options = options.filter(
         obj =>
-          obj[changeable.key]
-          !== this.props[changeable.storeName][changeable.storeField]
+          obj[changeable.key] !==
+          this.props[changeable.storeName][changeable.storeField]
       );
     }
     options = options.filter(this.props.filterFunc);
