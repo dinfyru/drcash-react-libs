@@ -103,6 +103,15 @@ class SelectTemplate extends Component {
       mustUpdate
     } = this.props;
 
+    if (
+      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
+      valueForFirstProps !== false &&
+      mustUpdate
+    ) {
+      this.setState({ valueForFirst: valueForFirstProps }, () => {
+        this.setValueForFirst();
+      });
+    }
     if (isFetching && Object.keys(options).length) {
       this.setValue();
       this.completeAsyncLoading();
@@ -111,18 +120,6 @@ class SelectTemplate extends Component {
       this.setState({
         value: propsValue
       });
-    }
-    if (
-      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
-      valueForFirstProps !== false &&
-      mustUpdate
-    ) {
-      console.log(
-        JSON.stringify(valueForFirst),
-        JSON.stringify(valueForFirstProps),
-        JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps)
-      );
-      this.setValueForFirst();
     }
   }
 
@@ -195,7 +192,7 @@ class SelectTemplate extends Component {
 
     this.setState({
       value: async ? value : newValue,
-      valueForFirst: null
+      valueForFirst: async ? value : newValue
     });
     this.props.onChange(newValue, nameParams, newLabel);
   };
