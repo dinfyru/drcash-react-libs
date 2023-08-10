@@ -1,6 +1,6 @@
 {
   "name": "drcash-react-libs",
-  "version": "0.7.62",
+  "version": "0.7.63",
   "description": "Dr cash react libs",
   "deprecated": false,
   "main": "packages/index.js",
@@ -75,7 +75,7 @@
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux": "6.0.1",
-    "react-select": "5.2.1",
+    "react-select": "5.7.4",
     "redux": "^4.0.4",
     "rollup": "^2.60.1",
     "rollup-plugin-babel": "4.3.2",

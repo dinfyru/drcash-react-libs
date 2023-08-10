@@ -385,7 +385,7 @@ class SelectTemplate extends Component {
       props.getOptionLabel = getOptionLabel;
     }
 
-    if (formatGroupLabel) {
+    if (getOptionValue) {
       props.getOptionValue = getOptionValue;
     }
 
