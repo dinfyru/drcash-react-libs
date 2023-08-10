@@ -1,11 +1,46 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import Creatable from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
+import cloneDeep from 'lodash.clonedeep';
+import styled from 'styled-components';
 
 import './index.sass';
-import cloneDeep from 'lodash.clonedeep';
+
+const Label = styled.label`
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  color: #bababa;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+  z-index: 2;
+
+  top: ${props => (props.isFloating ? '5px' : '10px')};
+  font-size: ${props => (props.isFloating ? '8px' : '14px')};
+`;
+
+// const Control = (props) => {
+//   console.log(props);
+//   return (
+//     <>
+//
+//       <components.Control {...props} />
+//     </>
+//   );
+// };
+
+const Control = ({ children, ...props }) => (
+  <components.Control {...props}>
+    <Label isFloating={props.isFocused || props.hasValue}>
+      {props.selectProps.placeholder}
+    </Label>
+    {children}
+  </components.Control>
+);
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -31,7 +66,7 @@ class SelectTemplate extends Component {
     onInit: false,
     onInputChange: false,
     valueForFirst: false,
-    mustUpdate: true,
+    mustUpdate: false,
     formatGroupLabel: false,
     getOptionLabel: false,
     getOptionValue: false
@@ -80,18 +115,31 @@ class SelectTemplate extends Component {
       multi: props.multi,
       options: [...props.options],
       value,
+      disabled: false,
+      inputValue: '',
       filteredOptions: [],
       isFetching: props.isFetching && (!props.options || !props.options.length),
       valueForFirst: null
     };
-    if (props.loadOptions && props.async) {
-      this.debounceLoadOptions = debounce(props.loadOptions, 300);
-    }
   }
 
-  static getDerrivedStateFromProps;
-
   componentDidMount() {
+    const { props } = this;
+    if (props.loadOptions && props.async) {
+      const loadOptions = (inputValue = '') => {
+        return props.loadOptions(inputValue).then(items => {
+          let formattedData = cloneDeep(items || []);
+          const { generateOptions } = this.props;
+          if (generateOptions) {
+            formattedData = generateOptions(formattedData);
+          }
+
+          return formattedData;
+        });
+      };
+      this.debounceLoadOptions = debounce(loadOptions, 300);
+    }
+
     this.setValueForFirst();
     this.setValue();
     if (typeof this.props.onInit === 'function') {
@@ -110,15 +158,6 @@ class SelectTemplate extends Component {
       mustUpdate
     } = this.props;
 
-    if (
-      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
-      valueForFirstProps !== false &&
-      mustUpdate
-    ) {
-      this.setState({ valueForFirst: valueForFirstProps }, () => {
-        this.setValueForFirst();
-      });
-    }
     if (isFetching && Object.keys(options).length) {
       this.setValue();
       this.completeAsyncLoading();
@@ -128,44 +167,59 @@ class SelectTemplate extends Component {
         value: propsValue
       });
     }
+    if (
+      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
+      valueForFirstProps !== false &&
+      mustUpdate
+    ) {
+      this.setValueForFirst();
+    }
   }
 
   setValueForFirst = () => {
     const { valueForFirst, async, generateOptions } = this.props;
     if (async && valueForFirst) {
-      this.props.loadOptions(valueForFirst, 'true').then(originalData => {
-        let formattedData = cloneDeep(originalData || []);
-        if (generateOptions) {
-          formattedData = generateOptions(originalData);
-        }
-        const data = formattedData.filter(el => {
-          if (el.value && el.value.toString) {
-            if (Array.isArray(valueForFirst)) {
-              if (
-                valueForFirst
-                  .map(item => (item.toString ? item.toString() : ''))
-                  .indexOf(el.value.toString()) >= 0
-              ) {
-                return true;
-              }
-            } else if (
-              valueForFirst.toString &&
-              el.value.toString() === valueForFirst.toString()
-            ) {
-              return true;
+      this.setState({ disabled: true }, () => {
+        this.props
+          .loadOptions(valueForFirst, 'true')
+          .then(responseData => {
+            let formattedData = cloneDeep(responseData || []);
+            if (generateOptions) {
+              formattedData = generateOptions(formattedData);
             }
-          }
-          return false;
-        });
+            const data = formattedData.filter(el => {
+              if (el.value && el.value.toString) {
+                if (Array.isArray(valueForFirst)) {
+                  if (
+                    valueForFirst
+                      .map(item => (item.toString ? item.toString() : ''))
+                      .indexOf(el.value.toString()) >= 0
+                  ) {
+                    return true;
+                  }
+                } else if (
+                  valueForFirst.toString &&
+                  el.value.toString() === valueForFirst.toString()
+                ) {
+                  return true;
+                }
+              }
+              return false;
+            });
 
-        let value = data;
-        if (!Array.isArray(valueForFirst)) {
-          value = data[0] ? data[0] : false;
-        }
-        this.setState({
-          value,
-          valueForFirst
-        });
+            let value = data;
+            if (!Array.isArray(valueForFirst)) {
+              value = data[0] ? data[0] : false;
+            }
+            this.setState({
+              value,
+              valueForFirst,
+              disabled: false
+            });
+          })
+          .catch(() => {
+            this.setState({ disabled: false });
+          });
       });
     }
   };
@@ -192,10 +246,8 @@ class SelectTemplate extends Component {
     let newValue = value;
     let newLabel;
 
-    if (multi) {
-      if (value && value.length) {
-        newValue = value.map(el => el.value);
-      }
+    if (multi && value && value.length) {
+      newValue = value.map(el => el.value);
     } else if (value && (value.value || value.value === 0)) {
       newValue = value.value;
       newLabel = value.label;
@@ -203,7 +255,7 @@ class SelectTemplate extends Component {
 
     this.setState({
       value: async ? value : newValue,
-      valueForFirst: async ? value : newValue
+      valueForFirst: null
     });
     this.props.onChange(newValue, nameParams, newLabel);
   };
@@ -218,6 +270,8 @@ class SelectTemplate extends Component {
         });
       }
     }
+
+    this.setState({ inputValue: filter });
   };
 
   filterOptions = (options, filter) => {
@@ -253,17 +307,23 @@ class SelectTemplate extends Component {
 
   render() {
     const { multi, value, isFetching } = this.state;
-    const { options: optionsState, filteredOptions } = this.state;
+    const {
+      options: optionsState,
+      disabled: disabledState,
+      filteredOptions,
+      inputValue
+    } = this.state;
     const {
       changeable,
       noOptionsMessage,
       className,
-      disabled,
+      disabled: disabledProps,
       searchable,
       clearable,
       placeholder,
       defaultOptions,
       async,
+      creatable,
       onInputChange,
       formatGroupLabel,
       getOptionLabel,
@@ -283,14 +343,21 @@ class SelectTemplate extends Component {
     options = options.filter(this.props.filterFunc);
 
     let curValue = value;
-    if (multi && value) {
+    if (multi && value && !creatable) {
       if (value.length && !this.debounceLoadOptions) {
         curValue = optionsState.filter(
           option => value.filter(valOption => option.value === valOption).length
         );
       }
-    } else if ((value || value === 0) && !async) {
+    } else if ((value || value === 0) && !async && !creatable) {
       curValue = options.filter(option => option.value === value);
+    }
+
+    if (creatable && multi && Array.isArray(value)) {
+      curValue = value.map(element => ({
+        label: element,
+        value: element
+      }));
     }
     const props = {
       classNamePrefix: 'select',
@@ -301,16 +368,26 @@ class SelectTemplate extends Component {
       value: curValue,
       className,
       onInputChange: onInputChange || this.handleInputChange,
-      isDisabled: disabled,
+      isDisabled: disabledProps || disabledState,
       isSearchable: searchable,
       isClearable: clearable,
       placeholder,
       onOpen: this.onOpenSelect,
-      noOptionsMessage,
-      formatGroupLabel,
-      getOptionLabel,
-      getOptionValue
+      noOptionsMessage
+      // components: { Control }
     };
+
+    if (formatGroupLabel) {
+      props.formatGroupLabel = formatGroupLabel;
+    }
+
+    if (getOptionLabel) {
+      props.getOptionLabel = getOptionLabel;
+    }
+
+    if (formatGroupLabel) {
+      props.getOptionValue = getOptionValue;
+    }
 
     if (async) {
       props.defaultOptions = defaultOptions;
@@ -319,16 +396,31 @@ class SelectTemplate extends Component {
       }
     }
 
+    if (creatable) {
+      return (
+        <Creatable
+          {...props}
+          // components={{ Control }}
+        />
+      );
+    }
+    if (async) {
+      return (
+        <AsyncSelect
+          inputValue={inputValue}
+          cacheOptions
+          debounceInterval={300}
+          // components={{ Control }}
+          {...props}
+        />
+      );
+    }
+
     return (
-      <>
-        {this.props.creatable ? (
-          <Select.Creatable {...props} />
-        ) : this.props.async ? (
-          <AsyncSelect cacheOptions debounceInterval={300} {...props} />
-        ) : (
-          <Select {...props} />
-        )}
-      </>
+      <Select
+        {...props}
+        // components={{ Control }}
+      />
     );
   }
 }
