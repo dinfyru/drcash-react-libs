@@ -5,6 +5,7 @@ import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 
 import './index.sass';
+import cloneDeep from 'lodash.clonedeep';
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -30,7 +31,10 @@ class SelectTemplate extends Component {
     onInit: false,
     onInputChange: false,
     valueForFirst: false,
-    mustUpdate: true
+    mustUpdate: true,
+    formatGroupLabel: false,
+    getOptionLabel: false,
+    getOptionValue: false
   };
 
   static propTypes = {
@@ -62,7 +66,10 @@ class SelectTemplate extends Component {
       PropTypes.array,
       PropTypes.bool
     ]),
-    mustUpdate: PropTypes.bool
+    mustUpdate: PropTypes.bool,
+    formatGroupLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    getOptionLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    getOptionValue: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
   };
 
   constructor(props) {
@@ -124,10 +131,14 @@ class SelectTemplate extends Component {
   }
 
   setValueForFirst = () => {
-    const { valueForFirst, async } = this.props;
+    const { valueForFirst, async, generateOptions } = this.props;
     if (async && valueForFirst) {
       this.props.loadOptions(valueForFirst, 'true').then(originalData => {
-        const data = (originalData || []).filter(el => {
+        let formattedData = cloneDeep(originalData || []);
+        if (generateOptions) {
+          formattedData = generateOptions(originalData);
+        }
+        const data = formattedData.filter(el => {
           if (el.value && el.value.toString) {
             if (Array.isArray(valueForFirst)) {
               if (
@@ -253,7 +264,10 @@ class SelectTemplate extends Component {
       placeholder,
       defaultOptions,
       async,
-      onInputChange
+      onInputChange,
+      formatGroupLabel,
+      getOptionLabel,
+      getOptionValue
     } = this.props;
     let options =
       Array.isArray(filteredOptions) && filteredOptions.length
@@ -292,7 +306,10 @@ class SelectTemplate extends Component {
       isClearable: clearable,
       placeholder,
       onOpen: this.onOpenSelect,
-      noOptionsMessage
+      noOptionsMessage,
+      formatGroupLabel,
+      getOptionLabel,
+      getOptionValue
     };
 
     if (async) {
