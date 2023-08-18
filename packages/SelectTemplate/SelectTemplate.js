@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Select, { components } from 'react-select';
+import Select, { components, createFilter } from 'react-select';
 import Creatable from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
 import styled from 'styled-components';
 
-import './index.sass';
+// import './index.sass';
 
-const Label = styled.label`
-  left: 12px;
-  pointer-events: none;
-  position: absolute;
-  color: #bababa;
-  transition: 0.2s ease all;
-  -moz-transition: 0.2s ease all;
-  -webkit-transition: 0.2s ease all;
-  z-index: 2;
-
-  top: ${props => (props.isFloating ? '5px' : '10px')};
-  font-size: ${props => (props.isFloating ? '8px' : '14px')};
-`;
+// const Label = styled.label`
+//   left: 12px;
+//   pointer-events: none;
+//   position: absolute;
+//   color: #bababa;
+//   transition: 0.2s ease all;
+//   -moz-transition: 0.2s ease all;
+//   -webkit-transition: 0.2s ease all;
+//   z-index: 2;
+//
+//   top: ${props => (props.isFloating ? '5px' : '10px')};
+//   font-size: ${props => (props.isFloating ? '8px' : '14px')};
+// `;
 
 // const Control = (props) => {
 //   console.log(props);
@@ -33,14 +33,86 @@ const Label = styled.label`
 //   );
 // };
 
-const Control = ({ children, ...props }) => (
-  <components.Control {...props}>
-    <Label isFloating={props.isFocused || props.hasValue}>
+// const Control = ({ children, ...props }) => (
+//   <components.Control {...props}>
+//     <Label isFloating={props.isFocused || props.hasValue}>
+//       {props.selectProps.placeholder}
+//     </Label>
+//     {children}
+//   </components.Control>
+// );
+const CustomMultiValueContainer = ({ children, ...props }) => {
+  const isMultiValue = props.selectProps.value.length > 1;
+  return (
+    <components.MultiValueContainer
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        className: `select__multi-value${
+          props.selectProps.value.length === 1 ? ' is-single' : ''
+        }${props.selectProps.inputValue.length ? ' is-searching' : ''}`
+      }}
+    >
+      {!props.selectProps.inputValue.length && (
+        <components.Placeholder
+          {...props}
+          isFocused={props.isFocused}
+          getStyles={() => {}}
+          getClassNames={(name, props) => {
+            return 'placeholder-test';
+          }}
+          cx={(c, b, f, d) => {
+            return { className: b };
+          }}
+          className={'placeholder'}
+          innerProps={{ ...props.innerProps, className: 'select__placeholder' }}
+        >
+          {isMultiValue ? (
+            <span style={{ color: '#333333' }}>
+              Selected {props.selectProps.value.length}
+            </span>
+          ) : (
+            props.selectProps.placeholder
+          )}
+        </components.Placeholder>
+      )}
+
+      {React.Children.map(children, child =>
+        child && child.type !== Placeholder ? child : null
+      )}
+    </components.MultiValueContainer>
+  );
+};
+const Placeholder = props => {
+  return props.selectProps.placeholder;
+  return (
+    <components.Placeholder {...props} isFocused={true}>
       {props.selectProps.placeholder}
-    </Label>
-    {children}
-  </components.Control>
-);
+    </components.Placeholder>
+  );
+};
+
+const Option = optionHtml => props => {
+  const style = {};
+
+  const groupLabel = props.selectProps.formatGroupLabel(props);
+  if (groupLabel && typeof groupLabel !== 'string') {
+    const { active } = props.options.find(
+      group => group.tier === props.data.tier
+    );
+    if (!active) {
+      style.display = 'none';
+    }
+  }
+  return (
+    <span style={style}>
+      <components.Option {...props}>
+        {optionHtml(props)}
+        {props.children}
+      </components.Option>
+    </span>
+  );
+};
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -64,12 +136,17 @@ class SelectTemplate extends Component {
     async: false,
     loadOptions: null,
     onInit: false,
+    filterOption: false,
     onInputChange: false,
     valueForFirst: false,
     mustUpdate: false,
     formatGroupLabel: false,
+    closeMenuOnSelect: true,
+    hideSelectedOptions: false,
     getOptionLabel: false,
-    getOptionValue: false
+    getOptionValue: false,
+    menuIsOpen: false,
+    optionHtml: false
   };
 
   static propTypes = {
@@ -91,6 +168,7 @@ class SelectTemplate extends Component {
     defaultOptions: PropTypes.bool,
     inputValue: PropTypes.string,
     multi: PropTypes.bool,
+    menuIsOpen: PropTypes.bool,
     async: PropTypes.bool,
     loadOptions: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onInit: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
@@ -102,9 +180,13 @@ class SelectTemplate extends Component {
       PropTypes.bool
     ]),
     mustUpdate: PropTypes.bool,
+    closeMenuOnSelect: PropTypes.bool,
+    hideSelectedOptions: PropTypes.bool,
+    filterOption: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     formatGroupLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     getOptionLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    getOptionValue: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
+    getOptionValue: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    optionHtml: PropTypes.element
   };
 
   constructor(props) {
@@ -148,7 +230,7 @@ class SelectTemplate extends Component {
   }
 
   componentDidUpdate() {
-    const { value: stateValue, isFetching, valueForFirst } = this.state;
+    const { value: stateValue, isFetching, valueForFirst, loaded } = this.state;
     const {
       value: propsValue,
       trackValue,
@@ -167,8 +249,10 @@ class SelectTemplate extends Component {
         value: propsValue
       });
     }
+
     if (
       JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
+      !loaded &&
       valueForFirstProps !== false &&
       mustUpdate
     ) {
@@ -179,48 +263,49 @@ class SelectTemplate extends Component {
   setValueForFirst = () => {
     const { valueForFirst, async, generateOptions } = this.props;
     if (async && valueForFirst) {
-      this.setState({ disabled: true }, () => {
-        this.props
-          .loadOptions(valueForFirst, 'true')
-          .then(responseData => {
-            let formattedData = cloneDeep(responseData || []);
-            if (generateOptions) {
-              formattedData = generateOptions(formattedData);
-            }
-            const data = formattedData.filter(el => {
-              if (el.value && el.value.toString) {
-                if (Array.isArray(valueForFirst)) {
-                  if (
-                    valueForFirst
-                      .map(item => (item.toString ? item.toString() : ''))
-                      .indexOf(el.value.toString()) >= 0
-                  ) {
-                    return true;
-                  }
-                } else if (
-                  valueForFirst.toString &&
-                  el.value.toString() === valueForFirst.toString()
+      // this.setState({ disabled: true }, () => {
+      this.props
+        .loadOptions(valueForFirst, 'true')
+        .then(responseData => {
+          let formattedData = cloneDeep(responseData || []);
+          if (generateOptions) {
+            formattedData = generateOptions(formattedData);
+          }
+          const data = formattedData.filter(el => {
+            if (el.value && el.value.toString) {
+              if (Array.isArray(valueForFirst)) {
+                if (
+                  valueForFirst
+                    .map(item => (item.toString ? item.toString() : ''))
+                    .indexOf(el.value.toString()) >= 0
                 ) {
                   return true;
                 }
+              } else if (
+                valueForFirst.toString &&
+                el.value.toString() === valueForFirst.toString()
+              ) {
+                return true;
               }
-              return false;
-            });
-
-            let value = data;
-            if (!Array.isArray(valueForFirst)) {
-              value = data[0] ? data[0] : false;
             }
-            this.setState({
-              value,
-              valueForFirst,
-              disabled: false
-            });
-          })
-          .catch(() => {
-            this.setState({ disabled: false });
+            return false;
           });
-      });
+
+          let value = data;
+          if (!Array.isArray(valueForFirst)) {
+            value = data[0] ? data[0] : false;
+          }
+          this.setState({
+            value,
+            valueForFirst,
+            loaded: true,
+            disabled: false
+          });
+        })
+        .catch(() => {
+          this.setState({ disabled: false });
+        });
+      // });
     }
   };
 
@@ -240,29 +325,45 @@ class SelectTemplate extends Component {
     });
   };
 
-  handleOnChange = value => {
-    const { nameParams, async } = this.props;
+  handleOnChange = (value, action) => {
+    console.log(value, action)
+    const { nameParams, async, getOptionLabel, getOptionValue } = this.props;
     const { multi } = this.state;
-    let newValue = value;
-    let newLabel;
 
     if (multi && value && value.length) {
-      newValue = value.map(el => el.value);
-    } else if (value && (value.value || value.value === 0)) {
-      newValue = value.value;
-      newLabel = value.label;
+      return this.callbackOnChange(value, nameParams, value, action);
+    }
+    if (value && (value.value || value.value === 0)) {
+      return this.callbackOnChange(
+        value.value,
+        nameParams,
+        value.label,
+        action
+      );
     }
 
-    this.setState({
-      value: async ? value : newValue,
-      valueForFirst: null
-    });
-    this.props.onChange(newValue, nameParams, newLabel);
+    if (async) {
+      return this.callbackOnChange(value, nameParams, false, action);
+    }
+
+    return this.callbackOnChange(value, nameParams, false, action);
   };
 
-  handleInputChange = (filter = '', { action }) => {
+  callbackOnChange = (value, label, nameParams, action) => {
+    this.setState(
+      {
+        value,
+        valueForFirst: value
+      },
+      () => {
+        this.props.onChange(value, nameParams, label, action);
+      }
+    );
+  };
+
+  handleInputChange = (filter = '', { action, prevInputValue }) => {
     if (!this.props.async) {
-      if (action === 'input-change') {
+      if (action === 'input-change' || action === 'menu-close') {
         this.setState(prevState => {
           const { options } = prevState;
           const filteredOptions = this.filterOptions(options, filter);
@@ -277,9 +378,10 @@ class SelectTemplate extends Component {
   filterOptions = (options, filter) => {
     let newOptions = null;
     if (filter !== '') {
-      const regexpStart = new RegExp(`^${filter}`, 'i');
-      const regexpStartWord = new RegExp(`\\b${filter}`, 'i');
-      const regexpGlobal = new RegExp(filter, 'gi');
+      const filterEscapeChar = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regexpStart = new RegExp(`^${filterEscapeChar}`, 'i');
+      const regexpStartWord = new RegExp(`\\b${filterEscapeChar}`, 'i');
+      const regexpGlobal = new RegExp(filterEscapeChar, 'gi');
 
       // Ищем по value в начале строки
       newOptions = options.filter(option => regexpStart.test(option.label));
@@ -327,24 +429,39 @@ class SelectTemplate extends Component {
       onInputChange,
       formatGroupLabel,
       getOptionLabel,
-      getOptionValue
+      getOptionValue,
+      closeMenuOnSelect,
+      hideSelectedOptions,
+      optionHtml,
+      menuIsOpen,
+      filterOption,
+      filterFunc,
+      showMenuList
     } = this.props;
     let options =
       Array.isArray(filteredOptions) && filteredOptions.length
         ? filteredOptions
         : optionsState;
-    if (Object.keys(changeable).length) {
+    if (Object.keys(changeable).length && !getOptionValue) {
       options = options.filter(
         obj =>
           obj[changeable.key] !==
           this.props[changeable.storeName][changeable.storeField]
       );
     }
-    options = options.filter(this.props.filterFunc);
+    if (getOptionValue) {
+      options = options.map(item => {
+        const newItem = { ...item };
+        newItem.options = newItem.options.filter(filterFunc);
+        return newItem;
+      });
+    } else {
+      options = options.filter(filterFunc);
+    }
 
     let curValue = value;
     if (multi && value && !creatable) {
-      if (value.length && !this.debounceLoadOptions) {
+      if (value.length && !this.debounceLoadOptions && !getOptionValue) {
         curValue = optionsState.filter(
           option => value.filter(valOption => option.value === valOption).length
         );
@@ -373,9 +490,66 @@ class SelectTemplate extends Component {
       isClearable: clearable,
       placeholder,
       onOpen: this.onOpenSelect,
-      noOptionsMessage
-      // components: { Control }
+      noOptionsMessage,
+      hideSelectedOptions,
+      closeMenuOnSelect,
+      components: {}
     };
+
+    if (this.props.onInputChange) {
+      console.log(props);
+    }
+
+    if (menuIsOpen) {
+      props.menuIsOpen = menuIsOpen;
+    }
+
+    if (showMenuList) {
+      props.components.MenuList = props => {
+        let opts = value || [];
+        if (!Array.isArray(value)) {
+          opts = [value];
+        }
+        return (
+          <>
+            <span
+              className={`offfer-top__selected${
+                opts.filter(v => v).length ? '' : ' empty'
+              }`}
+            >
+              {opts
+                .filter(v => v)
+                .map(option =>
+                  Option(() => {})({
+                    ...props,
+                    children: option.label,
+                    data: option,
+                    type: 'option',
+                    ...option,
+                    className: 'selected-option',
+                    isSelected: true,
+                    innerProps: {
+                      onClick: () => {
+                        this.handleOnChange(
+                          value.filter(val => val.value !== option.value)
+                        );
+                      }
+                    }
+                  })
+                )}
+            </span>
+            <components.MenuList {...props}>
+              {props.children}
+            </components.MenuList>
+          </>
+        );
+      };
+    }
+
+    if (optionHtml) {
+      props.components.Option = Option(optionHtml);
+      props.components.MultiValueContainer = CustomMultiValueContainer;
+    }
 
     if (formatGroupLabel) {
       props.formatGroupLabel = formatGroupLabel;
@@ -387,6 +561,10 @@ class SelectTemplate extends Component {
 
     if (getOptionValue) {
       props.getOptionValue = getOptionValue;
+    }
+
+    if (filterOption) {
+      props.filterOption = filterOption;
     }
 
     if (async) {
