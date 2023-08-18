@@ -326,7 +326,6 @@ class SelectTemplate extends Component {
   };
 
   handleOnChange = (value, action) => {
-    console.log(value, action)
     const { nameParams, async, getOptionLabel, getOptionValue } = this.props;
     const { multi } = this.state;
 
@@ -334,12 +333,7 @@ class SelectTemplate extends Component {
       return this.callbackOnChange(value, nameParams, value, action);
     }
     if (value && (value.value || value.value === 0)) {
-      return this.callbackOnChange(
-        value.value,
-        nameParams,
-        value.label,
-        action
-      );
+      return this.callbackOnChange(value, nameParams, value, action);
     }
 
     if (async) {
@@ -353,10 +347,30 @@ class SelectTemplate extends Component {
     this.setState(
       {
         value,
-        valueForFirst: value
+        valueForFirst: null
       },
       () => {
-        this.props.onChange(value, nameParams, label, action);
+        const { getOptionValue } = this.props;
+        let valueForResponse = value;
+
+        if (Array.isArray(valueForResponse)) {
+          valueForResponse = valueForResponse.map(option => {
+            if (getOptionValue) {
+              return getOptionValue(option);
+            }
+
+            return option.value;
+          });
+        } else {
+          if (valueForResponse) {
+            if (getOptionValue) {
+              valueForResponse = getOptionValue(valueForResponse);
+            } else {
+              valueForResponse = valueForResponse.value;
+            }
+          }
+        }
+        this.props.onChange(valueForResponse, nameParams, label, action);
       }
     );
   };
