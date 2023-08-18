@@ -544,8 +544,12 @@ class SelectTemplate extends Component {
                     isSelected: true,
                     innerProps: {
                       onClick: () => {
+                        let opts = value || [];
+                        if (!Array.isArray(value)) {
+                          opts = [value];
+                        }
                         this.handleOnChange(
-                          value.filter(val => val.value !== option.value)
+                          opts.filter(val => val.value !== option.value)
                         );
                       }
                     }
