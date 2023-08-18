@@ -7,7 +7,7 @@ import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
 import styled from 'styled-components';
 
-// import './index.sass';
+import './index.sass';
 
 // const Label = styled.label`
 //   left: 12px;
