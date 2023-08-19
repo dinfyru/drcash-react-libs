@@ -49,7 +49,10 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
       innerProps={{
         ...props.innerProps,
         className: `select__multi-value${
-          props.selectProps.value.length === 1 ? ' is-single' : ''
+          !Array.isArray(props.selectProps.value) ||
+          props.selectProps.value.length === 1
+            ? ' is-single'
+            : ''
         }${props.selectProps.inputValue.length ? ' is-searching' : ''}`
       }}
     >
@@ -77,8 +80,9 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
         </components.Placeholder>
       )}
 
-      {React.Children.map(children, child =>
-        child && child.type !== Placeholder ? child : null
+      {React.Children.map(
+        children,
+        child => (child && child.type !== Placeholder ? child : null)
       )}
     </components.MultiValueContainer>
   );
@@ -113,6 +117,16 @@ const Option = optionHtml => props => {
     </span>
   );
 };
+
+function once(f) {
+  let called = false;
+  return function() {
+    if (!called) {
+      called = true;
+      return f.apply(this, arguments);
+    }
+  };
+}
 
 class SelectTemplate extends Component {
   static defaultProps = {
@@ -200,9 +214,61 @@ class SelectTemplate extends Component {
       disabled: false,
       inputValue: '',
       filteredOptions: [],
-      isFetching: props.isFetching && (!props.options || !props.options.length),
+      isFetching: props.isFetching,
       valueForFirst: null
     };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      value: stateValue,
+      isFetching,
+      valueForFirst,
+      loaded,
+      disabled
+    } = prevState;
+    const {
+      value: propsValue,
+      trackValue,
+      options,
+      valueForFirst: valueForFirstProps,
+      loadOptions,
+      mustUpdate,
+      setValue,
+      async,
+      formatGroupLabel
+    } = nextProps;
+
+    const newState = {};
+
+    if (isFetching && Array.isArray(options) && options.length) {
+      newState.options = options;
+      newState.isFetching = false;
+
+      if (setValue && options && options.length) {
+        const random = Math.floor(Math.random() * (options.length - 0));
+        newState.value =
+          setValue === 2 ? options[random].value : options[0].value;
+      }
+    }
+
+    if (stateValue !== propsValue && !async && !loadOptions) {
+      newState.value = propsValue;
+    }
+
+    if (
+      !stateValue &&
+      valueForFirstProps &&
+      nextProps.loadOptions &&
+      !disabled
+    ) {
+      newState.l = once(() =>
+        nextProps.loadOptions(valueForFirstProps, 'true')
+      );
+      newState.disabled = true;
+    }
+
+    return newState;
   }
 
   componentDidMount() {
@@ -221,101 +287,68 @@ class SelectTemplate extends Component {
       };
       this.debounceLoadOptions = debounce(loadOptions, 300);
     }
-
-    this.setValueForFirst();
-    this.setValue();
-    if (typeof this.props.onInit === 'function') {
-      this.props.onInit({ setValueForFirst: this.setValueForFirst });
-    }
   }
 
   componentDidUpdate() {
-    const { value: stateValue, isFetching, valueForFirst, loaded } = this.state;
-    const {
-      value: propsValue,
-      trackValue,
-      options,
-      valueForFirst: valueForFirstProps,
-      loadOptions,
-      mustUpdate
-    } = this.props;
+    const { disabled, l } = this.state;
 
-    if (isFetching && Object.keys(options).length) {
-      this.setValue();
-      this.completeAsyncLoading();
-    }
-    if (stateValue !== propsValue && trackValue && !loadOptions) {
-      this.setState({
-        value: propsValue
-      });
-    }
-
-    if (
-      JSON.stringify(valueForFirst) !== JSON.stringify(valueForFirstProps) &&
-      !loaded &&
-      valueForFirstProps !== false &&
-      mustUpdate
-    ) {
-      this.setValueForFirst();
+    if (l && disabled) {
+      const loadingOptions = l();
+      if (loadingOptions) {
+        this.setValueForFirst(loadingOptions);
+      }
     }
   }
 
-  setValueForFirst = () => {
+  setValueForFirst = loadOptions => {
+    const { disabled } = this.state;
     const { valueForFirst, async, generateOptions } = this.props;
-    if (async && valueForFirst) {
-      // this.setState({ disabled: true }, () => {
-      this.props
-        .loadOptions(valueForFirst, 'true')
-        .then(responseData => {
-          let formattedData = cloneDeep(responseData || []);
-          if (generateOptions) {
-            formattedData = generateOptions(formattedData);
-          }
-          const data = formattedData.filter(el => {
-            if (el.value && el.value.toString) {
-              if (Array.isArray(valueForFirst)) {
-                if (
-                  valueForFirst
-                    .map(item => (item.toString ? item.toString() : ''))
-                    .indexOf(el.value.toString()) >= 0
-                ) {
-                  return true;
-                }
-              } else if (
-                valueForFirst.toString &&
-                el.value.toString() === valueForFirst.toString()
+
+    if (!disabled || !loadOptions) return;
+    loadOptions
+      .then(responseData => {
+        let formattedData = cloneDeep(responseData || []);
+        if (generateOptions) {
+          formattedData = generateOptions(formattedData);
+        }
+        const data = formattedData.filter(el => {
+          if (el.value && el.value.toString) {
+            if (Array.isArray(valueForFirst)) {
+              if (
+                valueForFirst
+                  .map(item => (item.toString ? item.toString() : ''))
+                  .indexOf(el.value.toString()) >= 0
               ) {
                 return true;
               }
+            } else if (
+              valueForFirst.toString &&
+              el.value.toString() === valueForFirst.toString()
+            ) {
+              return true;
             }
-            return false;
-          });
-
-          let value = data;
-          if (!Array.isArray(valueForFirst)) {
-            value = data[0] ? data[0] : false;
           }
-          this.setState({
-            value,
-            valueForFirst,
-            loaded: true,
-            disabled: false
-          });
-        })
-        .catch(() => {
-          this.setState({ disabled: false });
+          return false;
         });
-      // });
-    }
-  };
 
-  setValue = () => {
-    const { setValue, options } = this.props;
-    if (setValue && options && options.length) {
-      const random = Math.floor(Math.random() * (options.length - 0));
-      const value = setValue === 2 ? options[random].value : options[0].value;
-      this.handleOnChange(value);
-    }
+        let value = data;
+        if (!Array.isArray(valueForFirst)) {
+          value = data[0] ? data[0] : false;
+        }
+        this.setState({
+          value,
+          valueForFirst,
+          loaded: true,
+          disabled: false,
+          l: null
+        });
+      })
+      .catch(() => {
+        this.setState({
+          disabled: false,
+          l: null
+        });
+      });
   };
 
   completeAsyncLoading = () => {
@@ -352,7 +385,6 @@ class SelectTemplate extends Component {
       () => {
         const { getOptionValue } = this.props;
         let valueForResponse = value;
-
         if (Array.isArray(valueForResponse)) {
           valueForResponse = valueForResponse.map(option => {
             if (getOptionValue) {
@@ -450,6 +482,7 @@ class SelectTemplate extends Component {
       menuIsOpen,
       filterOption,
       filterFunc,
+      isFetching: isFetchingProps,
       showMenuList
     } = this.props;
     let options =
@@ -463,7 +496,7 @@ class SelectTemplate extends Component {
           this.props[changeable.storeName][changeable.storeField]
       );
     }
-    if (getOptionValue) {
+    if (formatGroupLabel) {
       options = options.map(item => {
         const newItem = { ...item };
         newItem.options = newItem.options.filter(filterFunc);
@@ -510,10 +543,6 @@ class SelectTemplate extends Component {
       components: {}
     };
 
-    if (this.props.onInputChange) {
-      console.log(props);
-    }
-
     if (menuIsOpen) {
       props.menuIsOpen = menuIsOpen;
     }
@@ -531,30 +560,28 @@ class SelectTemplate extends Component {
                 opts.filter(v => v).length ? '' : ' empty'
               }`}
             >
-              {opts
-                .filter(v => v)
-                .map(option =>
-                  Option(() => {})({
-                    ...props,
-                    children: option.label,
-                    data: option,
-                    type: 'option',
-                    ...option,
-                    className: 'selected-option',
-                    isSelected: true,
-                    innerProps: {
-                      onClick: () => {
-                        let opts = value || [];
-                        if (!Array.isArray(value)) {
-                          opts = [value];
-                        }
-                        this.handleOnChange(
-                          opts.filter(val => val.value !== option.value)
-                        );
+              {opts.filter(v => v).map(option =>
+                Option(() => {})({
+                  ...props,
+                  children: option.label,
+                  data: option,
+                  type: 'option',
+                  ...option,
+                  className: 'selected-option',
+                  isSelected: true,
+                  innerProps: {
+                    onClick: () => {
+                      let opts = value || [];
+                      if (!Array.isArray(value)) {
+                        opts = [value];
                       }
+                      this.handleOnChange(
+                        opts.filter(val => val.value !== option.value)
+                      );
                     }
-                  })
-                )}
+                  }
+                })
+              )}
             </span>
             <components.MenuList {...props}>
               {props.children}
