@@ -266,6 +266,7 @@ class SelectTemplate extends Component {
         nextProps.loadOptions(valueForFirstProps, 'true')
       );
       newState.disabled = true;
+      // newState.valueForFirst = valueForFirstProps;
     }
 
     return newState;
@@ -359,24 +360,23 @@ class SelectTemplate extends Component {
   };
 
   handleOnChange = (value, action) => {
-    const { nameParams, async, getOptionLabel, getOptionValue } = this.props;
-    const { multi } = this.state;
+    const { nameParams, maxSizeValue } = this.props;
+    const { multi, value: stateValue } = this.state;
 
-    if (multi && value && value.length) {
-      return this.callbackOnChange(value, nameParams, value, action);
-    }
-    if (value && (value.value || value.value === 0)) {
-      return this.callbackOnChange(value, nameParams, value, action);
-    }
-
-    if (async) {
-      return this.callbackOnChange(value, nameParams, false, action);
+    if (action && action.action === 'select-option' && multi) {
+      if (
+        maxSizeValue &&
+        Array.isArray(stateValue) &&
+        stateValue.length >= maxSizeValue
+      ) {
+        return;
+      }
     }
 
     return this.callbackOnChange(value, nameParams, false, action);
   };
 
-  callbackOnChange = (value, label, nameParams, action) => {
+  callbackOnChange = (value, nameParams, label, action) => {
     this.setState(
       {
         value,
@@ -469,6 +469,7 @@ class SelectTemplate extends Component {
       searchable,
       clearable,
       placeholder,
+
       defaultOptions,
       async,
       creatable,
@@ -480,6 +481,7 @@ class SelectTemplate extends Component {
       hideSelectedOptions,
       optionHtml,
       menuIsOpen,
+      maxSizeValue,
       filterOption,
       filterFunc,
       isFetching: isFetchingProps,
@@ -542,6 +544,16 @@ class SelectTemplate extends Component {
       closeMenuOnSelect,
       components: {}
     };
+
+    if (
+      maxSizeValue &&
+      value &&
+      Array.isArray(value) &&
+      value.length >= maxSizeValue
+    ) {
+      props.isSearchable = false;
+      props.noOptionsMessage = () => `Maximum selected values reached`;
+    }
 
     if (menuIsOpen) {
       props.menuIsOpen = menuIsOpen;
