@@ -206,11 +206,11 @@ class SelectTemplate extends Component {
   constructor(props) {
     super(props);
 
-    const { value } = props;
+    const { value, loadOptions } = props;
     this.state = {
       multi: props.multi,
       options: [...props.options],
-      value,
+      value: !loadOptions ? value : undefined,
       disabled: false,
       inputValue: '',
       filteredOptions: [],
@@ -516,7 +516,10 @@ class SelectTemplate extends Component {
         );
       }
     } else if ((value || value === 0) && !async && !creatable) {
-      curValue = options.filter(option => option.value === value);
+      curValue = options.filter(
+        option =>
+          (getOptionValue ? getOptionValue(option) : option.value) === value
+      );
     }
 
     if (creatable && multi && Array.isArray(value)) {
@@ -552,7 +555,7 @@ class SelectTemplate extends Component {
       value.length >= maxSizeValue
     ) {
       props.isSearchable = false;
-      props.noOptionsMessage = () => `Maximum selected values reached`;
+      props.noOptionsMessage = () => 'Maximum selected values reached';
     }
 
     if (menuIsOpen) {
