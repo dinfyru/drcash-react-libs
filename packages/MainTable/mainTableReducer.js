@@ -130,12 +130,16 @@ const mainTableReducer = (state = initialState, action) => {
   }
 
   if (action.type === MT_CHANGE_FILTERS_VALUE) {
-    const { reducer, data } = action;
+    const { reducer, data, firstLoad } = action;
     const prevState = cloneDeep(state);
     const props = {
-      ...prevState[reducer],
-      filtersValue: { ...prevState[reducer].filtersValue, ...data }
+      ...prevState[reducer]
     };
+    if (firstLoad) {
+      props.filtersValue = { ...data };
+    } else {
+      props.filtersValue = { ...prevState[reducer].filtersValue, ...data };
+    }
     Object.entries(props.filtersValue).forEach(([key, value]) => {
       if (value === false || value === undefined) {
         delete props.filtersValue[key];
@@ -219,7 +223,10 @@ const mainTableReducer = (state = initialState, action) => {
       const {
         payload: {
           payload: { items, item },
-          _meta = { is_last_page: false, total: 0 }
+          _meta = {
+            is_last_page: false,
+            total: 0
+          }
         },
         meta: { reloadItemsOnRequest }
       } = action;

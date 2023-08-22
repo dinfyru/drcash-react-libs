@@ -5,7 +5,6 @@ import Creatable from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
-import styled from 'styled-components';
 
 import './index.sass';
 
