@@ -67,7 +67,10 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
             return { className: b };
           }}
           className={'placeholder'}
-          innerProps={{ ...props.innerProps, className: 'select__placeholder' }}
+          innerProps={{
+            ...props.innerProps,
+            className: 'select__placeholder'
+          }}
         >
           {isMultiValue ? (
             <span style={{ color: '#333333' }}>
@@ -79,9 +82,8 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
         </components.Placeholder>
       )}
 
-      {React.Children.map(
-        children,
-        child => (child && child.type !== Placeholder ? child : null)
+      {React.Children.map(children, child =>
+        child && child.type !== Placeholder ? child : null
       )}
     </components.MultiValueContainer>
   );
@@ -103,7 +105,7 @@ const Option = optionHtml => props => {
     const { active } = props.options.find(
       group => group.tier === props.data.tier
     );
-    if (!active) {
+    if (!active && !props.selectProps.inputValue) {
       style.display = 'none';
     }
   }
@@ -246,8 +248,8 @@ class SelectTemplate extends Component {
 
       if (setValue && options && options.length) {
         const random = Math.floor(Math.random() * (options.length - 0));
-        newState.value =
-          setValue === 2 ? options[random].value : options[0].value;
+        newState.value = setValue === 2 ? options[random] : options[0];
+        nextProps.onChange(newState.value.value);
       }
     }
 
@@ -273,19 +275,16 @@ class SelectTemplate extends Component {
 
   componentDidMount() {
     const { props } = this;
+    const { disabled, l } = this.state;
     if (props.loadOptions && props.async) {
-      const loadOptions = (inputValue = '') => {
-        return props.loadOptions(inputValue).then(items => {
-          let formattedData = cloneDeep(items || []);
-          const { generateOptions } = this.props;
-          if (generateOptions) {
-            formattedData = generateOptions(formattedData);
-          }
+      this.debounceLoadOptions = debounce(props.loadOptions, 300);
+    }
 
-          return formattedData;
-        });
-      };
-      this.debounceLoadOptions = debounce(loadOptions, 300);
+    if (l && disabled) {
+      const loadingOptions = l();
+      if (loadingOptions) {
+        this.setValueForFirst(loadingOptions);
+      }
     }
   }
 
@@ -421,6 +420,7 @@ class SelectTemplate extends Component {
   };
 
   filterOptions = (options, filter) => {
+    const { getOptionLabel, getOptionValue } = this.props;
     let newOptions = null;
     if (filter !== '') {
       const filterEscapeChar = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -429,24 +429,52 @@ class SelectTemplate extends Component {
       const regexpGlobal = new RegExp(filterEscapeChar, 'gi');
 
       // Ищем по value в начале строки
-      newOptions = options.filter(option => regexpStart.test(option.label));
+      newOptions = options.filter(option =>
+        regexpStart.test(getOptionValue ? getOptionValue(option) : option.value)
+      );
       // Ищем по label в начале слова
       newOptions = [
         ...newOptions,
-        ...options.filter(
-          option =>
-            regexpStartWord.test(option.label) &&
-            !newOptions.find(elem => elem.value === option.value)
-        )
+        ...options.filter(option => {
+          let label = getOptionLabel ? getOptionLabel(option) : option.label;
+          if (
+            typeof label !== 'string' &&
+            label.props &&
+            label.props.children
+          ) {
+            label = label.props.children.join('');
+          }
+          return (
+            regexpStartWord.test(label) &&
+            !newOptions.find(
+              elem =>
+                (getOptionValue ? getOptionValue(elem) : elem.value) ===
+                (getOptionValue ? getOptionValue(option) : option.value)
+            )
+          );
+        })
       ];
       // Ищем по label в начале строки
       newOptions = [
         ...newOptions,
-        ...options.filter(
-          option =>
-            regexpGlobal.test(option.label) &&
-            !newOptions.find(elem => elem.value === option.value)
-        )
+        ...options.filter(option => {
+          let label = getOptionLabel ? getOptionLabel(option) : option.label;
+          if (
+            typeof label !== 'string' &&
+            label.props &&
+            label.props.children
+          ) {
+            label = label.props.children.join('');
+          }
+          return (
+            regexpGlobal.test(label) &&
+            !newOptions.find(
+              elem =>
+                (getOptionValue ? getOptionValue(elem) : elem.value) ===
+                (getOptionValue ? getOptionValue(option) : option.value)
+            )
+          );
+        })
       ];
     }
     return newOptions || options;
@@ -547,6 +575,26 @@ class SelectTemplate extends Component {
       components: {}
     };
 
+    if (!async && searchable) {
+      props.filterOption = createFilter({
+        ignoreCase: true,
+        ignoreAccents: true,
+        trim: true,
+        stringify: option => {
+          let label = option.label;
+          if (
+            typeof label !== 'string' &&
+            label.props &&
+            label.props.children
+          ) {
+            label = label.props.children.join('');
+          }
+          return label;
+        },
+        matchFrom: 'any'
+      });
+    }
+
     if (
       maxSizeValue &&
       value &&
@@ -574,28 +622,30 @@ class SelectTemplate extends Component {
                 opts.filter(v => v).length ? '' : ' empty'
               }`}
             >
-              {opts.filter(v => v).map(option =>
-                Option(() => {})({
-                  ...props,
-                  children: option.label,
-                  data: option,
-                  type: 'option',
-                  ...option,
-                  className: 'selected-option',
-                  isSelected: true,
-                  innerProps: {
-                    onClick: () => {
-                      let opts = value || [];
-                      if (!Array.isArray(value)) {
-                        opts = [value];
+              {opts
+                .filter(v => v)
+                .map(option =>
+                  Option(() => {})({
+                    ...props,
+                    children: option.label,
+                    data: option,
+                    type: 'option',
+                    ...option,
+                    className: 'selected-option',
+                    isSelected: true,
+                    innerProps: {
+                      onClick: () => {
+                        let opts = value || [];
+                        if (!Array.isArray(value)) {
+                          opts = [value];
+                        }
+                        this.handleOnChange(
+                          opts.filter(val => val.value !== option.value)
+                        );
                       }
-                      this.handleOnChange(
-                        opts.filter(val => val.value !== option.value)
-                      );
                     }
-                  }
-                })
-              )}
+                  })
+                )}
             </span>
             <components.MenuList {...props}>
               {props.children}
