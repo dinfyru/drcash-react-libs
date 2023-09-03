@@ -82,8 +82,9 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
         </components.Placeholder>
       )}
 
-      {React.Children.map(children, child =>
-        child && child.type !== Placeholder ? child : null
+      {React.Children.map(
+        children,
+        child => (child && child.type !== Placeholder ? child : null)
       )}
     </components.MultiValueContainer>
   );
@@ -206,6 +207,7 @@ class SelectTemplate extends Component {
 
   constructor(props) {
     super(props);
+    this.selectRef = React.createRef();
 
     const { value, loadOptions } = props;
     this.state = {
@@ -417,6 +419,8 @@ class SelectTemplate extends Component {
     }
 
     this.setState({ inputValue: filter });
+
+    return filter;
   };
 
   filterOptions = (options, filter) => {
@@ -622,30 +626,28 @@ class SelectTemplate extends Component {
                 opts.filter(v => v).length ? '' : ' empty'
               }`}
             >
-              {opts
-                .filter(v => v)
-                .map(option =>
-                  Option(() => {})({
-                    ...props,
-                    children: option.label,
-                    data: option,
-                    type: 'option',
-                    ...option,
-                    className: 'selected-option',
-                    isSelected: true,
-                    innerProps: {
-                      onClick: () => {
-                        let opts = value || [];
-                        if (!Array.isArray(value)) {
-                          opts = [value];
-                        }
-                        this.handleOnChange(
-                          opts.filter(val => val.value !== option.value)
-                        );
+              {opts.filter(v => v).map(option =>
+                Option(() => {})({
+                  ...props,
+                  children: option.label,
+                  data: option,
+                  type: 'option',
+                  ...option,
+                  className: 'selected-option',
+                  isSelected: true,
+                  innerProps: {
+                    onClick: () => {
+                      let opts = value || [];
+                      if (!Array.isArray(value)) {
+                        opts = [value];
                       }
+                      this.handleOnChange(
+                        opts.filter(val => val.value !== option.value)
+                      );
                     }
-                  })
-                )}
+                  }
+                })
+              )}
             </span>
             <components.MenuList {...props}>
               {props.children}
@@ -691,6 +693,7 @@ class SelectTemplate extends Component {
         />
       );
     }
+
     if (async) {
       return (
         <AsyncSelect
@@ -699,6 +702,13 @@ class SelectTemplate extends Component {
           debounceInterval={300}
           // components={{ Control }}
           {...props}
+          ref={ref => (this.selectRef.current = ref)}
+          onFocus={() =>
+            this.selectRef.current.onInputChange(inputValue, {
+              prevInputValue: '',
+              action: 'set-value'
+            })
+          }
         />
       );
     }
