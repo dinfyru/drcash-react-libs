@@ -82,9 +82,8 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
         </components.Placeholder>
       )}
 
-      {React.Children.map(
-        children,
-        child => (child && child.type !== Placeholder ? child : null)
+      {React.Children.map(children, child =>
+        child && child.type !== Placeholder ? child : null
       )}
     </components.MultiValueContainer>
   );
@@ -265,10 +264,14 @@ class SelectTemplate extends Component {
       nextProps.loadOptions &&
       !disabled
     ) {
-      newState.l = once(() =>
-        nextProps.loadOptions(valueForFirstProps, 'true')
-      );
-      newState.disabled = true;
+      if (!prevState.isActionClear) {
+        newState.l = once(() =>
+          nextProps.loadOptions(valueForFirstProps, 'true')
+        );
+        newState.disabled = true;
+      } else {
+        newState.isActionClear = false;
+      }
       // newState.valueForFirst = valueForFirstProps;
     }
 
@@ -371,6 +374,18 @@ class SelectTemplate extends Component {
       ) {
         return;
       }
+    }
+
+    if (action && action.action === 'clear') {
+      this.setState(
+        {
+          isActionClear: true
+        },
+        () => {
+          this.callbackOnChange(value, nameParams, false, action);
+        }
+      );
+      return;
     }
 
     return this.callbackOnChange(value, nameParams, false, action);
@@ -626,28 +641,30 @@ class SelectTemplate extends Component {
                 opts.filter(v => v).length ? '' : ' empty'
               }`}
             >
-              {opts.filter(v => v).map(option =>
-                Option(() => {})({
-                  ...props,
-                  children: option.label,
-                  data: option,
-                  type: 'option',
-                  ...option,
-                  className: 'selected-option',
-                  isSelected: true,
-                  innerProps: {
-                    onClick: () => {
-                      let opts = value || [];
-                      if (!Array.isArray(value)) {
-                        opts = [value];
+              {opts
+                .filter(v => v)
+                .map(option =>
+                  Option(() => {})({
+                    ...props,
+                    children: option.label,
+                    data: option,
+                    type: 'option',
+                    ...option,
+                    className: 'selected-option',
+                    isSelected: true,
+                    innerProps: {
+                      onClick: () => {
+                        let opts = value || [];
+                        if (!Array.isArray(value)) {
+                          opts = [value];
+                        }
+                        this.handleOnChange(
+                          opts.filter(val => val.value !== option.value)
+                        );
                       }
-                      this.handleOnChange(
-                        opts.filter(val => val.value !== option.value)
-                      );
                     }
-                  }
-                })
-              )}
+                  })
+                )}
             </span>
             <components.MenuList {...props}>
               {props.children}
