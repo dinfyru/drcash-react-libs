@@ -427,7 +427,19 @@ class SelectTemplate extends Component {
       if (action === 'input-change' || action === 'menu-close') {
         this.setState(prevState => {
           const { options } = prevState;
-          const filteredOptions = this.filterOptions(options, filter);
+          let filteredOptions;
+
+          if (this.props.formatGroupLabel) {
+            filteredOptions = options.map(item => {
+              const newItem = { ...item };
+              newItem.options = this.filterOptions(newItem.options, filter);
+              return newItem;
+            });
+          } else {
+            filteredOptions = this.filterOptions(options, filter);
+          }
+
+          console.log(options, filteredOptions)
           return { filteredOptions };
         });
       }
@@ -496,6 +508,7 @@ class SelectTemplate extends Component {
         })
       ];
     }
+
     return newOptions || options;
   };
 
