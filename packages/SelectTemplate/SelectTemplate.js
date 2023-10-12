@@ -7,7 +7,7 @@ import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
 import styled from 'styled-components';
 
-import './index.sass';
+// import './index.sass';
 
 const Label = styled.label`
   left: 12px;
@@ -126,6 +126,7 @@ class SelectTemplate extends Component {
     setValue: 0,
     options: [],
     placeholder: 'Выберите значение',
+    label: false,
     className: 'select',
     isFetching: false,
     changeable: {},
@@ -166,6 +167,7 @@ class SelectTemplate extends Component {
     searchable: PropTypes.bool,
     filterFunc: PropTypes.func,
     placeholder: PropTypes.string,
+    label: PropTypes.bool,
     noOptionsMessage: PropTypes.func,
     isFetching: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -192,11 +194,12 @@ class SelectTemplate extends Component {
     formatGroupLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     getOptionLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     getOptionValue: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    optionHtml: PropTypes.element
+    optionHtml: PropTypes.oneOfType([PropTypes.element, PropTypes.bool]),
   };
 
   constructor(props) {
     super(props);
+    this.selectRef = React.createRef();
 
     const { value, loadOptions } = props;
     this.state = {
@@ -254,10 +257,14 @@ class SelectTemplate extends Component {
       nextProps.loadOptions &&
       !disabled
     ) {
-      newState.l = once(() =>
-        nextProps.loadOptions(valueForFirstProps, 'true')
-      );
-      newState.disabled = true;
+      if (!prevState.isActionClear) {
+        newState.l = once(() =>
+          nextProps.loadOptions(valueForFirstProps, 'true')
+        );
+        newState.disabled = true;
+      } else {
+        newState.isActionClear = false;
+      }
       // newState.valueForFirst = valueForFirstProps;
     }
 
@@ -362,6 +369,18 @@ class SelectTemplate extends Component {
       }
     }
 
+    if (action && action.action === 'clear') {
+      this.setState(
+        {
+          isActionClear: true
+        },
+        () => {
+          this.callbackOnChange(value, nameParams, false, action);
+        }
+      );
+      return;
+    }
+
     return this.callbackOnChange(value, nameParams, false, action);
   };
 
@@ -401,13 +420,27 @@ class SelectTemplate extends Component {
       if (action === 'input-change' || action === 'menu-close') {
         this.setState(prevState => {
           const { options } = prevState;
-          const filteredOptions = this.filterOptions(options, filter);
+          let filteredOptions;
+
+          if (this.props.formatGroupLabel) {
+            filteredOptions = options.map(item => {
+              const newItem = { ...item };
+              newItem.options = this.filterOptions(newItem.options, filter);
+              return newItem;
+            });
+          } else {
+            filteredOptions = this.filterOptions(options, filter);
+          }
+
+          console.log(options, filteredOptions)
           return { filteredOptions };
         });
       }
     }
 
     this.setState({ inputValue: filter });
+
+    return filter;
   };
 
   filterOptions = (options, filter) => {
@@ -468,6 +501,7 @@ class SelectTemplate extends Component {
         })
       ];
     }
+
     return newOptions || options;
   };
 
@@ -487,6 +521,7 @@ class SelectTemplate extends Component {
       searchable,
       clearable,
       placeholder,
+      label,
 
       defaultOptions,
       async,
@@ -667,6 +702,10 @@ class SelectTemplate extends Component {
       props.filterOption = filterOption;
     }
 
+    if (label) {
+      props.components.Control = Control;
+    }
+
     if (async) {
       props.defaultOptions = defaultOptions;
       if (this.debounceLoadOptions) {
@@ -678,18 +717,24 @@ class SelectTemplate extends Component {
       return (
         <Creatable
           {...props}
-          // components={{ Control }}
         />
       );
     }
+
     if (async) {
       return (
         <AsyncSelect
           inputValue={inputValue}
           cacheOptions
           debounceInterval={300}
-          // components={{ Control }}
           {...props}
+          ref={ref => (this.selectRef.current = ref)}
+          onFocus={() =>
+            this.selectRef.current.onInputChange(inputValue, {
+              prevInputValue: '',
+              action: 'set-value'
+            })
+          }
         />
       );
     }
@@ -697,7 +742,6 @@ class SelectTemplate extends Component {
     return (
       <Select
         {...props}
-        // components={{ Control }}
       />
     );
   }
