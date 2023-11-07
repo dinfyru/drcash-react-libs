@@ -134,6 +134,7 @@ const TableComponent = (props) => {
         <THead
           template={filteredTemplate}
           titleTemplate={titleTemplate}
+          visibleColumns={visibleColumns}
           getItems={getItems}
           reducer={reducer}
           filtersValue={filtersValue}
