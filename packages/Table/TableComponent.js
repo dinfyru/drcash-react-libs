@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'debounce-promise';
 
-import TTitle from './TTitle/TTitle';
 import THead from './THead/THead';
 import TBody from './TBody/TBody';
 import TFoot from './TFoot/TFoot';
@@ -132,12 +131,6 @@ const TableComponent = (props) => {
       onTouchMove={lazyLoad}
     >
       <table>
-        {!!titleTemplate.length && (
-          <TTitle
-            titleTemplate={titleTemplate}
-            visibleColumns={visibleColumns}
-          />
-        )}
         <THead
           template={filteredTemplate}
           titleTemplate={titleTemplate}

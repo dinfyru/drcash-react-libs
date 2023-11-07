@@ -15,16 +15,20 @@ const TTitle = ({
         value
       } = column;
       const columns = [...column.columns];
+      let colSpan = 0;
       let visible;
       if (visibleColumns) {
         columns.forEach(() => {
-          if (visibleColumns[columnI]) visible = true;
+          if (visibleColumns[columnI]) {
+            colSpan++;
+            visible = true;
+          }
           columnI++;
         });
       }
       if (!visibleColumns || visible) {
         const th = (
-          <th key={index} js-title-index={index} {...props}>
+          <th key={index} js-title-index={index} colSpan={colSpan} {...props}>
             <span>{value}</span>
           </th>
         );
@@ -37,13 +41,11 @@ const TTitle = ({
 
   const data = generateFromTemplate();
   return (
-    <thead>
-      <tr>
-        <th className="padding-table">&nbsp;</th>
-        {data}
-        <th className="padding-table">&nbsp;</th>
-      </tr>
-    </thead>
+    <tr className="js-table__grouped-titles">
+      <th className="padding-table">&nbsp;</th>
+      {data}
+      <th className="padding-table">&nbsp;</th>
+    </tr>
   );
 };
 

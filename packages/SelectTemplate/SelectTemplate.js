@@ -462,7 +462,6 @@ class SelectTemplate extends Component {
             filteredOptions = this.filterOptions(options, filter);
           }
 
-          console.log(options, filteredOptions);
           return { filteredOptions };
         });
       }

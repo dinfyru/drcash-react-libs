@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 import classname from 'classnames';
+import TTitle from './TTitle/TTitle';
 
 const ORDER_BY_DESC = 'DESC';
 const ORDER_BY_ASC = 'ASC';
@@ -13,7 +14,9 @@ const THead = props => {
     sortType,
     sortBy,
     filtersValue,
-    reducer
+    reducer,
+    titleTemplate,
+    visibleColumns,
   } = props;
 
   const changeSortType = () =>
@@ -94,11 +97,17 @@ const THead = props => {
 
   return (
     <thead>
-    <tr>
-      <th className="dr-padding">&nbsp;</th>
-      {items}
-      <th className="dr-padding">&nbsp;</th>
-    </tr>
+      {!!titleTemplate.length && (
+        <TTitle
+          titleTemplate={titleTemplate}
+          visibleColumns={visibleColumns}
+        />
+      )}
+      <tr>
+        <th className="dr-padding">&nbsp;</th>
+        {items}
+        <th className="dr-padding">&nbsp;</th>
+      </tr>
     </thead>
   );
 };
@@ -109,7 +118,9 @@ THead.propTypes = {
   reducer: PropTypes.string.isRequired,
   filtersValue: PropTypes.object.isRequired,
   sortType: PropTypes.string,
-  sortBy: PropTypes.string
+  sortBy: PropTypes.string,
+  titleTemplate: PropTypes.array.isRequired,
+  visibleColumns: PropTypes.array
 };
 
 THead.defaultProps = {
