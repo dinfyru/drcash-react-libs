@@ -22,27 +22,28 @@ const RSAA = '@@redux-api-middleware/RSAA';
  * @param {Object} params.headers
  * @returns {Promise} request result
  */
-export default ({
-  method = 'GET',
-  endpoint,
-  keys,
-  query = {},
-  body,
-  meta = {},
-  name = 'base_',
-  headers = {},
-  needToken = true,
-  uploadFile = false,
-  crudTypes = {
-    request: `${name}_${CRUD_ACTION_REQUEST}`,
-    success: `${name}_${CRUD_ACTION_SUCCESS}`,
-    failure: `${name}_${CRUD_ACTION_FAILURE}`
-  },
-  validStatuses = [],
-  errorMessagesByStatus = {}
-}) => {
+export default (params) => {
+  const {
+    method = 'GET',
+    endpoint,
+    keys,
+    query = {},
+    body,
+    meta = {},
+    name = 'base_',
+    headers = {},
+    needToken = true,
+    uploadFile = false,
+    crudTypes = {
+      request: `${name}_${CRUD_ACTION_REQUEST}`,
+      success: `${name}_${CRUD_ACTION_SUCCESS}`,
+      failure: `${name}_${CRUD_ACTION_FAILURE}`
+    },
+    validStatuses = [],
+    errorMessagesByStatus = {}
+  } = params;
   const { disableFilters, requiredFilters = [] } = meta;
-  const metaObj = { query, ...meta, validStatuses, errorMessagesByStatus };
+  const metaObj = { query, ...meta, validStatuses, errorMessagesByStatus, params };
   const action = {
     needToken,
     isCrud: true,
@@ -50,8 +51,8 @@ export default ({
       endpoint,
       method,
       types: [
-        { type: crudTypes.request, meta: metaObj },
-        { type: crudTypes.success, meta: metaObj },
+        { type: crudTypes.request, meta: metaObj, crudParams: params },
+        { type: crudTypes.success, meta: metaObj, crudParams: params },
         {
           type: crudTypes.failure,
           meta: (actionFailure, state, res) => {
@@ -85,7 +86,7 @@ export default ({
   }
 
   if (keys) {
-    Object.keys(keys).forEach(key => {
+    Object.keys(keys).forEach((key) => {
       action[RSAA].endpoint = action[RSAA].endpoint.replace(
         `:${key}`,
         keys[key]
@@ -101,7 +102,7 @@ export default ({
     });
 
     if (disableFilters && requiredFilters && requiredFilters.length) {
-      Object.keys(compactedQuery).forEach(key => {
+      Object.keys(compactedQuery).forEach((key) => {
         if (requiredFilters.indexOf(key) < 0) {
           delete compactedQuery[key];
         }

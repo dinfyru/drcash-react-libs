@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'debounce-promise';
 
+import TTitle from './TTitle/TTitle';
 import THead from './THead/THead';
 import TBody from './TBody/TBody';
 import TFoot from './TFoot/TFoot';
@@ -26,7 +27,8 @@ const TableComponent = (props) => {
     tfootItem,
     visibleColumnsMiddleware,
     messages,
-    disableLazyLoad
+    disableLazyLoad,
+    titleTemplate
   } = props;
 
   const {
@@ -41,7 +43,7 @@ const TableComponent = (props) => {
   } = data;
   const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
-  const getItems = params => {
+  const getItems = (params) => {
     const {
       listGet,
       changeFiltersValue
@@ -130,8 +132,15 @@ const TableComponent = (props) => {
       onTouchMove={lazyLoad}
     >
       <table>
+        {!!titleTemplate.length && (
+          <TTitle
+            titleTemplate={titleTemplate}
+            visibleColumns={visibleColumns}
+          />
+        )}
         <THead
           template={filteredTemplate}
+          titleTemplate={titleTemplate}
           getItems={getItems}
           reducer={reducer}
           filtersValue={filtersValue}
@@ -153,7 +162,7 @@ const TableComponent = (props) => {
 
 TableComponent.defaultProps = {
   id: null,
-  url: null,
+  titleTemplate: [],
   reducer: '',
   onInit: () => {
   },
@@ -171,6 +180,7 @@ TableComponent.propTypes = {
   url: PropTypes.string,
   id: PropTypes.string,
   template: PropTypes.array.isRequired,
+  titleTemplate: PropTypes.array,
   reducer: PropTypes.string,
   onInit: PropTypes.func,
   visibleColumnsMiddleware: PropTypes.func,
