@@ -15,12 +15,15 @@ const BlockedItems = (props) => {
     for (let i = 0; i < trNodeList.length; i++) {
       const element = trNodeList[i];
       const dataId = element.getAttribute('item-data-id');
+      const hasMainElement = !!document.querySelector('main.main');
       const item = parent.querySelector(`tbody tr[data-id="${dataId}"]`);
       if (!item.length) {
-        const top =
-          parent.scrollTop +
-          (Math.abs(elemOffset(item).top) - elemOffset(parent).top) +
-          1;
+        let top = parent.scrollTop;
+        if (!hasMainElement) {
+          top = top +
+            (Math.abs(elemOffset(item).top) - elemOffset(parent).top) +
+            1;
+        }
         const height = item.offsetHeight - 1;
         element.style.top = `${top}px`;
         element.style.height = `${height}px`;
