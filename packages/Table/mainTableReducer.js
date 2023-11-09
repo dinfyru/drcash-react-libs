@@ -265,6 +265,7 @@ const mainTableReducer = (state = initialState, action) => {
         payload: {
           payload: {
             items,
+            total: itemsTotal,
             item
           },
           _meta = {
@@ -281,6 +282,7 @@ const mainTableReducer = (state = initialState, action) => {
 
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
+      nextState[reducer].itemsTotal = itemsTotal;
 
       if ((items && items.length) || item) {
         if (reloadItemsOnRequest) {
