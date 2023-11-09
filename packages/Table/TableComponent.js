@@ -139,7 +139,6 @@ const TableComponent = (props) => {
           reducer={reducer}
           filtersValue={filtersValue}
         />
-        <TFoot tfootItem={tfootItem} template={filteredTemplate} forwardedRef={tableRefs.tfoot} />
         <TBody
           template={filteredTemplate}
           items={items}
@@ -149,6 +148,7 @@ const TableComponent = (props) => {
           isLoading={isLoading}
           blockedItems={blockedItems}
         />
+        <TFoot tfootItem={tfootItem} template={filteredTemplate} forwardedRef={tableRefs.tfoot} />
       </table>
     </div>
   );
