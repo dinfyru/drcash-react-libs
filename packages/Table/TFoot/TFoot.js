@@ -40,6 +40,9 @@ const TFoot = props => {
       }
 
       const itemProps = tfoot.props ? cloneDeep(tfoot.props) : {};
+      if (tfoot.className) {
+        itemProps.className = typeof tfoot.className === 'function' ? tfoot.className(tfootItem) : tfoot.className;
+      }
 
       // переименовать isWholeLine
       if (tfoot.isWholeLine) {

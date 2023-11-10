@@ -40,6 +40,9 @@ const TBodyPart = props => {
         }
 
         const itemProps = tbody.props ? cloneDeep(tbody.props) : {};
+        if (tbody.className) {
+          itemProps.className = typeof tbody.className === 'function' ? tbody.className(item) : tbody.className;
+        }
         Object.keys(itemProps)
           .forEach(key => {
             if (typeof itemProps[key] === 'function') {
