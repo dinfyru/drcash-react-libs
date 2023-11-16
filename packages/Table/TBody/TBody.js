@@ -12,7 +12,7 @@ const TBody = (props) => {
     isLoading,
     messages,
     blockedItems,
-    tableRefs
+    tableRefs,
   } = props;
 
   const {
@@ -48,7 +48,10 @@ const TBody = (props) => {
         </td>
       </tr>
     )}
-    <BlockedItems blockedItems={blockedItems} tableRefs={tableRefs} />
+    <BlockedItems
+      blockedItems={blockedItems}
+      tableRefs={tableRefs}
+    />
     </tbody>
   );
 };

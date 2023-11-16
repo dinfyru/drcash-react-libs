@@ -27,7 +27,8 @@ const TableComponent = (props) => {
     visibleColumnsMiddleware,
     messages,
     disableLazyLoad,
-    titleTemplate
+    titleTemplate,
+    dataForRender
   } = props;
 
   const {
@@ -42,7 +43,7 @@ const TableComponent = (props) => {
   } = data;
   const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
-  const getItems = (params) => {
+  const getItems = (params, urlProps) => {
     const {
       listGet,
       changeFiltersValue
@@ -60,7 +61,7 @@ const TableComponent = (props) => {
 
     listGet(
       reducer,
-      url
+      urlProps || url
     );
   };
 
@@ -120,7 +121,7 @@ const TableComponent = (props) => {
   const filteredTemplate = useMemo(() => {
     if (!visibleColumns) return template;
     return template.filter((item, index) => visibleColumns[index]);
-  }, [visibleColumns]);
+  }, [visibleColumns, dataForRender]);
 
   return (
     <div
@@ -148,7 +149,11 @@ const TableComponent = (props) => {
           isLoading={isLoading}
           blockedItems={blockedItems}
         />
-        <TFoot tfootItem={tfootItem} template={filteredTemplate} forwardedRef={tableRefs.tfoot} />
+        <TFoot
+          tfootItem={tfootItem}
+          template={filteredTemplate}
+          forwardedRef={tableRefs.tfoot}
+        />
       </table>
     </div>
   );
@@ -165,6 +170,7 @@ TableComponent.defaultProps = {
   visibleColumnsMiddleware: visibleColumns => visibleColumns,
   refreshTableOnPush: false,
   disableLazyLoad: false,
+  dataForRender: null,
   messages: {
     noDataContent: 'No content'
   }
@@ -173,6 +179,7 @@ TableComponent.defaultProps = {
 TableComponent.propTypes = {
   url: PropTypes.string,
   id: PropTypes.string,
+  dataForRender: PropTypes.object,
   template: PropTypes.array.isRequired,
   titleTemplate: PropTypes.array,
   reducer: PropTypes.string,

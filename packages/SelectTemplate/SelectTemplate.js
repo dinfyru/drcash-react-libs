@@ -112,7 +112,6 @@ const Option = optionHtml => props => {
     <span style={style}>
       <components.Option {...props}>
         {optionHtml(props)}
-        {props.children}
       </components.Option>
     </span>
   );

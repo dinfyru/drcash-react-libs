@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
-import classname from 'classnames';
+import classNames from 'classnames';
 import TTitle from './TTitle/TTitle';
 
 const ORDER_BY_DESC = 'DESC';
@@ -11,29 +11,31 @@ const THead = props => {
   const {
     template,
     getItems,
-    sortType,
-    sortBy,
     filtersValue,
+    filtersValue: {
+      sort_type: sortType,
+      sort_by: sortBy
+    },
     reducer,
     titleTemplate,
-    visibleColumns,
+    visibleColumns
   } = props;
-
-  const changeSortType = () =>
-    filtersValue.sort_by !== sortBy
-      ? ORDER_BY_DESC
-      : filtersValue.sort_type === ORDER_BY_DESC
-        ? ORDER_BY_ASC
-        : ORDER_BY_DESC;
 
   const sortOnClick = ({
     sortKey
   }) => {
     if (!sortKey) return false;
 
+    let newSortType = ORDER_BY_DESC;
+    if (sortKey === filtersValue.sort_by) {
+      if (filtersValue.sort_type === ORDER_BY_DESC) {
+        newSortType = ORDER_BY_ASC;
+      }
+    }
+
     getItems(
       {
-        sort_type: changeSortType(),
+        sort_type: newSortType,
         sort_by: sortKey,
         offset: 0
       },
@@ -61,7 +63,7 @@ const THead = props => {
 
       const itemProps = thead.props ? cloneDeep(thead.props) : {};
       itemProps.title = itemProps.title || value;
-      itemProps.className = classname([className, sortKey && 'cup']);
+      itemProps.className = classNames([className, sortKey && 'cup']);
 
       const th = (
         <th
@@ -71,19 +73,19 @@ const THead = props => {
             sortKey
           })}
         >
-          {sortLtr && sortKey && (
+          {sortLtr && sortKey && sortType && (
             <span
-              className={`sorting ltr ${
-                sortBy === sortKey ? sortType.toLowerCase() : ''
-              }`}
+              className={classNames('sorting', 'ltr', {
+                [sortType.toLowerCase()]: sortBy === sortKey
+              })}
             />
           )}
           {resultValue}
-          {!sortLtr && sortKey && (
+          {!sortLtr && sortKey && sortType && (
             <span
-              className={`sorting fal ${
-                sortBy === sortKey ? sortType.toLowerCase() : ''
-              }`}
+              className={classNames('sorting', 'fal', {
+                [sortType.toLowerCase()]: sortBy === sortKey
+              })}
             />
           )}
         </th>
@@ -97,17 +99,17 @@ const THead = props => {
 
   return (
     <thead>
-      {!!titleTemplate.length && (
-        <TTitle
-          titleTemplate={titleTemplate}
-          visibleColumns={visibleColumns}
-        />
-      )}
-      <tr>
-        <th className="dr-padding">&nbsp;</th>
-        {items}
-        <th className="dr-padding">&nbsp;</th>
-      </tr>
+    {!!titleTemplate.length && (
+      <TTitle
+        titleTemplate={titleTemplate}
+        visibleColumns={visibleColumns}
+      />
+    )}
+    <tr>
+      <th className="dr-padding">&nbsp;</th>
+      {items}
+      <th className="dr-padding">&nbsp;</th>
+    </tr>
     </thead>
   );
 };
@@ -117,15 +119,11 @@ THead.propTypes = {
   getItems: PropTypes.func.isRequired,
   reducer: PropTypes.string.isRequired,
   filtersValue: PropTypes.object.isRequired,
-  sortType: PropTypes.string,
-  sortBy: PropTypes.string,
   titleTemplate: PropTypes.array.isRequired,
   visibleColumns: PropTypes.array
 };
 
 THead.defaultProps = {
-  sortType: null,
-  sortBy: null,
   isHidden: false,
   softSort: false,
   visibleColumns: null
