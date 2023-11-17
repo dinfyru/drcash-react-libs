@@ -33,14 +33,11 @@ const THead = props => {
       }
     }
 
-    getItems(
-      {
-        sort_type: newSortType,
-        sort_by: sortKey,
-        offset: 0
-      },
-      reducer
-    );
+    getItems({
+      sort_type: newSortType,
+      sort_by: sortKey,
+      offset: 0
+    });
   };
 
   const generateItemsByTemplate = () => {

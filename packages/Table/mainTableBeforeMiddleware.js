@@ -9,9 +9,10 @@ export default store => next => action => {
   if (action[RSAA]) {
     const newAction = { ...action };
 
-    const type = typeof action[RSAA].types[0] === 'object'
-      ? action[RSAA].types[0].type
-      : action[RSAA].types[0];
+    const type =
+      typeof action[RSAA].types[0] === 'object'
+        ? action[RSAA].types[0].type
+        : action[RSAA].types[0];
     if (REQUEST_REGEXP.test(type)) {
       const reducer = type.match(REQUEST_REGEXP)[1];
       const {

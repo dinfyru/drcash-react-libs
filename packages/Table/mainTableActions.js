@@ -10,10 +10,11 @@ const saveTableScrollAction = (scroll, reducer) => ({
 });
 
 export const MT_CHANGE_FILTERS_VALUE = 'MT_CHANGE_FILTERS_VALUE';
-const changeFiltersValueAction = (data, reducer) => ({
+const changeFiltersValueAction = (data, reducer, firstLoad) => ({
   type: MT_CHANGE_FILTERS_VALUE,
   data,
-  reducer
+  reducer,
+  firstLoad
 });
 
 export const MT_UPDATE_VISIBLE_COLUMNS = 'MT_UPDATE_VISIBLE_COLUMNS';
@@ -128,8 +129,8 @@ const listGetAction = (
 
 export const MTsaveTableScroll = (scroll, reducer) => dispatch =>
   dispatch(saveTableScrollAction(scroll, reducer));
-export const MTchangeFiltersValue = (data, reducer) => dispatch =>
-  dispatch(changeFiltersValueAction(data, reducer));
+export const MTchangeFiltersValue = (data, reducer, firstLoad) => dispatch =>
+  dispatch(changeFiltersValueAction(data, reducer, firstLoad));
 export const MTfiltersDataGet = (
   reducer,
   url,

@@ -165,13 +165,18 @@ const mainTableReducer = (state = initialState, action) => {
   if (action.type === MT_CHANGE_FILTERS_VALUE) {
     const {
       reducer,
-      data
+      data,
+      firstLoad
     } = action;
     const prevState = cloneDeep(state);
     const props = {
-      ...prevState[reducer],
-      filtersValue: { ...prevState[reducer].filtersValue, ...data }
+      ...prevState[reducer]
     };
+    if (firstLoad) {
+      props.filtersValue = { ...data };
+    } else {
+      props.filtersValue = { ...prevState[reducer].filtersValue, ...data };
+    }
     Object.entries(props.filtersValue)
       .forEach(([key, value]) => {
         if (value === false || value === undefined) {
