@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'debounce-promise';
 
@@ -43,6 +43,8 @@ const TableComponent = (props) => {
   } = data;
   const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
+  const [firstLoad, setFirstLoad] = useState(true);
+
   const getItems = (params, urlProps) => {
     const {
       listGet,
@@ -82,7 +84,8 @@ const TableComponent = (props) => {
         !Object.keys(data[reducer].filtersValue).length ||
         (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))
       ) {
-        changeFiltersValue(initFiltersValue, reducer);
+        changeFiltersValue(initFiltersValue, reducer, firstLoad);
+        setFirstLoad(false);
       }
     }
     // init get items for table
