@@ -8,7 +8,7 @@ import cloneDeep from 'lodash.clonedeep';
 import classNames from 'classnames';
 import styled from 'styled-components';
 
-export style from './index.sass';
+// export style from './index.sass';
 
 const Label = styled.label`
   left: 12px;
