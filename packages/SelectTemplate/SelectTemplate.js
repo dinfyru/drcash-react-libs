@@ -240,6 +240,17 @@ class SelectTemplate extends Component {
     }
 
     if (
+      nextProps.multi &&
+      (stateValue || []).length &&
+      !(valueForFirstProps || []).length &&
+      nextProps.loadOptions &&
+      !disabled
+    ) {
+      newState.valueForFirst = valueForFirstProps;
+      newState.value = valueForFirstProps;
+    }
+
+    if (
       !stateValue &&
       valueForFirstProps &&
       nextProps.loadOptions &&
