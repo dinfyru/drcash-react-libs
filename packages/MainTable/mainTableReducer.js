@@ -146,7 +146,7 @@ const mainTableReducer = (state = initialState, action) => {
       }
     });
 
-    if (data.offset === 0) {
+    if (!data || data.offset === 0) {
       props.items = [];
     }
     nextState = {
