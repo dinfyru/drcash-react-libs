@@ -11,17 +11,17 @@ import styled from 'styled-components';
 // export style from './index.sass';
 
 const Label = styled.label`
-  left: 12px;
-  pointer-events: none;
-  position: absolute;
-  color: #bababa;
-  transition: 0.2s ease all;
-  -moz-transition: 0.2s ease all;
-  -webkit-transition: 0.2s ease all;
-  z-index: 2;
+    left: 12px;
+    pointer-events: none;
+    position: absolute;
+    color: #bababa;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+    z-index: 2;
 
-  top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
-  font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
+    top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
+    font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
 `;
 
 const Control = ({ children, ...props }) => (
@@ -109,7 +109,7 @@ class SelectTemplate extends Component {
     replacementProps: {},
     nameParams: undefined,
     setValue: 0,
-    options: [],
+    options: undefined,
     placeholder: 'Выберите значение',
     label: false,
     className: 'select',
@@ -189,7 +189,7 @@ class SelectTemplate extends Component {
     const { value, loadOptions } = props;
     this.state = {
       multi: props.multi,
-      options: [...props.options],
+      options: [...(props.options || [])],
       value: !loadOptions ? value : undefined,
       disabled: false,
       inputValue: '',
@@ -199,12 +199,7 @@ class SelectTemplate extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      value: stateValue,
-      valueForFirst,
-      loaded,
-      disabled,
-    } = prevState;
+    const { value: stateValue, valueForFirst, loaded, disabled } = prevState;
     const {
       value: propsValue,
       trackValue,
@@ -219,7 +214,11 @@ class SelectTemplate extends Component {
 
     const newState = {};
 
-    if ((!Array.isArray(prevState.options) || !prevState.options.length) && Array.isArray(options) && options.length) {
+    if (
+      (!Array.isArray(prevState.options) || !prevState.options.length) &&
+      Array.isArray(options) &&
+      options.length
+    ) {
       newState.options = options;
 
       if (setValue && options && options.length) {
@@ -510,7 +509,7 @@ class SelectTemplate extends Component {
       innerRef,
       innerProps,
     } = props;
-    const isHidden = (data || {}).isHidden
+    const isHidden = (data || {}).isHidden;
     return (
       <div
         ref={innerRef}
@@ -523,7 +522,7 @@ class SelectTemplate extends Component {
             'option--is-selected': isSelected,
             'option--is-hidden': isHidden,
           },
-          className
+          className,
         )}
         {...innerProps}
       >
@@ -571,7 +570,8 @@ class SelectTemplate extends Component {
     let options =
       Array.isArray(filteredOptions) && filteredOptions.length
         ? filteredOptions
-        : optionsState;
+        : optionsState || [];
+
     if (Object.keys(changeable).length && !getOptionValue) {
       options = options.filter(
         (obj) =>
@@ -610,12 +610,17 @@ class SelectTemplate extends Component {
         value: element,
       }));
     }
+
     const props = {
       unstyled: true,
       classNamePrefix: 'select',
       isMulti: multi,
       options,
-      isLoading: !(options.length || !isFetching),
+      isLoading: !(
+        options.length ||
+        !isFetching ||
+        Array.isArray(this.props.options)
+      ),
       onChange: this.handleOnChange,
       value: curValue,
       className,
