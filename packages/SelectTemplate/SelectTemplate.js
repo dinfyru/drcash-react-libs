@@ -243,7 +243,7 @@ class SelectTemplate extends Component {
 
     const newState = {};
 
-    if (isFetching && Array.isArray(options) && options.length) {
+    if (isFetching && Array.isArray(options)) {
       newState.options = options;
       newState.isFetching = false;
 

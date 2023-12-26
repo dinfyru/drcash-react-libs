@@ -38,7 +38,7 @@ export default ({
     success: `${name}_${CRUD_ACTION_SUCCESS}`,
     failure: `${name}_${CRUD_ACTION_FAILURE}`
   },
-  validStatuses = [],
+  validStatuses,
   errorMessagesByStatus = {}
 }) => {
   const { disableFilters, requiredFilters = [] } = meta;

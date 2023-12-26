@@ -51,7 +51,7 @@ export default store => next => action => {
       const { status } = payload;
       if (
         ignoreStatuses.indexOf(status) < 0 &&
-        validStatuses.indexOf(status) < 0
+        (validStatuses || []).indexOf(status) < 0
       ) {
         const message = errorMessagesByStatus[status]
           ? errorMessagesByStatus[status]
