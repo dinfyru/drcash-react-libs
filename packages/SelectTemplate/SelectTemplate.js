@@ -193,7 +193,6 @@ class SelectTemplate extends Component {
       value: !loadOptions ? value : undefined,
       disabled: false,
       inputValue: '',
-      isFetching: props.isFetching,
       filteredOptions: [],
       valueForFirst: null,
     };
@@ -220,9 +219,8 @@ class SelectTemplate extends Component {
 
     const newState = {};
 
-    if ((!Array.isArray(prevState.options) || !prevState.options.length) && Array.isArray(options)) {
+    if ((!Array.isArray(prevState.options) || !prevState.options.length) && Array.isArray(options) && options.length) {
       newState.options = options;
-      newState.isFetching = false;
 
       if (setValue && options && options.length) {
         const random = Math.floor(Math.random() * (options.length - 0));
@@ -617,7 +615,7 @@ class SelectTemplate extends Component {
       classNamePrefix: 'select',
       isMulti: multi,
       options,
-      isLoading: !(options.length || !(isFetching && !this.state.isFetching) || !isFetching),
+      isLoading: !(options.length || !isFetching),
       onChange: this.handleOnChange,
       value: curValue,
       className,
