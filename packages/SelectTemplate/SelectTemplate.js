@@ -297,7 +297,7 @@ class SelectTemplate extends Component {
 
   setValueForFirst = (loadOptions) => {
     const { disabled } = this.state;
-    const { valueForFirst, async, generateOptions } = this.props;
+    const { valueForFirst, async, generateOptions, getOptionValue } = this.props;
 
     if (!disabled || !loadOptions) return;
     loadOptions
@@ -307,18 +307,19 @@ class SelectTemplate extends Component {
           formattedData = generateOptions(formattedData);
         }
         const data = formattedData.filter((el) => {
-          if (el.value && el.value.toString) {
+          const elementValue = getOptionValue ? getOptionValue (el) : el.value;
+          if (elementValue && elementValue.toString) {
             if (Array.isArray(valueForFirst)) {
               if (
                 valueForFirst
                   .map((item) => (item.toString ? item.toString() : ''))
-                  .indexOf(el.value.toString()) >= 0
+                  .indexOf(elementValue.toString()) >= 0
               ) {
                 return true;
               }
             } else if (
               valueForFirst.toString &&
-              el.value.toString() === valueForFirst.toString()
+              elementValue.toString() === valueForFirst.toString()
             ) {
               return true;
             }
