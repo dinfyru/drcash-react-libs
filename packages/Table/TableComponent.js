@@ -135,12 +135,12 @@ const TableComponent = (props) => {
       onWheel={lazyLoad}
       onTouchMove={lazyLoad}
     >
+      {isLoading && action !== 'next-page' && (
+        <div className="dr-table__loading">
+          <span />
+        </div>
+      )}
       <table>
-        {isLoading && action !== 'next-page' && (
-          <div className="dr-table__loading">
-            <span />
-          </div>
-        )}
         <THead
           template={filteredTemplate}
           titleTemplate={titleTemplate}
