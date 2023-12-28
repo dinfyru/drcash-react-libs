@@ -12,7 +12,7 @@ import {
   MT_REMOVE_SUBLINE_DATA,
   MT_SAVE_TABLE_SCROLL,
   MT_SET_ITEMS,
-  MT_UPDATE_VISIBLE_COLUMNS
+  MT_UPDATE_VISIBLE_COLUMNS,
 } from './mainTableActions';
 
 const REQUEST_LIST_REGEXP = /^MT_LIST@(.+)_REQUEST$/;
@@ -28,10 +28,10 @@ const tableExample = {
   scroll: {},
   subLineData: {},
   filtersValue: {},
-  blockedItems: []
+  blockedItems: [],
 };
 const initialState = {
-  filtersData: {}
+  filtersData: {},
 };
 
 const mainTableReducer = (state = initialState, action) => {
@@ -47,19 +47,19 @@ const mainTableReducer = (state = initialState, action) => {
 
   if (action.type === MT_GET_SUBLINE_DATA_REQUEST) {
     const {
-      meta: { id, subLineKey, reducer }
+      meta: { id, subLineKey, reducer },
     } = action;
     nextState = cloneDeep(state);
     nextState[reducer].subLineData[id] = {
       isLoading: true,
       items: [],
-      key: subLineKey
+      key: subLineKey,
     };
   }
 
   if (action.type === MT_GET_SUBLINE_DATA_FAILURE) {
     const {
-      meta: { id, reducer }
+      meta: { id, reducer },
     } = action;
     nextState = cloneDeep(state);
     if (nextState[reducer].subLineData[id]) {
@@ -70,7 +70,7 @@ const mainTableReducer = (state = initialState, action) => {
   if (action.type === MT_GET_SUBLINE_DATA_SUCCESS) {
     const {
       meta: { id, reducer },
-      payload: { status, payload }
+      payload: { status, payload },
     } = action;
     nextState = cloneDeep(state);
     const hasId = !!nextState[reducer].subLineData[id];
@@ -85,17 +85,17 @@ const mainTableReducer = (state = initialState, action) => {
   if (action.type === MT_LIST_REMOVE_ITEM) {
     const { id, reducer, key = 'id' } = action;
     let items = cloneDeep(state[reducer].items);
-    items = items.map(partItems => {
+    items = items.map((partItems) => {
       const newPartItems = cloneDeep(partItems);
-      const index = newPartItems.findIndex(elem => elem[key] === id);
+      const index = newPartItems.findIndex((elem) => elem[key] === id);
       if (index >= 0) {
         delete newPartItems[index];
       }
-      return newPartItems.filter(elem => Boolean(elem));
+      return newPartItems.filter((elem) => Boolean(elem));
     });
     items = items
-      .filter(el => Array.isArray(el) && el.length)
-      .filter(el => Boolean(el));
+      .filter((el) => Array.isArray(el) && el.length)
+      .filter((el) => Boolean(el));
 
     nextState = cloneDeep(state);
     nextState[reducer].items = items;
@@ -105,9 +105,9 @@ const mainTableReducer = (state = initialState, action) => {
     const { item, reducer, key = 'id' } = action;
     const id = item[key];
     let items = cloneDeep(state[reducer].items);
-    items = items.map(partItems => {
+    items = items.map((partItems) => {
       const newPartItems = cloneDeep(partItems);
-      const index = newPartItems.findIndex(elem => elem[key] === id);
+      const index = newPartItems.findIndex((elem) => elem[key] === id);
       if (index >= 0) {
         newPartItems[index] = item;
       }
@@ -124,8 +124,8 @@ const mainTableReducer = (state = initialState, action) => {
       ...prevState,
       [reducer]: {
         ...prevState[reducer],
-        scroll
-      }
+        scroll,
+      },
     };
   }
 
@@ -134,7 +134,7 @@ const mainTableReducer = (state = initialState, action) => {
     const prevState = cloneDeep(state);
     const props = {
       ...prevState[reducer],
-      filtersValue: { ...prevState[reducer].filtersValue, ...data }
+      filtersValue: { ...prevState[reducer].filtersValue, ...data },
     };
     Object.entries(props.filtersValue).forEach(([key, value]) => {
       if (value === false || value === undefined) {
@@ -142,12 +142,15 @@ const mainTableReducer = (state = initialState, action) => {
       }
     });
 
-    if (data.offset === 0) {
-      props.items = [];
+    // if (data.offset === 0) {
+    //   props.items = [];
+    // }
+    if (data.offset !== state[reducer].filtersValue.offset && data.offset !== 0) {
+      props.action = 'next-page';
     }
     nextState = {
       ...state,
-      [action.reducer]: props
+      [action.reducer]: props,
     };
   }
 
@@ -157,16 +160,16 @@ const mainTableReducer = (state = initialState, action) => {
     if (action.payload.status === 'OK') {
       const {
         payload: {
-          payload: { items }
+          payload: { items },
         },
-        meta: { modifyResponse }
+        meta: { modifyResponse },
       } = action;
 
       nextState = cloneDeep(state);
       if (modifyResponse) {
-        nextState.filtersData[reducer] = items.map(item => ({
+        nextState.filtersData[reducer] = items.map((item) => ({
           label: item[modifyResponse.label],
-          value: item[modifyResponse.value]
+          value: item[modifyResponse.value],
         }));
       } else {
         nextState.filtersData[reducer] = items || [];
@@ -178,7 +181,7 @@ const mainTableReducer = (state = initialState, action) => {
     const { data, reducer, byIndex } = action;
     nextState = cloneDeep(state);
     if (!byIndex) {
-      Object.keys(data).forEach(id => {
+      Object.keys(data).forEach((id) => {
         const val = data[id];
         if (!val) {
           const index = nextState[reducer].blockedItems.indexOf(id);
@@ -194,7 +197,7 @@ const mainTableReducer = (state = initialState, action) => {
       });
     }
     nextState[reducer].blockedItems = nextState[reducer].blockedItems.filter(
-      elem => elem
+      (elem) => elem,
     );
   }
 
@@ -219,14 +222,19 @@ const mainTableReducer = (state = initialState, action) => {
       const {
         payload: {
           payload: { items, item },
-          _meta = { is_last_page: false, total: 0 }
+          _meta = { is_last_page: false, total: 0 },
         },
-        meta: { reloadItemsOnRequest }
+        meta: { reloadItemsOnRequest },
       } = action;
       const { is_last_page: isLastPage, total } = _meta;
 
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
+      nextState[reducer].action = '';
+
+      if (nextState[reducer].filtersValue.offset === 0) {
+        nextState[reducer].items = [];
+      }
 
       if ((items && items.length) || item) {
         if (reloadItemsOnRequest) {
@@ -234,7 +242,7 @@ const mainTableReducer = (state = initialState, action) => {
         } else {
           nextState[reducer].items = [
             ...nextState[reducer].items,
-            items || [item]
+            items || [item],
           ];
         }
       } else {
@@ -249,6 +257,7 @@ const mainTableReducer = (state = initialState, action) => {
     nextState = cloneDeep(state);
     nextState[reducer].isLoading = false;
     nextState[reducer].isLastPage = true;
+    nextState[reducer].action = '';
   }
 
   if (action.type === MT_LIST_UPDATE_ITEMS) {
@@ -270,7 +279,7 @@ const mainTableReducer = (state = initialState, action) => {
 };
 
 export default (tableNames = []) => {
-  tableNames.forEach(tableName => {
+  tableNames.forEach((tableName) => {
     initialState[tableName] = cloneDeep(tableExample);
   });
 

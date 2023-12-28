@@ -28,7 +28,8 @@ const tableExample = {
   scroll: {},
   subLineData: {},
   filtersValue: {},
-  blockedItems: []
+  blockedItems: [],
+  action: ''
 };
 const initialState = {
   filtersData: {}
@@ -184,9 +185,13 @@ const mainTableReducer = (state = initialState, action) => {
         }
       });
 
-    if (data.offset === 0) {
-      props.items = [];
+    // if (data.offset === 0) {
+    //   props.items = [];
+    // }
+    if (data.offset !== state[reducer].filtersValue.offset && data.offset !== 0) {
+      props.action = 'next-page';
     }
+
     nextState = {
       ...state,
       [action.reducer]: props
@@ -288,6 +293,11 @@ const mainTableReducer = (state = initialState, action) => {
       nextState[reducer].isLastPage = isLastPage;
       nextState[reducer].total = total;
       nextState[reducer].itemsTotal = itemsTotal;
+      nextState[reducer].action = '';
+
+      if (nextState[reducer].filtersValue.offset === 0) {
+        nextState[reducer].items = [];
+      }
 
       if ((items && items.length) || item) {
         if (reloadItemsOnRequest) {
@@ -310,6 +320,7 @@ const mainTableReducer = (state = initialState, action) => {
     nextState = cloneDeep(state);
     nextState[reducer].isLoading = false;
     nextState[reducer].isLastPage = true;
+    nextState[reducer].action = '';
   }
 
   if (action.type === MT_LIST_UPDATE_ITEMS) {

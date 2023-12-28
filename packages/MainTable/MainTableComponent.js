@@ -567,7 +567,8 @@ class MainTableComponent extends Component {
         filtersValue,
         visibleColumns: originalVisibleColumns,
         blockedItems,
-        subLineData: afterLineData
+        subLineData: afterLineData,
+        action,
       }
     } = data;
     const { colsCount, canDoRequest } = this.state;
@@ -584,6 +585,11 @@ class MainTableComponent extends Component {
         onWheel={this.lazyLoad}
         onTouchMove={this.lazyLoad}
       >
+        {isLoading && action && action !== 'next-page' && (
+          <div className="dr-table__">
+            <span />
+          </div>
+        )}
         {titleTemplate ? (
           <table className="table__title table-list">
             <TTitle
@@ -662,7 +668,7 @@ class MainTableComponent extends Component {
             ) : (
               false
             )}
-            {isLoading ? (
+            {isLoading && action === 'next-page' && (
               <tr className="no-border">
                 <td colSpan={colsCount}>
                   <span className="loading">
@@ -670,8 +676,6 @@ class MainTableComponent extends Component {
                   </span>
                 </td>
               </tr>
-            ) : (
-              false
             )}
           </tbody>
           {tfootItem ? (

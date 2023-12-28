@@ -13,6 +13,7 @@ const TBody = (props) => {
     messages,
     blockedItems,
     tableRefs,
+    action,
   } = props;
 
   const {
@@ -25,38 +26,39 @@ const TBody = (props) => {
 
   return (
     <tbody ref={forwardedRef}>
-    {items.map((innerItems, index) => (
-      <TBodyPart
-        key={index}
-        items={innerItems}
-        template={template}
+      {items.map((innerItems, index) => (
+        <TBodyPart
+          key={index}
+          items={innerItems}
+          template={template}
+        />
+      ))}
+      {isNoData && (
+        <tr className="no-border">
+          <td colSpan={colsCount}>
+            <span className="no-data">{messages.noDataContent}</span>
+          </td>
+        </tr>
+      )}
+      {isLoading && action === 'next-page' && (
+        <tr className="no-border">
+          <td colSpan={colsCount}>
+            <span className="loading">
+              <span />
+            </span>
+          </td>
+        </tr>
+      )}
+      <BlockedItems
+        blockedItems={blockedItems}
+        tableRefs={tableRefs}
       />
-    ))}
-    {isNoData && (
-      <tr className="no-border">
-        <td colSpan={colsCount}>
-          <span className="no-data">{messages.noDataContent}</span>
-        </td>
-      </tr>
-    )}
-    {isLoading && (
-      <tr className="no-border">
-        <td colSpan={colsCount}>
-          <span className="loading">
-            <span />
-          </span>
-        </td>
-      </tr>
-    )}
-    <BlockedItems
-      blockedItems={blockedItems}
-      tableRefs={tableRefs}
-    />
     </tbody>
   );
 };
 
 TBody.defaultProps = {
+  action: false,
   isLoading: false,
   blockedItems: []
 };
@@ -66,6 +68,7 @@ TBody.propTypes = {
   forwardedRef: PropTypes.object.isRequired,
   tableRefs: PropTypes.object.isRequired,
   isLoading: PropTypes.bool,
+  action: PropTypes.string,
   items: PropTypes.array.isRequired,
   blockedItems: PropTypes.array,
   messages: PropTypes.object.isRequired

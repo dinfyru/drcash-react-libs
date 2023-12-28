@@ -38,7 +38,8 @@ const TableComponent = (props) => {
       items,
       visibleColumns: originalVisibleColumns,
       blockedItems,
-      filtersValue
+      filtersValue,
+      action,
     }
   } = data;
   const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
@@ -135,6 +136,11 @@ const TableComponent = (props) => {
       onTouchMove={lazyLoad}
     >
       <table>
+        {isLoading && action !== 'next-page' && (
+          <div className="dr-table__loading">
+            <span />
+          </div>
+        )}
         <THead
           template={filteredTemplate}
           titleTemplate={titleTemplate}
