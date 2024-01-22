@@ -148,7 +148,7 @@ class SelectTemplate extends Component {
     className: PropTypes.string,
     changeable: PropTypes.object,
     clearable: PropTypes.bool,
-    setValue: PropTypes.number,
+    setValue: PropTypes.any,
     searchable: PropTypes.bool,
     filterFunc: PropTypes.func,
     placeholder: PropTypes.string,
