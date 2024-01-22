@@ -584,7 +584,7 @@ class SelectTemplate extends Component {
     if (formatGroupLabel) {
       options = options.map((item) => {
         const newItem = { ...item };
-        newItem.options = newItem.options.filter(filterFunc);
+        newItem.options = newItem.options.filter((option) => filterFunc(option, inputValue));
         return newItem;
       });
     } else {
