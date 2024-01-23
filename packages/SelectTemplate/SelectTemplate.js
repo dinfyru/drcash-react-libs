@@ -15,9 +15,9 @@ const Label = styled.label`
     pointer-events: none;
     position: absolute;
     color: #bababa;
-    transition: 0.2s ease all;
-    -moz-transition: 0.2s ease all;
-    -webkit-transition: 0.2s ease all;
+    transition: 0.2s ease top, 0.2s ease font-size;
+    -moz-transition: 0.2s ease top, 0.2s ease font-size;
+    -webkit-transition: 0.2s ease top, 0.2s ease font-size;
     z-index: 2;
 
     top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
