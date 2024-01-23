@@ -15,9 +15,15 @@ const Label = styled.label`
     pointer-events: none;
     position: absolute;
     color: #bababa;
-    transition: 0.2s ease top, 0.2s ease font-size;
-    -moz-transition: 0.2s ease top, 0.2s ease font-size;
-    -webkit-transition: 0.2s ease top, 0.2s ease font-size;
+    transition:
+            0.2s ease top,
+            0.2s ease font-size;
+    -moz-transition:
+            0.2s ease top,
+            0.2s ease font-size;
+    -webkit-transition:
+            0.2s ease top,
+            0.2s ease font-size;
     z-index: 2;
 
     top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
@@ -266,6 +272,10 @@ class SelectTemplate extends Component {
       // newState.valueForFirst = valueForFirstProps;
     }
 
+    // if (prevState.isActionClear) {
+    //   newState.isActionClear = false;
+    // }
+
     return newState;
   }
 
@@ -378,15 +388,22 @@ class SelectTemplate extends Component {
   };
 
   callbackOnChange = (value, nameParams, label, action) => {
+    const { multi } = this.props;
     this.setState(
       {
-        value,
+        value: action && action.action === 'clear' ? null : value,
         valueForFirst: null,
       },
       () => {
         const { getOptionValue } = this.props;
         let valueForResponse = value;
-        if (Array.isArray(valueForResponse)) {
+        if (multi) {
+          if (!Array.isArray(valueForResponse)) {
+            valueForResponse = [valueForResponse];
+          }
+
+
+          this.setState({ value: valueForResponse });
           valueForResponse = valueForResponse.map((option) => {
             if (getOptionValue) {
               return getOptionValue(option);
@@ -404,6 +421,7 @@ class SelectTemplate extends Component {
           }
         }
         this.props.onChange(valueForResponse, nameParams, label, action);
+        // this.setState({ isActionClear: false });
       },
     );
   };
@@ -584,7 +602,9 @@ class SelectTemplate extends Component {
     if (formatGroupLabel) {
       options = options.map((item) => {
         const newItem = { ...item };
-        newItem.options = newItem.options.filter((option) => filterFunc(option, inputValue));
+        newItem.options = newItem.options.filter((option) =>
+          filterFunc(option, inputValue),
+        );
         return newItem;
       });
     } else {
