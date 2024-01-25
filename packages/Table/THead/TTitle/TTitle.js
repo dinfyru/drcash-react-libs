@@ -27,7 +27,7 @@ const TTitle = ({
         });
       }
       if (!visibleColumns || visible) {
-        if (!props.title) {
+        if (typeof props === 'object' && !props.title) {
           delete props.title;
         }
         const th = (
