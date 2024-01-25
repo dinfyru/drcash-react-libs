@@ -61,6 +61,9 @@ const THead = props => {
       const itemProps = thead.props ? cloneDeep(thead.props) : {};
       itemProps.title = itemProps.title || value;
       itemProps.className = classNames([className, sortKey && 'cup']);
+      if (!itemProps.title) {
+        delete itemProps.title;
+      }
 
       const th = (
         <th

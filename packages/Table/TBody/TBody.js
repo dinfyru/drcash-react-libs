@@ -58,7 +58,7 @@ const TBody = (props) => {
 };
 
 TBody.defaultProps = {
-  action: false,
+  action: '',
   isLoading: false,
   blockedItems: []
 };

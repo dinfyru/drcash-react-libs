@@ -27,6 +27,9 @@ const TTitle = ({
         });
       }
       if (!visibleColumns || visible) {
+        if (!props.title) {
+          delete props.title;
+        }
         const th = (
           <th key={index} js-title-index={index} colSpan={colSpan} {...props}>
             <span>{value}</span>
