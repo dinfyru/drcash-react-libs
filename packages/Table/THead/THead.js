@@ -63,6 +63,8 @@ const THead = props => {
       itemProps.className = classNames([className, sortKey && 'cup']);
       if (!itemProps.title) {
         delete itemProps.title;
+      } else {
+        itemProps.title = itemProps.title.toString();
       }
 
       const th = (
