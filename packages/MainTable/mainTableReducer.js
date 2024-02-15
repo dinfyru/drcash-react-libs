@@ -9,7 +9,7 @@ import {
   MT_LIST_AUTO_UPDATE_ITEM,
   MT_LIST_REMOVE_ITEM,
   MT_LIST_UPDATE_ITEMS,
-  MT_REMOVE_SUBLINE_DATA,
+  MT_REMOVE_SUBLINE_DATA, MT_SAVE_TABLE_INIT_FILTERS,
   MT_SAVE_TABLE_SCROLL,
   MT_SET_ITEMS,
   MT_UPDATE_VISIBLE_COLUMNS
@@ -270,6 +270,13 @@ const mainTableReducer = (state = initialState, action) => {
 
     nextState = cloneDeep(state);
     nextState[reducer].visibleColumns = data;
+  }
+
+  if (action.type === MT_SAVE_TABLE_INIT_FILTERS) {
+    const { data, reducer } = action;
+
+    nextState = cloneDeep(state);
+    nextState[reducer].initFiltersValue = cloneDeep(data);
   }
 
   // return the original `state` if `nextState` is null or undefined.

@@ -71,6 +71,7 @@ class MainTableComponent extends Component {
     listGet: PropTypes.func.isRequired,
     reloadItemsOnRequest: PropTypes.bool,
     saveTableScroll: PropTypes.func.isRequired,
+    saveTableInitFilters: PropTypes.func.isRequired,
     changeFiltersValue: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
     onInit: PropTypes.func,
@@ -177,12 +178,14 @@ class MainTableComponent extends Component {
       changeFiltersValue,
       refreshTableOnPush,
       reloadItemsOnRequest,
+      saveTableInitFilters,
       disableFilters,
       requiredFilters
     } = this.props;
 
     // init filtersValue for first request
     if (initFiltersValue) {
+      saveTableInitFilters(cloneDeep(initFiltersValue), reducer);
       if (
         !Object.keys(data[reducer].filtersValue).length ||
         (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))

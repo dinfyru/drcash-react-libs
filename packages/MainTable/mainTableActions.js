@@ -106,6 +106,13 @@ const disableItemSwitcherAction = (data, reducer, byIndex) => ({
   byIndex
 });
 
+export const MT_SAVE_TABLE_INIT_FILTERS = 'MT_SAVE_TABLE_INIT_FILTERS';
+const saveTableInitFilters = (data, reducer) => ({
+  type: MT_SAVE_TABLE_INIT_FILTERS,
+  data,
+  reducer,
+});
+
 const listGetAction = (
   reducer,
   endpoint,
@@ -149,6 +156,8 @@ export const MTlistRemoveItem = (id, reducer, key) => dispatch =>
   dispatch(MTlistRemoveItemAction(id, reducer, key));
 export const MTdisableItemSwitcher = (data, reducer, byIndex) => dispatch =>
   dispatch(disableItemSwitcherAction(data, reducer, byIndex));
+export const MTsaveTableInitFilters = (data, reducer, byIndex) => dispatch =>
+  dispatch(saveTableInitFilters(data, reducer));
 export const MTlistGet = (
   reducer,
   url,
