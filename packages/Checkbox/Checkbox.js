@@ -8,7 +8,7 @@ class Checkbox extends PureComponent {
     type: 'checkbox',
     active: false,
     disabled: false,
-    trackValue: false
+    trackValue: false,
   };
   static propTypes = {
     onChange: PropTypes.func.isRequired,
@@ -17,7 +17,7 @@ class Checkbox extends PureComponent {
     title: PropTypes.string,
     active: PropTypes.bool,
     disabled: PropTypes.bool,
-    trackValue: PropTypes.bool
+    trackValue: PropTypes.bool,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -36,7 +36,7 @@ class Checkbox extends PureComponent {
 
     this.active = this.active.bind(this);
     this.state = {
-      active: props.active
+      active: props.active,
     };
   }
 
@@ -48,24 +48,24 @@ class Checkbox extends PureComponent {
       return;
     }
     this.setState(
-      prevState => {
+      (prevState) => {
         let active = trackValue ? activeProps : !prevState.active;
         if (this.props.type === 'radio') {
           active = true;
         }
         return {
-          active
+          active,
         };
       },
       () => {
         this.props.onChange(this.state.active);
-      }
+      },
     );
   };
 
-  active = active => {
+  active = (active) => {
     this.setState({
-      active
+      active,
     });
   };
 

@@ -3,13 +3,18 @@ import cloneDeep from 'lodash.clonedeep';
 import PropTypes from 'prop-types';
 
 import { MTupdateVisibleColumns } from './mainTableActions';
-import { addEvent, removeEvent, findByValue, getParentNodes } from '../../utils';
+import {
+  addEvent,
+  removeEvent,
+  findByValue,
+  getParentNodes,
+} from '../../utils';
 
 export default class FilterColumns extends Component {
   static defaultProps = {
     columnCategories: { 0: 'Колонки' },
     mainTableName: null,
-    title: 'Настройка колонок'
+    title: 'Настройка колонок',
   };
 
   static propTypes = {
@@ -18,7 +23,7 @@ export default class FilterColumns extends Component {
     settingsColumns: PropTypes.object.isRequired,
     mainTableName: PropTypes.string,
     title: PropTypes.string,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -27,7 +32,7 @@ export default class FilterColumns extends Component {
     const {
       tableName,
       columnCategories,
-      settingsColumns: propsSettingsColumns
+      settingsColumns: propsSettingsColumns,
     } = props;
     const localSettingsColumns = localStorage.getItem(tableName);
 
@@ -41,7 +46,7 @@ export default class FilterColumns extends Component {
     this.state = {
       selectMultiOpened: false,
       settingsColumns,
-      columnCategories
+      columnCategories,
     };
   }
 
@@ -73,14 +78,14 @@ export default class FilterColumns extends Component {
       () => {
         this.updateSettingsColumnsStorage();
         this.getVisibleColumns();
-      }
+      },
     );
   };
 
   updateSettingsColumnsStorage = (settingsColumns) => {
     const { tableName } = this.props;
     const stringifySettingsColumns = JSON.stringify(
-      settingsColumns || this.state.settingsColumns
+      settingsColumns || this.state.settingsColumns,
     );
     localStorage.setItem(tableName, stringifySettingsColumns);
   };
@@ -96,15 +101,17 @@ export default class FilterColumns extends Component {
   };
 
   selectMultiOpener = () => {
-    this.setState((prevState) => ({ selectMultiOpened: !prevState.selectMultiOpened }));
+    this.setState((prevState) => ({
+      selectMultiOpened: !prevState.selectMultiOpened,
+    }));
   };
 
   clickOut = (event) => {
     const { target } = event;
     if (
-      document.querySelector('.select-multi').classList.contains('active')
-      && !target.classList.contains('select-multi')
-      && !target.closest('.select-multi')
+      document.querySelector('.select-multi').classList.contains('active') &&
+      !target.classList.contains('select-multi') &&
+      !target.closest('.select-multi')
     ) {
       this.setState({ selectMultiOpened: false });
     }

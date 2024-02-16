@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 export default class TTitle extends Component {
   static defaultProps = {
-    visibleColumns: null
+    visibleColumns: null,
   };
 
   static propTypes = {
     titleTemplate: PropTypes.array.isRequired,
-    visibleColumns: PropTypes.array
+    visibleColumns: PropTypes.array,
   };
 
   shouldComponentUpdate(nextProps) {

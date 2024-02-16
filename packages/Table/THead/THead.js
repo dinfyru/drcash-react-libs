@@ -7,23 +7,18 @@ import TTitle from './TTitle/TTitle';
 const ORDER_BY_DESC = 'DESC';
 const ORDER_BY_ASC = 'ASC';
 
-const THead = props => {
+const THead = (props) => {
   const {
     template,
     getItems,
     filtersValue,
-    filtersValue: {
-      sort_type: sortType,
-      sort_by: sortBy
-    },
+    filtersValue: { sort_type: sortType, sort_by: sortBy },
     reducer,
     titleTemplate,
-    visibleColumns
+    visibleColumns,
   } = props;
 
-  const sortOnClick = ({
-    sortKey
-  }) => {
+  const sortOnClick = ({ sortKey }) => {
     if (!sortKey) return false;
 
     let newSortType = ORDER_BY_DESC;
@@ -36,7 +31,7 @@ const THead = props => {
     getItems({
       sort_type: newSortType,
       sort_by: sortKey,
-      offset: 0
+      offset: 0,
     });
   };
 
@@ -45,13 +40,8 @@ const THead = props => {
 
     template.forEach((column, index) => {
       const {
-        thead: {
-          value,
-          sortKey,
-          sortLtr,
-          className
-        },
-        thead
+        thead: { value, sortKey, sortLtr, className },
+        thead,
       } = column;
       let resultValue = value;
       if (typeof value === 'function') {
@@ -71,14 +61,16 @@ const THead = props => {
         <th
           key={index}
           {...itemProps}
-          onClick={() => sortOnClick({
-            sortKey
-          })}
+          onClick={() =>
+            sortOnClick({
+              sortKey,
+            })
+          }
         >
           {sortLtr && sortKey && sortType && (
             <span
               className={classNames('sorting', 'ltr', {
-                [sortType.toLowerCase()]: sortBy === sortKey
+                [sortType.toLowerCase()]: sortBy === sortKey,
               })}
             />
           )}
@@ -86,7 +78,7 @@ const THead = props => {
           {!sortLtr && sortKey && sortType && (
             <span
               className={classNames('sorting', 'fal', {
-                [sortType.toLowerCase()]: sortBy === sortKey
+                [sortType.toLowerCase()]: sortBy === sortKey,
               })}
             />
           )}
@@ -101,17 +93,14 @@ const THead = props => {
 
   return (
     <thead>
-    {!!titleTemplate.length && (
-      <TTitle
-        titleTemplate={titleTemplate}
-        visibleColumns={visibleColumns}
-      />
-    )}
-    <tr>
-      <th className="dr-padding">&nbsp;</th>
-      {items}
-      <th className="dr-padding">&nbsp;</th>
-    </tr>
+      {!!titleTemplate.length && (
+        <TTitle titleTemplate={titleTemplate} visibleColumns={visibleColumns} />
+      )}
+      <tr>
+        <th className="dr-padding">&nbsp;</th>
+        {items}
+        <th className="dr-padding">&nbsp;</th>
+      </tr>
     </thead>
   );
 };
@@ -122,13 +111,13 @@ THead.propTypes = {
   reducer: PropTypes.string.isRequired,
   filtersValue: PropTypes.object.isRequired,
   titleTemplate: PropTypes.array.isRequired,
-  visibleColumns: PropTypes.array
+  visibleColumns: PropTypes.array,
 };
 
 THead.defaultProps = {
   isHidden: false,
   softSort: false,
-  visibleColumns: null
+  visibleColumns: null,
 };
 
 export default THead;

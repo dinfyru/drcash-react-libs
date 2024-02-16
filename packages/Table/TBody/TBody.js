@@ -16,22 +16,18 @@ const TBody = (props) => {
     action,
   } = props;
 
-  const {
-    isNoData,
-    colsCount
-  } = useMemo(() => ({
-    isNoData: (!items.length || !items[0].length) && !isLoading,
-    colsCount: template.length + 2
-  }), [template, items]);
+  const { isNoData, colsCount } = useMemo(
+    () => ({
+      isNoData: (!items.length || !items[0].length) && !isLoading,
+      colsCount: template.length + 2,
+    }),
+    [template, items],
+  );
 
   return (
     <tbody ref={forwardedRef}>
       {items.map((innerItems, index) => (
-        <TBodyPart
-          key={index}
-          items={innerItems}
-          template={template}
-        />
+        <TBodyPart key={index} items={innerItems} template={template} />
       ))}
       {isNoData && (
         <tr className="no-border">
@@ -49,10 +45,7 @@ const TBody = (props) => {
           </td>
         </tr>
       )}
-      <BlockedItems
-        blockedItems={blockedItems}
-        tableRefs={tableRefs}
-      />
+      <BlockedItems blockedItems={blockedItems} tableRefs={tableRefs} />
     </tbody>
   );
 };
@@ -60,7 +53,7 @@ const TBody = (props) => {
 TBody.defaultProps = {
   action: '',
   isLoading: false,
-  blockedItems: []
+  blockedItems: [],
 };
 
 TBody.propTypes = {
@@ -71,7 +64,7 @@ TBody.propTypes = {
   action: PropTypes.string,
   items: PropTypes.array.isRequired,
   blockedItems: PropTypes.array,
-  messages: PropTypes.object.isRequired
+  messages: PropTypes.object.isRequired,
 };
 
 export default TBody;

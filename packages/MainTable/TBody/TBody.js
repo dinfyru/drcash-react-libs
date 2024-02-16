@@ -48,8 +48,8 @@ export default class TBody extends Component {
   blockedItemsPosition = () => {
     const {
       refs: {
-        parent: { current: parent }
-      }
+        parent: { current: parent },
+      },
     } = this.props;
     const tr = document.querySelectorAll('.blocked-item');
 
@@ -80,7 +80,7 @@ export default class TBody extends Component {
       afterLineTemplate,
       blockedItems,
       afterLineData,
-      titleTemplate
+      titleTemplate,
     } = this.props;
 
     return (
@@ -99,7 +99,7 @@ export default class TBody extends Component {
             titleTemplate={titleTemplate}
           />
         ))}
-        {blockedItems.map(id => (
+        {blockedItems.map((id) => (
           <tr className="blocked-item" key={id} item-data-id={id}>
             <td>
               <span className="loading" />

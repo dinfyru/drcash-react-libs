@@ -17,6 +17,7 @@ export {
   MTremoveSubLineData,
   MTgetSubLineData,
   MTupdateVisibleColumns,
+  MTsaveTableInitFilters,
   MT_CHANGE_FILTERS_VALUE,
   MT_DISABLE_ITEM_SWITCHER,
   MT_GET_SUBLINE_DATA_FAILURE,
@@ -28,5 +29,6 @@ export {
   MT_LIST_UPDATE_ITEMS,
   MT_REMOVE_SUBLINE_DATA,
   MT_SAVE_TABLE_SCROLL,
-  MT_UPDATE_VISIBLE_COLUMNS
+  MT_UPDATE_VISIBLE_COLUMNS,
+  MT_SAVE_TABLE_INIT_FILTERS,
 } from './mainTableActions';

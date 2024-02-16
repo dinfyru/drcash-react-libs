@@ -10,7 +10,7 @@ const getAfterLineObjs = (afterLineTemplate, afterLineData, partItems) => {
     if (keys.length) {
       keyForSearch = afterLineData[keys[0]].key;
       const itemsFinded = partItems.filter(
-        el => keys.indexOf(el[keyForSearch].toString()) >= 0
+        (el) => keys.indexOf(el[keyForSearch].toString()) >= 0,
       );
       if (itemsFinded.length) {
         for (let i = 0; i < itemsFinded.length; i += 1) {
@@ -30,7 +30,7 @@ export default class TBodyPart extends Component {
     rerenderById: null,
     visibleColumns: null,
     afterLineData: null,
-    afterLineTemplate: null
+    afterLineTemplate: null,
   };
 
   static propTypes = {
@@ -40,21 +40,17 @@ export default class TBodyPart extends Component {
     rerenderById: PropTypes.number,
     visibleColumns: PropTypes.array,
     afterLineData: PropTypes.object,
-    afterLineTemplate: PropTypes.array
+    afterLineTemplate: PropTypes.array,
   };
 
   constructor(props) {
     super(props);
 
-    const {
-      rerenderById,
-      partItems,
-      afterLineTemplate,
-      afterLineData
-    } = this.props;
+    const { rerenderById, partItems, afterLineTemplate, afterLineData } =
+      this.props;
     let rerenderByIdState = null;
     if (rerenderById) {
-      const itemIsFinded = partItems.find(el => el.id === rerenderById);
+      const itemIsFinded = partItems.find((el) => el.id === rerenderById);
       if (itemIsFinded) {
         rerenderByIdState = rerenderById;
       }
@@ -62,19 +58,19 @@ export default class TBodyPart extends Component {
     const afterLineObjs = getAfterLineObjs(
       afterLineTemplate,
       afterLineData,
-      props.partItems
+      props.partItems,
     );
 
     this.state = {
       rerenderById: rerenderByIdState,
-      afterLineObjs
+      afterLineObjs,
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.rerenderById && !prevState.rerenderById) {
       const itemIsFinded = nextProps.partItems.find(
-        el => el.id === nextProps.rerenderById
+        (el) => el.id === nextProps.rerenderById,
       );
       if (itemIsFinded) {
         return { rerenderById: nextProps.rerenderById };
@@ -85,7 +81,7 @@ export default class TBodyPart extends Component {
       const afterLineObjs = getAfterLineObjs(
         nextProps.afterLineTemplate,
         nextProps.afterLineData,
-        nextProps.partItems
+        nextProps.partItems,
       );
 
       return { afterLineObjs };
@@ -97,7 +93,7 @@ export default class TBodyPart extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const {
       props,
-      state: { afterLineObjs }
+      state: { afterLineObjs },
     } = this;
 
     const partItemsNotEqual =
@@ -137,7 +133,7 @@ export default class TBodyPart extends Component {
       partItems: data,
       visibleColumns,
       afterLineTemplate,
-      afterLineData
+      afterLineData,
     } = this.props;
     const { afterLineObjs } = this.state;
     const items = [];
@@ -151,7 +147,7 @@ export default class TBodyPart extends Component {
         if (afterLineKeys.indexOf(data[i][keyForSearch].toString()) >= 0) {
           afterLines[i] = {
             id: data[i][keyForSearch],
-            items: []
+            items: [],
           };
         }
       }
@@ -274,7 +270,7 @@ export default class TBodyPart extends Component {
               <span className="loading">
                 <span />
               </span>
-            </td>
+            </td>,
           ]);
         }
       });

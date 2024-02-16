@@ -2,12 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 
-const TFoot = props => {
+const TFoot = (props) => {
   const generateItemsByTemplate = () => {
-    const {
-      template,
-      tfootItem: item
-    } = props;
+    const { template, tfootItem: item } = props;
     const footItems = [];
     const tfootItem = item ? item.item : null;
     if (!item) return false;
@@ -41,7 +38,10 @@ const TFoot = props => {
 
       const itemProps = tfoot.props ? cloneDeep(tfoot.props) : {};
       if (tfoot.className) {
-        itemProps.className = typeof tfoot.className === 'function' ? tfoot.className(tfootItem) : tfoot.className;
+        itemProps.className =
+          typeof tfoot.className === 'function'
+            ? tfoot.className(tfootItem)
+            : tfoot.className;
       }
 
       // переименовать isWholeLine
@@ -52,12 +52,11 @@ const TFoot = props => {
         cellCounter++;
       }
 
-      Object.keys(itemProps)
-        .forEach(key => {
-          if (typeof itemProps[key] === 'function') {
-            itemProps[key] = itemProps[key](item);
-          }
-        });
+      Object.keys(itemProps).forEach((key) => {
+        if (typeof itemProps[key] === 'function') {
+          itemProps[key] = itemProps[key](item);
+        }
+      });
 
       footItems[index] = (
         <td key={index} {...itemProps}>
@@ -69,44 +68,40 @@ const TFoot = props => {
     return footItems;
   };
 
-  const {
-    forwardedRef,
-    tfootItem,
-    tfootOtherTemplate
-  } = props;
+  const { forwardedRef, tfootItem, tfootOtherTemplate } = props;
   const item = tfootItem ? tfootItem.item : null;
   const isLoading = tfootItem ? tfootItem.isLoading : null;
   const data = generateItemsByTemplate();
 
   return (
     <tfoot ref={forwardedRef}>
-    {tfootOtherTemplate}
-    <tr>
-      <th className="dr-padding">&nbsp;</th>
-      {data}
-      <td className="dr-padding">&nbsp;</td>
-    </tr>
-    {(item && isLoading && !Object.keys(item).length) && (
-      <tr className="tfoot-loading no-border">
-        <td>
+      {tfootOtherTemplate}
+      <tr>
+        <th className="dr-padding">&nbsp;</th>
+        {data}
+        <td className="dr-padding">&nbsp;</td>
+      </tr>
+      {item && isLoading && !Object.keys(item).length && (
+        <tr className="tfoot-loading no-border">
+          <td>
             <span className="loading">
               <span />
             </span>
-        </td>
-      </tr>
-    )}
+          </td>
+        </tr>
+      )}
     </tfoot>
   );
 };
 
 TFoot.defaultProps = {
-  tfootItem: null
+  tfootItem: null,
 };
 
 TFoot.propTypes = {
   template: PropTypes.array.isRequired,
   forwardedRef: PropTypes.object.isRequired,
-  tfootItem: PropTypes.object
+  tfootItem: PropTypes.object,
 };
 
 export default TFoot;

@@ -6,7 +6,7 @@ export default (optionHtml, formatGroupLabel) => (propsOptions) => {
 
   if (formatGroupLabel) {
     const { active } = this.props.options.find(
-      (group) => group.tier === propsOptions.data.tier
+      (group) => group.tier === propsOptions.data.tier,
     );
     if (!active && !propsOptions.selectProps.inputValue) {
       style.display = 'none';

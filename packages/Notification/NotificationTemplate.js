@@ -6,7 +6,7 @@ import './NotificationTemplate.sass';
 class Notification extends React.PureComponent {
   static defaultProps = {
     duration: 0,
-    message: ''
+    message: '',
   };
 
   static propTypes = {
@@ -14,7 +14,7 @@ class Notification extends React.PureComponent {
     type: PropTypes.string.isRequired,
     message: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     duration: PropTypes.number,
-    handleDismiss: PropTypes.func.isRequired
+    handleDismiss: PropTypes.func.isRequired,
   };
 
   componentDidMount() {

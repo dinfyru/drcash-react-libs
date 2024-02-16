@@ -10,14 +10,16 @@ export default (props) => {
   return (
     <>
       <span
-        className={classNames('offfer-top__selected', { empty: opts.filter((v) => v).length } )}
+        className={classNames('offfer-top__selected', {
+          empty: opts.filter((v) => v).length,
+        })}
       >
         {options
           .filter((v) => v)
           .map((option) =>
             this.Option(
               (propsOption) => propsOption.children,
-              !!formatGroupLabel
+              !!formatGroupLabel,
             )({
               ...props,
               children: option.label,
@@ -33,16 +35,14 @@ export default (props) => {
                     opts = [value];
                   }
                   this.handleOnChange(
-                    opts.filter((val) => val.value !== option.value)
+                    opts.filter((val) => val.value !== option.value),
                   );
-                }
-              }
-            })
+                },
+              },
+            }),
           )}
       </span>
-      <components.MenuList {...props}>
-        {props.children}
-      </components.MenuList>
+      <components.MenuList {...props}>{props.children}</components.MenuList>
     </>
   );
-}
+};

@@ -7,7 +7,7 @@ export default class TFoot extends Component {
     tfootItem: null,
     dataForRender: {},
     items: [],
-    tfootDataForRender: null
+    tfootDataForRender: null,
   };
 
   static propTypes = {
@@ -17,7 +17,7 @@ export default class TFoot extends Component {
     visibleColumns: PropTypes.array,
     tfootItem: PropTypes.object,
     items: PropTypes.array,
-    tfootDataForRender: PropTypes.object
+    tfootDataForRender: PropTypes.object,
   };
 
   shouldComponentUpdate(nextProps) {

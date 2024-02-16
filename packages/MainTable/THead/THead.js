@@ -16,7 +16,7 @@ export default class THead extends Component {
     sortBy: null,
     isHidden: false,
     softSort: false,
-    visibleColumns: null
+    visibleColumns: null,
   };
 
   static propTypes = {
@@ -31,7 +31,7 @@ export default class THead extends Component {
     changeFiltersValue: PropTypes.func.isRequired,
     setItems: PropTypes.func.isRequired,
     softSort: PropTypes.bool,
-    visibleColumns: PropTypes.array
+    visibleColumns: PropTypes.array,
   };
 
   shouldComponentUpdate(nextProps) {
@@ -67,8 +67,8 @@ export default class THead extends Component {
     filtersValue.sort_by !== sortBy
       ? ORDER_BY_DESC
       : filtersValue.sort_type === ORDER_BY_DESC
-      ? ORDER_BY_ASC
-      : ORDER_BY_DESC;
+        ? ORDER_BY_ASC
+        : ORDER_BY_DESC;
 
   generateFromTemplate = () => {
     const {
@@ -83,10 +83,9 @@ export default class THead extends Component {
       sortBy,
       visibleColumns,
       titleTemplate,
-      setItems
+      setItems,
     } = this.props;
     const headItems = [];
-
 
     const titleIndexes = [];
     if (titleTemplate && Array.isArray(titleTemplate)) {
@@ -100,7 +99,7 @@ export default class THead extends Component {
       if (!visibleColumns || visibleColumns[index]) {
         const {
           thead: { className, value, title, sortKey, sortLtr },
-          thead
+          thead,
         } = column;
         let resultValue = value;
         if (typeof value === 'function') {
@@ -120,9 +119,14 @@ export default class THead extends Component {
               if (!sortKey) return false;
               const newSortType = this.changeSortType(sortKey, filtersValue);
               if (softSort) {
-                changeFiltersValue({ sort_type: newSortType, sort_by: sortKey }, reducer);
+                changeFiltersValue(
+                  { sort_type: newSortType, sort_by: sortKey },
+                  reducer,
+                );
                 let newItems = [];
-                items.forEach(itemsPart => {newItems.push(...cloneDeep(itemsPart))});
+                items.forEach((itemsPart) => {
+                  newItems.push(...cloneDeep(itemsPart));
+                });
                 newItems = newItems.sort((a, b) => {
                   const bandA = a[sortKey];
                   const bandB = b[sortKey];
@@ -139,7 +143,7 @@ export default class THead extends Component {
               } else {
                 getItems(
                   { sort_type: newSortType, sort_by: sortKey, offset: 0 },
-                  reducer
+                  reducer,
                 );
               }
             }}

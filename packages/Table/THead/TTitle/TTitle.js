@@ -1,19 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
-const TTitle = ({
-  titleTemplate,
-  visibleColumns
-}) => {
+const TTitle = ({ titleTemplate, visibleColumns }) => {
   const generateFromTemplate = () => {
     const titleItems = [];
     let columnI = 0;
     titleTemplate.forEach((column, index) => {
-      const {
-        props,
-        value
-      } = column;
+      const { props, value } = column;
       const columns = [...column.columns];
       let colSpan = 0;
       let visible;
@@ -56,14 +49,13 @@ const TTitle = ({
   );
 };
 
-
 TTitle.defaultProps = {
-  visibleColumns: null
+  visibleColumns: null,
 };
 
 TTitle.propTypes = {
   titleTemplate: PropTypes.array.isRequired,
-  visibleColumns: PropTypes.array
+  visibleColumns: PropTypes.array,
 };
 
 export default TTitle;

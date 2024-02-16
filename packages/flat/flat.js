@@ -8,7 +8,7 @@ export const flatten = (target, opts = {}) => {
   const output = {};
 
   function step(object, prev, currentDepth = 1) {
-    Object.keys(object).forEach(key => {
+    Object.keys(object).forEach((key) => {
       const value = object[key];
       const isArray = opts.safe && Array.isArray(value);
       const type = Object.prototype.toString.call(value);
@@ -83,7 +83,7 @@ export const unflatten = (target, opts = {}) => {
     return keyA.length - keyB.length;
   });
 
-  sortedKeys.forEach(key => {
+  sortedKeys.forEach((key) => {
     const split = splitKey(key, delimiter);
     let key1 = getKey(split.shift());
     let key2 = getKey(split[0]);

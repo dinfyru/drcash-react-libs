@@ -5,7 +5,7 @@ import compact from 'lodash.compact';
 const REQUEST_REGEXP = /^MT_LIST@(.+)_REQUEST$/;
 const RSAA = '@@redux-api-middleware/RSAA';
 
-export default store => next => action => {
+export default (store) => (next) => (action) => {
   if (action[RSAA]) {
     const newAction = { ...action };
 
@@ -17,8 +17,8 @@ export default store => next => action => {
       const reducer = type.match(REQUEST_REGEXP)[1];
       const {
         mainTable: {
-          [reducer]: { isLoading, filtersValue }
-        }
+          [reducer]: { isLoading, filtersValue },
+        },
       } = store.getState();
       if (isLoading) {
         return false;
@@ -31,9 +31,10 @@ export default store => next => action => {
           compactedQuery[key] = compact(arr);
         });
 
-        const { disableFilters, requiredFilters } = newAction[RSAA].types[0].meta;
+        const { disableFilters, requiredFilters } =
+          newAction[RSAA].types[0].meta;
         if (disableFilters && requiredFilters && requiredFilters.length) {
-          Object.keys(compactedQuery).forEach(key => {
+          Object.keys(compactedQuery).forEach((key) => {
             if (requiredFilters.indexOf(key) < 0) {
               delete compactedQuery[key];
             }
@@ -42,10 +43,8 @@ export default store => next => action => {
         const queryString = queryBuilder.stringify(compactedQuery);
 
         if (queryString.length) {
-          newAction[RSAA].endpoint = `${
-            newAction[RSAA].endpoint
-          }?${queryString}`;
-
+          newAction[RSAA].endpoint =
+            `${newAction[RSAA].endpoint}?${queryString}`;
         }
       }
 

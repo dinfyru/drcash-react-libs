@@ -36,10 +36,10 @@ export default ({
   crudTypes = {
     request: `${name}_${CRUD_ACTION_REQUEST}`,
     success: `${name}_${CRUD_ACTION_SUCCESS}`,
-    failure: `${name}_${CRUD_ACTION_FAILURE}`
+    failure: `${name}_${CRUD_ACTION_FAILURE}`,
   },
   validStatuses,
-  errorMessagesByStatus = {}
+  errorMessagesByStatus = {},
 }) => {
   const { disableFilters, requiredFilters = [] } = meta;
   const metaObj = { query, ...meta, validStatuses, errorMessagesByStatus };
@@ -59,16 +59,16 @@ export default ({
               return {
                 status: res.status,
                 statusText: res.statusText,
-                ...metaObj
+                ...metaObj,
               };
             }
             return {
-              status: 'network'
+              status: 'network',
             };
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   };
 
   if (!uploadFile) {
@@ -76,19 +76,19 @@ export default ({
       'Content-Type': 'application/json',
       'Cache-Control':
         'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-      ...headers
+      ...headers,
     };
   } else {
     action[RSAA].headers = {
-      ...headers
+      ...headers,
     };
   }
 
   if (keys) {
-    Object.keys(keys).forEach(key => {
+    Object.keys(keys).forEach((key) => {
       action[RSAA].endpoint = action[RSAA].endpoint.replace(
         `:${key}`,
-        keys[key]
+        keys[key],
       );
     });
   }
@@ -101,7 +101,7 @@ export default ({
     });
 
     if (disableFilters && requiredFilters && requiredFilters.length) {
-      Object.keys(compactedQuery).forEach(key => {
+      Object.keys(compactedQuery).forEach((key) => {
         if (requiredFilters.indexOf(key) < 0) {
           delete compactedQuery[key];
         }

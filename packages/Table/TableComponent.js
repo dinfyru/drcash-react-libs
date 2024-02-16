@@ -6,12 +6,13 @@ import THead from './THead/THead';
 import TBody from './TBody/TBody';
 import TFoot from './TFoot/TFoot';
 import { elemOffset } from '../../utils';
+import cloneDeep from 'lodash.clonedeep';
 
 const TableComponent = (props) => {
   const tableRefs = {
     parent: useRef(null),
     tbody: React.createRef(),
-    tfoot: React.createRef()
+    tfoot: React.createRef(),
   };
 
   const {
@@ -22,13 +23,14 @@ const TableComponent = (props) => {
     data,
     onInit,
     refreshTableOnPush,
+    saveTableInitFilters,
     initFiltersValue,
     tfootItem,
     visibleColumnsMiddleware,
     messages,
     disableLazyLoad,
     titleTemplate,
-    dataForRender
+    dataForRender,
   } = props;
 
   const {
@@ -40,47 +42,50 @@ const TableComponent = (props) => {
       blockedItems,
       filtersValue,
       action,
-    }
+    },
   } = data;
   const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);
 
   const [firstLoad, setFirstLoad] = useState(true);
 
   const getItems = (params, urlProps) => {
-    const {
-      listGet,
-      changeFiltersValue
-    } = props;
+    const { listGet, changeFiltersValue } = props;
     const {
       [reducer]: {
-        filtersValue: {
-          offset,
-          limit
-        }
-      }
+        filtersValue: { offset, limit },
+      },
     } = data;
 
     changeFiltersValue(params || { offset: offset + limit }, reducer);
 
-    listGet(
-      reducer,
-      urlProps || url
-    );
+    listGet(reducer, urlProps || url);
   };
 
   useEffect(() => {
     const debounceGetItems = debounce(getItems, 500);
     onInit({
       getItems,
-      debounceGetItems
+      debounceGetItems,
     });
     const {
       listGet,
       changeFiltersValue,
-      history: { action }
+      history: { action },
     } = props;
 
     if (initFiltersValue) {
+      saveTableInitFilters(cloneDeep(initFiltersValue), reducer);
+    }
+
+    if (initFiltersValue) {
+      console.log(
+        !Object.keys(data[reducer].filtersValue).length,
+        refreshTableOnPush,
+        action,
+        props.history,
+      );
+      console.log(initFiltersValue, reducer, firstLoad);
+      console.log('------')
       if (
         !Object.keys(data[reducer].filtersValue).length ||
         (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))
@@ -95,14 +100,10 @@ const TableComponent = (props) => {
       (!data[reducer].items.length && data[reducer].isLastPage === null)
     ) {
       if (url) {
-        listGet(
-          reducer,
-          url
-        );
+        listGet(reducer, url);
       }
     }
   }, []);
-
 
   const lazyLoad = () => {
     if (disableLazyLoad || isLastPage || isLoading) return false;
@@ -112,7 +113,7 @@ const TableComponent = (props) => {
 
     const maxScrollTop = tbody.offsetHeight - parent.offsetHeight;
     const currentScrollTop = Math.abs(
-      elemOffset(tbody).top - elemOffset(parent).top
+      elemOffset(tbody).top - elemOffset(parent).top,
     );
     const documentHalfHeight =
       document.getElementsByTagName('html')[0].offsetHeight / 2;
@@ -172,17 +173,16 @@ TableComponent.defaultProps = {
   id: null,
   titleTemplate: [],
   reducer: '',
-  onInit: () => {
-  },
+  onInit: () => {},
   tfootItem: null,
   initFiltersValue: null,
-  visibleColumnsMiddleware: visibleColumns => visibleColumns,
+  visibleColumnsMiddleware: (visibleColumns) => visibleColumns,
   refreshTableOnPush: false,
   disableLazyLoad: false,
   dataForRender: null,
   messages: {
-    noDataContent: 'No content'
-  }
+    noDataContent: 'No content',
+  },
 };
 
 TableComponent.propTypes = {
@@ -198,10 +198,11 @@ TableComponent.propTypes = {
   tfootItem: PropTypes.object,
   initFiltersValue: PropTypes.object,
   refreshTableOnPush: PropTypes.bool,
+  saveTableInitFilters: PropTypes.func.isRequired,
   disableLazyLoad: PropTypes.bool,
   listGet: PropTypes.func.isRequired,
   changeFiltersValue: PropTypes.func.isRequired,
-  messages: PropTypes.object
+  messages: PropTypes.object,
 };
 
 export default TableComponent;

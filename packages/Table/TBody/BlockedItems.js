@@ -7,8 +7,8 @@ const BlockedItems = (props) => {
   const blockedItemsPosition = () => {
     const {
       tableRefs: {
-        parent: { current: parent }
-      }
+        parent: { current: parent },
+      },
     } = props;
     const trNodeList = parent.querySelectorAll('.blocked-item');
 
@@ -20,9 +20,8 @@ const BlockedItems = (props) => {
       if (!item.length) {
         let top = parent.scrollTop;
         if (!hasMainElement) {
-          top = top +
-            (Math.abs(elemOffset(item).top) - elemOffset(parent).top) +
-            1;
+          top =
+            top + (Math.abs(elemOffset(item).top) - elemOffset(parent).top) + 1;
         }
         const height = item.offsetHeight - 1;
         element.style.top = `${top}px`;
@@ -44,7 +43,7 @@ const BlockedItems = (props) => {
     blockedItemsPosition();
   }, [blockedItems]);
 
-  return blockedItems.map(id => (
+  return blockedItems.map((id) => (
     <tr className="blocked-item" key={id} item-data-id={id}>
       <td>
         <span className="loading" />

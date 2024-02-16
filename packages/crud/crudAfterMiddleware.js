@@ -2,22 +2,17 @@ import cloneDeep from 'lodash.clonedeep';
 
 const ignoreStatuses = ['OK', 'NO_ROWS'];
 
-export default store => next => action => {
+export default (store) => (next) => (action) => {
   if (/.*_FAILURE$/gi.test(action.type) && action.meta.status !== 401) {
     next({
       type: 'ADD_NOTIFICATION',
       notification: {
-        id: parseInt(
-          Math.random()
-            .toString()
-            .split('.')[1],
-          10
-        ),
+        id: parseInt(Math.random().toString().split('.')[1], 10),
         duration: 7000,
         message: 'Something went wrong. Try again later.',
         type: 'NOTIFICATION_TYPE_ERROR',
-        canDismiss: true
-      }
+        canDismiss: true,
+      },
     });
     return Promise.reject(next(action));
   }
@@ -31,7 +26,7 @@ export default store => next => action => {
     if (typeof cloneAction.payload.payload !== 'object') {
       cloneAction.payload.payload = {
         item: {},
-        items: []
+        items: [],
       };
     }
     if (typeof cloneAction.payload._meta !== 'object') {
@@ -46,7 +41,7 @@ export default store => next => action => {
     ) {
       const {
         payload = { status: 'INTERNAL_ERROR' },
-        meta: { validStatuses = [], errorMessagesByStatus = {} }
+        meta: { validStatuses = [], errorMessagesByStatus = {} },
       } = cloneAction;
       const { status } = payload;
       if (
@@ -60,17 +55,12 @@ export default store => next => action => {
         next({
           type: 'ADD_NOTIFICATION',
           notification: {
-            id: parseInt(
-              Math.random()
-                .toString()
-                .split('.')[1],
-              10
-            ),
+            id: parseInt(Math.random().toString().split('.')[1], 10),
             duration: 7000,
             message,
             type: 'NOTIFICATION_TYPE_ERROR',
-            canDismiss: true
-          }
+            canDismiss: true,
+          },
         });
         return Promise.reject(next(action));
       }

@@ -145,7 +145,10 @@ const mainTableReducer = (state = initialState, action) => {
     // if (data.offset === 0) {
     //   props.items = [];
     // }
-    if (data.offset !== state[reducer].filtersValue.offset && data.offset !== 0) {
+    if (
+      data.offset !== state[reducer].filtersValue.offset &&
+      data.offset !== 0
+    ) {
       props.action = 'next-page';
     }
     nextState = {

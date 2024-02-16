@@ -2,10 +2,7 @@ import React, { useRef } from 'react';
 import AsyncSelect from 'react-select/async';
 
 export default (props) => {
-  const {
-    selectProps,
-    inputValue
-  } = props;
+  const { selectProps, inputValue } = props;
 
   const selectRef = useRef();
 
@@ -18,7 +15,7 @@ export default (props) => {
       onFocus={() =>
         selectRef.current.onInputChange(inputValue, {
           prevInputValue: '',
-          action: 'set-value'
+          action: 'set-value',
         })
       }
       {...selectProps}

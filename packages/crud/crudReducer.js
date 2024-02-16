@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 
 const initialState = {
-  isLoading: {}
+  isLoading: {},
 };
 
 export default (state = initialState, action) => {

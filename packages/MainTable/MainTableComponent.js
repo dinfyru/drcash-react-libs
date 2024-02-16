@@ -12,13 +12,13 @@ import TFoot from './TFoot/TFoot';
 
 const mobileAndTabletcheck = () => {
   let check = false;
-  (function(a) {
+  (function (a) {
     if (
       /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
-        a
+        a,
       ) ||
       /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(
-        a.substr(0, 4)
+        a.substr(0, 4),
       )
     )
       check = true;
@@ -49,9 +49,9 @@ class MainTableComponent extends Component {
     requiredFilters: [],
     softSort: false,
     requiredFilterValues: [],
-    visibleColumnsMiddleware: visibleColumns => visibleColumns,
+    visibleColumnsMiddleware: (visibleColumns) => visibleColumns,
     requiredFilterValuesMessage: 'Empty required filters',
-    noDataContent: 'No data'
+    noDataContent: 'No data',
   };
 
   static propTypes = {
@@ -85,7 +85,7 @@ class MainTableComponent extends Component {
     requiredFilterValues: PropTypes.array,
     disableLazyLoad: PropTypes.bool,
     requiredFilterValuesMessage: PropTypes.string,
-    noDataContent: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+    noDataContent: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   };
 
   constructor(props) {
@@ -93,7 +93,7 @@ class MainTableComponent extends Component {
 
     this.state = {
       colsCount: props.tableTemplate.length + 2,
-      canDoRequest: !props.requiredFilterValues.length
+      canDoRequest: !props.requiredFilterValues.length,
     };
 
     this.table = {
@@ -103,7 +103,7 @@ class MainTableComponent extends Component {
       theadHidden: React.createRef(),
       tbody: React.createRef(),
       tfoot: React.createRef(),
-      tfootHidden: React.createRef()
+      tfootHidden: React.createRef(),
     };
   }
 
@@ -119,10 +119,10 @@ class MainTableComponent extends Component {
         url,
         reloadItemsOnRequest,
         disableFilters,
-        requiredFilters
+        requiredFilters,
       } = props;
       const { filtersValue } = data[reducer];
-      props.requiredFilterValues.forEach(el => {
+      props.requiredFilterValues.forEach((el) => {
         if (!filtersValue[el]) {
           canDoRequest = false;
         }
@@ -133,7 +133,7 @@ class MainTableComponent extends Component {
           url,
           reloadItemsOnRequest,
           disableFilters,
-          requiredFilters
+          requiredFilters,
         );
       }
 
@@ -142,7 +142,7 @@ class MainTableComponent extends Component {
       let canDoRequest = true;
       const { reducer, data } = props;
       const { filtersValue } = data[reducer];
-      props.requiredFilterValues.forEach(el => {
+      props.requiredFilterValues.forEach((el) => {
         if (!filtersValue[el]) {
           canDoRequest = false;
         }
@@ -162,7 +162,7 @@ class MainTableComponent extends Component {
       onInit(this.getItems);
     }
     const {
-      parent: { current: parent }
+      parent: { current: parent },
     } = this.table;
     const {
       reducer,
@@ -175,7 +175,7 @@ class MainTableComponent extends Component {
       refreshTableOnPush,
       reloadItemsOnRequest,
       disableFilters,
-      requiredFilters
+      requiredFilters,
     } = this.props;
 
     // init filtersValue for first request
@@ -198,7 +198,7 @@ class MainTableComponent extends Component {
           url,
           reloadItemsOnRequest,
           disableFilters,
-          requiredFilters
+          requiredFilters,
         );
       }
     }
@@ -214,7 +214,7 @@ class MainTableComponent extends Component {
 
     this.resizeTableColumns();
     const {
-      [reducer]: { items, scroll }
+      [reducer]: { items, scroll },
     } = data;
 
     if (scroll) {
@@ -234,8 +234,8 @@ class MainTableComponent extends Component {
     const {
       parent: {
         current: parent,
-        current: { scrollTop, scrollLeft }
-      }
+        current: { scrollTop, scrollLeft },
+      },
     } = this.table;
     const { saveTableScroll, reducer } = this.props;
     const html = document.getElementsByTagName('html')[0];
@@ -256,7 +256,7 @@ class MainTableComponent extends Component {
       parent: { current: parent },
       theadVisible: { current: theadVisible },
       tfoot: { current: tfoot },
-      ttitle: { current: ttitle }
+      ttitle: { current: ttitle },
     } = this.table;
     const {
       id,
@@ -265,7 +265,7 @@ class MainTableComponent extends Component {
       titleTemplate,
       tfootOtherTemplate,
       offsetHeight,
-      fixedFooter
+      fixedFooter,
     } = this.props;
     if (parent) {
       let left = leftMenuWidth - parent.scrollLeft;
@@ -288,7 +288,7 @@ class MainTableComponent extends Component {
     if (pageContent.length) {
       const {
         theadVisible: { current: theadVisible },
-        ttitle: { current: ttitle }
+        ttitle: { current: ttitle },
       } = this.table;
 
       const tableFilter = document.getElementsByClassName('table__filters')[0];
@@ -309,27 +309,28 @@ class MainTableComponent extends Component {
         theadVisible.setAttribute('js-data-top', topOffset);
       }
       this.addNewStyle(
-        `.page__content #${id} .table__thead thead { top: ${offsetTopThead +
-          titleHeight +
-          offsetHeight -
-          pageContent[0].scrollTop}px !important }`
+        `.page__content #${id} .table__thead thead { top: ${
+          offsetTopThead + titleHeight + offsetHeight - pageContent[0].scrollTop
+        }px !important }`,
       );
       // theadVisible.style.top = `${topOffset - pageContent[0].scrollTop}px !important`;
 
       if (tfoot && fixedFooter) {
         const offsetTopTable = 32 + tableFilterHeight + switchPagesHeight;
-        tfoot.style.top = `${offsetTopTable +
+        tfoot.style.top = `${
+          offsetTopTable +
           titleHeight +
           offsetHeight +
           parent.offsetHeight -
           pageContent[0].scrollTop -
-          (parent.offsetHeight - parent.clientHeight)}px`;
+          (parent.offsetHeight - parent.clientHeight)
+        }px`;
         tfoot.style.bottom = 'initial';
       }
     }
   };
 
-  addNewStyle = newStyle => {
+  addNewStyle = (newStyle) => {
     const { id } = this.props;
     let styleElement = document.getElementById(`${id}_js`);
     if (!styleElement) {
@@ -350,10 +351,10 @@ class MainTableComponent extends Component {
       titleTemplate,
       disableLazyLoad,
       offsetHeight,
-      fixedFooter
+      fixedFooter,
     } = this.props;
     const {
-      [reducer]: { items, isLoading, isLastPage }
+      [reducer]: { items, isLoading, isLastPage },
     } = data;
 
     const {
@@ -362,7 +363,7 @@ class MainTableComponent extends Component {
       theadHidden: { current: theadHidden },
       theadVisible: { current: theadVisible },
       tfoot: { current: tfoot },
-      ttitle: { current: ttitle }
+      ttitle: { current: ttitle },
     } = this.table;
 
     const tableFilter = document.getElementsByClassName('table__filters')[0];
@@ -392,24 +393,26 @@ class MainTableComponent extends Component {
       theadVisible.style.width = `${tbody.offsetWidth}px`;
       if (titleTemplate) {
         const html = document.getElementsByTagName('html')[0];
-        ttitle.style.width = `${parent.clientWidth +
-          parent.scrollLeft +
-          html.scrollLeft}px`;
+        ttitle.style.width = `${
+          parent.clientWidth + parent.scrollLeft + html.scrollLeft
+        }px`;
         // tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
       }
       if (tfootItem || tfootOtherTemplate) {
         const pageContent = document.getElementsByClassName('page__content');
         const html = document.getElementsByTagName('html')[0];
-        tfoot.style.width = `${parent.clientWidth +
-          parent.scrollLeft +
-          html.scrollLeft}px`;
+        tfoot.style.width = `${
+          parent.clientWidth + parent.scrollLeft + html.scrollLeft
+        }px`;
         if (fixedFooter) {
-          tfoot.style.top = `${offsetTopTable +
+          tfoot.style.top = `${
+            offsetTopTable +
             titleHeight +
             offsetHeight +
             parent.offsetHeight -
             pageContent[0].scrollTop -
-            (parent.offsetHeight - parent.clientHeight)}px`;
+            (parent.offsetHeight - parent.clientHeight)
+          }px`;
           tfoot.style.bottom = 'initial';
         } else {
           tfoot.style.bottom = `${parent.offsetHeight - parent.clientHeight}px`;
@@ -442,7 +445,7 @@ class MainTableComponent extends Component {
 
       if (titleTemplate) {
         const widths = {};
-        Array.prototype.forEach.call(targetItems, el => {
+        Array.prototype.forEach.call(targetItems, (el) => {
           const index = el.getAttribute('js-title-index');
           if (index) {
             if (!widths[index]) {
@@ -461,14 +464,14 @@ class MainTableComponent extends Component {
                 width = +Math.floor(targetItems[i].offsetWidth);
               } else {
                 width = +Math.floor(
-                  targetItems[targetItems.length - 1].offsetWidth
+                  targetItems[targetItems.length - 1].offsetWidth,
                 );
               }
             } else {
               width = widths[index];
             }
             el.style.width = `${width}px`;
-          }
+          },
         );
       }
     }
@@ -480,7 +483,7 @@ class MainTableComponent extends Component {
     const { data, reducer, disableLazyLoad } = this.props;
     if (disableLazyLoad) return false;
     const {
-      [reducer]: { isLastPage, isLoading }
+      [reducer]: { isLastPage, isLoading },
     } = data;
     if (isLastPage || isLoading) return false;
 
@@ -489,7 +492,7 @@ class MainTableComponent extends Component {
 
     const maxScrollTop = tbody.offsetHeight - parent.offsetHeight;
     const currentScrollTop = Math.abs(
-      elemOffset(tbody).top - elemOffset(parent).top
+      elemOffset(tbody).top - elemOffset(parent).top,
     );
     const documentHalfHeight =
       document.getElementsByTagName('html')[0].offsetHeight / 2;
@@ -499,7 +502,7 @@ class MainTableComponent extends Component {
     }
   };
 
-  getItems = params => {
+  getItems = (params) => {
     const {
       listGet,
       changeFiltersValue,
@@ -508,13 +511,13 @@ class MainTableComponent extends Component {
       data,
       reloadItemsOnRequest,
       disableFilters,
-      requiredFilters
+      requiredFilters,
     } = this.props;
     const {
       [reducer]: {
         filtersValue: { offset, limit },
-        filtersValue
-      }
+        filtersValue,
+      },
     } = data;
 
     changeFiltersValue(params || { offset: offset + limit }, reducer);
@@ -522,9 +525,9 @@ class MainTableComponent extends Component {
     let canDoRequest = true;
     const newFilters = {
       ...cloneDeep(filtersValue),
-      ...cloneDeep(params || {})
+      ...cloneDeep(params || {}),
     };
-    this.props.requiredFilterValues.forEach(el => {
+    this.props.requiredFilterValues.forEach((el) => {
       if (!newFilters[el]) {
         canDoRequest = false;
       }
@@ -535,7 +538,7 @@ class MainTableComponent extends Component {
       url,
       reloadItemsOnRequest,
       disableFilters,
-      requiredFilters
+      requiredFilters,
     );
   };
 
@@ -557,7 +560,7 @@ class MainTableComponent extends Component {
       requiredFilterValuesMessage,
       noDataContent,
       setItems,
-      softSort
+      softSort,
     } = this.props;
     const {
       [reducer]: {
@@ -569,7 +572,7 @@ class MainTableComponent extends Component {
         blockedItems,
         subLineData: afterLineData,
         action,
-      }
+      },
     } = data;
     const { colsCount, canDoRequest } = this.state;
     const visibleColumns = visibleColumnsMiddleware(originalVisibleColumns);

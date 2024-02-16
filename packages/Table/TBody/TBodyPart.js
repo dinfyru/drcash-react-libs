@@ -2,11 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 
-const TBodyPart = props => {
-  const {
-    template,
-    items: propsItems
-  } = props;
+const TBodyPart = (props) => {
+  const { template, items: propsItems } = props;
 
   const generateItemsByTemplate = () => {
     const items = [];
@@ -41,14 +38,16 @@ const TBodyPart = props => {
 
         const itemProps = tbody.props ? cloneDeep(tbody.props) : {};
         if (tbody.className) {
-          itemProps.className = typeof tbody.className === 'function' ? tbody.className(item) : tbody.className;
+          itemProps.className =
+            typeof tbody.className === 'function'
+              ? tbody.className(item)
+              : tbody.className;
         }
-        Object.keys(itemProps)
-          .forEach(key => {
-            if (typeof itemProps[key] === 'function') {
-              itemProps[key] = itemProps[key](item);
-            }
-          });
+        Object.keys(itemProps).forEach((key) => {
+          if (typeof itemProps[key] === 'function') {
+            itemProps[key] = itemProps[key](item);
+          }
+        });
 
         items[i][index] = <td {...itemProps}>{result}</td>;
       });
@@ -60,10 +59,7 @@ const TBodyPart = props => {
   const items = generateItemsByTemplate();
 
   return items.map((item, index) => (
-    <tr
-      key={index}
-      data-id={item.id ? item.id : index}
-    >
+    <tr key={index} data-id={item.id ? item.id : index}>
       <td className="dr-padding">&nbsp;</td>
       {item.map((td, tdIndex) => (
         <React.Fragment key={tdIndex}>{td}</React.Fragment>
@@ -75,7 +71,7 @@ const TBodyPart = props => {
 
 TBodyPart.propTypes = {
   template: PropTypes.array.isRequired,
-  items: PropTypes.array.isRequired
+  items: PropTypes.array.isRequired,
 };
 
 export default TBodyPart;
