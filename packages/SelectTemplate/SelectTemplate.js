@@ -5,41 +5,44 @@ import Creatable from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import cloneDeep from 'lodash.clonedeep';
+import classNames from 'classnames';
+import styled from 'styled-components';
 
-import './index.sass';
+// export style from './index.sass';
 
-// const Label = styled.label`
-//   left: 12px;
-//   pointer-events: none;
-//   position: absolute;
-//   color: #bababa;
-//   transition: 0.2s ease all;
-//   -moz-transition: 0.2s ease all;
-//   -webkit-transition: 0.2s ease all;
-//   z-index: 2;
-//
-//   top: ${props => (props.isFloating ? '5px' : '10px')};
-//   font-size: ${props => (props.isFloating ? '8px' : '14px')};
-// `;
+const Label = styled.label`
+    left: 12px;
+    pointer-events: none;
+    position: absolute;
+    color: #bababa;
+    transition:
+            0.2s ease top,
+            0.2s ease font-size;
+    -moz-transition:
+            0.2s ease top,
+            0.2s ease font-size;
+    -webkit-transition:
+            0.2s ease top,
+            0.2s ease font-size;
+    z-index: 2;
 
-// const Control = (props) => {
-//   console.log(props);
-//   return (
-//     <>
-//
-//       <components.Control {...props} />
-//     </>
-//   );
-// };
+    top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
+    font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
+`;
 
-// const Control = ({ children, ...props }) => (
-//   <components.Control {...props}>
-//     <Label isFloating={props.isFocused || props.hasValue}>
-//       {props.selectProps.placeholder}
-//     </Label>
-//     {children}
-//   </components.Control>
-// );
+const Control = ({ children, ...props }) => (
+  <components.Control {...props}>
+    <Label
+      className={classNames('select-label', {
+        '--is-floating': props.isFocused || props.hasValue,
+      })}
+      floating={(props.isFocused || props.hasValue).toString()}
+    >
+      {props.selectProps.placeholder}
+    </Label>
+    {children}
+  </components.Control>
+);
 const CustomMultiValueContainer = ({ children, ...props }) => {
   const isMultiValue = props.selectProps.value.length > 1;
   return (
@@ -52,7 +55,7 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
           props.selectProps.value.length === 1
             ? ' is-single'
             : ''
-        }${props.selectProps.inputValue.length ? ' is-searching' : ''}`
+        }${props.selectProps.inputValue.length ? ' is-searching' : ''}`,
       }}
     >
       {!props.selectProps.inputValue.length && (
@@ -69,7 +72,7 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
           className={'placeholder'}
           innerProps={{
             ...props.innerProps,
-            className: 'select__placeholder'
+            className: 'select__placeholder',
           }}
         >
           {isMultiValue ? (
@@ -82,13 +85,13 @@ const CustomMultiValueContainer = ({ children, ...props }) => {
         </components.Placeholder>
       )}
 
-      {React.Children.map(children, child =>
-        child && child.type !== Placeholder ? child : null
+      {React.Children.map(children, (child) =>
+        child && child.type !== Placeholder ? child : null,
       )}
     </components.MultiValueContainer>
   );
 };
-const Placeholder = props => {
+const Placeholder = (props) => {
   return props.selectProps.placeholder;
   return (
     <components.Placeholder {...props} isFocused={true}>
@@ -97,31 +100,9 @@ const Placeholder = props => {
   );
 };
 
-const Option = optionHtml => props => {
-  const style = {};
-
-  const groupLabel = props.selectProps.formatGroupLabel(props);
-  if (groupLabel && typeof groupLabel !== 'string') {
-    const { active } = props.options.find(
-      group => group.tier === props.data.tier
-    );
-    if (!active && !props.selectProps.inputValue) {
-      style.display = 'none';
-    }
-  }
-  return (
-    <span style={style}>
-      <components.Option {...props}>
-        {optionHtml(props)}
-        {props.children}
-      </components.Option>
-    </span>
-  );
-};
-
 function once(f) {
   let called = false;
-  return function() {
+  return function () {
     if (!called) {
       called = true;
       return f.apply(this, arguments);
@@ -131,16 +112,17 @@ function once(f) {
 
 class SelectTemplate extends Component {
   static defaultProps = {
+    replacementProps: {},
     nameParams: undefined,
     setValue: 0,
-    options: [],
+    options: undefined,
     placeholder: 'Выберите значение',
+    label: false,
     className: 'select',
-    isFetching: false,
     changeable: {},
     clearable: true,
     searchable: true,
-    filterFunc: option => option,
+    filterFunc: (option) => option,
     creatable: false,
     disabled: false,
     trackValue: false,
@@ -161,20 +143,22 @@ class SelectTemplate extends Component {
     getOptionLabel: false,
     getOptionValue: false,
     menuIsOpen: false,
-    optionHtml: false
+    optionHtml: false,
   };
 
   static propTypes = {
+    replacementProps: PropTypes.object,
     nameParams: PropTypes.string,
     options: PropTypes.array,
     onChange: PropTypes.func.isRequired,
     className: PropTypes.string,
     changeable: PropTypes.object,
     clearable: PropTypes.bool,
-    setValue: PropTypes.number,
+    setValue: PropTypes.any,
     searchable: PropTypes.bool,
     filterFunc: PropTypes.func,
     placeholder: PropTypes.string,
+    label: PropTypes.bool,
     noOptionsMessage: PropTypes.func,
     isFetching: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -192,7 +176,7 @@ class SelectTemplate extends Component {
       PropTypes.number,
       PropTypes.string,
       PropTypes.array,
-      PropTypes.bool
+      PropTypes.bool,
     ]),
     mustUpdate: PropTypes.bool,
     closeMenuOnSelect: PropTypes.bool,
@@ -201,7 +185,7 @@ class SelectTemplate extends Component {
     formatGroupLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     getOptionLabel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     getOptionValue: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    optionHtml: PropTypes.element
+    optionHtml: PropTypes.any,
   };
 
   constructor(props) {
@@ -211,24 +195,17 @@ class SelectTemplate extends Component {
     const { value, loadOptions } = props;
     this.state = {
       multi: props.multi,
-      options: [...props.options],
+      options: [...(props.options || [])],
       value: !loadOptions ? value : undefined,
       disabled: false,
       inputValue: '',
       filteredOptions: [],
-      isFetching: props.isFetching,
-      valueForFirst: null
+      valueForFirst: null,
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      value: stateValue,
-      isFetching,
-      valueForFirst,
-      loaded,
-      disabled
-    } = prevState;
+    const { value: stateValue, valueForFirst, loaded, disabled } = prevState;
     const {
       value: propsValue,
       trackValue,
@@ -238,14 +215,17 @@ class SelectTemplate extends Component {
       mustUpdate,
       setValue,
       async,
-      formatGroupLabel
+      formatGroupLabel,
     } = nextProps;
 
     const newState = {};
 
-    if (isFetching && Array.isArray(options)) {
+    if (
+      (!Array.isArray(prevState.options) || !prevState.options.length) &&
+      Array.isArray(options) &&
+      options.length
+    ) {
       newState.options = options;
-      newState.isFetching = false;
 
       if (setValue && options && options.length) {
         const random = Math.floor(Math.random() * (options.length - 0));
@@ -253,20 +233,39 @@ class SelectTemplate extends Component {
         nextProps.onChange(newState.value.value);
       }
     }
+    if (
+      !newState.options &&
+      JSON.stringify(options) !== JSON.stringify(prevState.options)
+    ) {
+      newState.options = options;
+    }
 
     if (stateValue !== propsValue && !async && !loadOptions) {
       newState.value = propsValue;
     }
 
     if (
-      !stateValue &&
-      valueForFirstProps &&
+      nextProps.multi &&
+      (stateValue || []).length &&
+      !(valueForFirstProps || []).length &&
       nextProps.loadOptions &&
       !disabled
     ) {
+      newState.valueForFirst = valueForFirstProps;
+      newState.value = valueForFirstProps;
+    }
+
+    if (
+      ((!stateValue && valueForFirstProps) ||
+        (stateValue && !valueForFirstProps  && typeof valueForFirstProps === 'string')) &&
+      nextProps.loadOptions &&
+      !disabled
+    ) {
+      console.log('select')
+      console.log(typeof valueForFirstProps, valueForFirstProps, stateValue, valueForFirst);
       if (!prevState.isActionClear) {
         newState.l = once(() =>
-          nextProps.loadOptions(valueForFirstProps, 'true')
+          nextProps.loadOptions(valueForFirstProps, 'true'),
         );
         newState.disabled = true;
       } else {
@@ -274,6 +273,10 @@ class SelectTemplate extends Component {
       }
       // newState.valueForFirst = valueForFirstProps;
     }
+
+    // if (prevState.isActionClear) {
+    //   newState.isActionClear = false;
+    // }
 
     return newState;
   }
@@ -304,30 +307,32 @@ class SelectTemplate extends Component {
     }
   }
 
-  setValueForFirst = loadOptions => {
+  setValueForFirst = (loadOptions) => {
     const { disabled } = this.state;
-    const { valueForFirst, async, generateOptions } = this.props;
+    const { valueForFirst, async, generateOptions, getOptionValue } =
+      this.props;
 
     if (!disabled || !loadOptions) return;
     loadOptions
-      .then(responseData => {
+      .then((responseData) => {
         let formattedData = cloneDeep(responseData || []);
         if (generateOptions) {
           formattedData = generateOptions(formattedData);
         }
-        const data = formattedData.filter(el => {
-          if (el.value && el.value.toString) {
+        const data = formattedData.filter((el) => {
+          const elementValue = getOptionValue ? getOptionValue(el) : el.value;
+          if (elementValue && elementValue.toString) {
             if (Array.isArray(valueForFirst)) {
               if (
                 valueForFirst
-                  .map(item => (item.toString ? item.toString() : ''))
-                  .indexOf(el.value.toString()) >= 0
+                  .map((item) => (item.toString ? item.toString() : ''))
+                  .indexOf(elementValue.toString()) >= 0
               ) {
                 return true;
               }
             } else if (
               valueForFirst.toString &&
-              el.value.toString() === valueForFirst.toString()
+              elementValue.toString() === valueForFirst.toString()
             ) {
               return true;
             }
@@ -344,22 +349,15 @@ class SelectTemplate extends Component {
           valueForFirst,
           loaded: true,
           disabled: false,
-          l: null
+          l: null,
         });
       })
       .catch(() => {
         this.setState({
           disabled: false,
-          l: null
+          l: null,
         });
       });
-  };
-
-  completeAsyncLoading = () => {
-    this.setState({
-      options: this.props.options,
-      isFetching: false
-    });
   };
 
   handleOnChange = (value, action) => {
@@ -379,11 +377,11 @@ class SelectTemplate extends Component {
     if (action && action.action === 'clear') {
       this.setState(
         {
-          isActionClear: true
+          isActionClear: true,
         },
         () => {
           this.callbackOnChange(value, nameParams, false, action);
-        }
+        },
       );
       return;
     }
@@ -392,16 +390,22 @@ class SelectTemplate extends Component {
   };
 
   callbackOnChange = (value, nameParams, label, action) => {
+    const { multi } = this.props;
     this.setState(
       {
-        value,
-        valueForFirst: null
+        value: action && action.action === 'clear' ? null : value,
+        valueForFirst: null,
       },
       () => {
         const { getOptionValue } = this.props;
         let valueForResponse = value;
-        if (Array.isArray(valueForResponse)) {
-          valueForResponse = valueForResponse.map(option => {
+        if (multi) {
+          if (!Array.isArray(valueForResponse)) {
+            valueForResponse = [valueForResponse];
+          }
+
+          this.setState({ value: valueForResponse });
+          valueForResponse = valueForResponse.map((option) => {
             if (getOptionValue) {
               return getOptionValue(option);
             }
@@ -418,19 +422,20 @@ class SelectTemplate extends Component {
           }
         }
         this.props.onChange(valueForResponse, nameParams, label, action);
-      }
+        // this.setState({ isActionClear: false });
+      },
     );
   };
 
   handleInputChange = (filter = '', { action, prevInputValue }) => {
     if (!this.props.async) {
       if (action === 'input-change' || action === 'menu-close') {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           const { options } = prevState;
           let filteredOptions;
 
           if (this.props.formatGroupLabel) {
-            filteredOptions = options.map(item => {
+            filteredOptions = options.map((item) => {
               const newItem = { ...item };
               newItem.options = this.filterOptions(newItem.options, filter);
               return newItem;
@@ -439,13 +444,12 @@ class SelectTemplate extends Component {
             filteredOptions = this.filterOptions(options, filter);
           }
 
-          console.log(options, filteredOptions)
           return { filteredOptions };
         });
       }
     }
 
-    this.setState({ inputValue: filter });
+    this.setState({ inputValue: filter.replace(/^\s+/, '') });
 
     return filter;
   };
@@ -460,13 +464,15 @@ class SelectTemplate extends Component {
       const regexpGlobal = new RegExp(filterEscapeChar, 'gi');
 
       // Ищем по value в начале строки
-      newOptions = options.filter(option =>
-        regexpStart.test(getOptionValue ? getOptionValue(option) : option.value)
+      newOptions = options.filter((option) =>
+        regexpStart.test(
+          getOptionValue ? getOptionValue(option) : option.value,
+        ),
       );
       // Ищем по label в начале слова
       newOptions = [
         ...newOptions,
-        ...options.filter(option => {
+        ...options.filter((option) => {
           let label = getOptionLabel ? getOptionLabel(option) : option.label;
           if (
             typeof label !== 'string' &&
@@ -478,17 +484,17 @@ class SelectTemplate extends Component {
           return (
             regexpStartWord.test(label) &&
             !newOptions.find(
-              elem =>
+              (elem) =>
                 (getOptionValue ? getOptionValue(elem) : elem.value) ===
-                (getOptionValue ? getOptionValue(option) : option.value)
+                (getOptionValue ? getOptionValue(option) : option.value),
             )
           );
-        })
+        }),
       ];
       // Ищем по label в начале строки
       newOptions = [
         ...newOptions,
-        ...options.filter(option => {
+        ...options.filter((option) => {
           let label = getOptionLabel ? getOptionLabel(option) : option.label;
           if (
             typeof label !== 'string' &&
@@ -500,27 +506,63 @@ class SelectTemplate extends Component {
           return (
             regexpGlobal.test(label) &&
             !newOptions.find(
-              elem =>
+              (elem) =>
                 (getOptionValue ? getOptionValue(elem) : elem.value) ===
-                (getOptionValue ? getOptionValue(option) : option.value)
+                (getOptionValue ? getOptionValue(option) : option.value),
             )
           );
-        })
+        }),
       ];
     }
 
     return newOptions || options;
   };
 
+  Option = (optionHtml) => (props) => {
+    const {
+      data,
+      className,
+      cx,
+      getStyles,
+      isDisabled,
+      isFocused,
+      isSelected,
+      innerRef,
+      innerProps,
+    } = props;
+    const isHidden = (data || {}).isHidden;
+    return (
+      <div
+        ref={innerRef}
+        css={getStyles('option', props)}
+        className={cx(
+          {
+            option: true,
+            'option--is-disabled': isDisabled,
+            'option--is-focused': isFocused,
+            'option--is-selected': isSelected,
+            'option--is-hidden': isHidden,
+          },
+          className,
+        )}
+        {...innerProps}
+      >
+        {optionHtml(props)}
+      </div>
+    );
+  };
+
   render() {
-    const { multi, value, isFetching } = this.state;
+    const { multi, value } = this.state;
     const {
       options: optionsState,
       disabled: disabledState,
       filteredOptions,
-      inputValue
+      inputValue,
     } = this.state;
     const {
+      replacementProps,
+
       changeable,
       noOptionsMessage,
       className,
@@ -528,7 +570,7 @@ class SelectTemplate extends Component {
       searchable,
       clearable,
       placeholder,
-
+      label,
       defaultOptions,
       async,
       creatable,
@@ -543,24 +585,27 @@ class SelectTemplate extends Component {
       maxSizeValue,
       filterOption,
       filterFunc,
-      isFetching: isFetchingProps,
-      showMenuList
+      isFetching,
+      showMenuList,
     } = this.props;
     let options =
       Array.isArray(filteredOptions) && filteredOptions.length
         ? filteredOptions
-        : optionsState;
+        : optionsState || [];
+
     if (Object.keys(changeable).length && !getOptionValue) {
       options = options.filter(
-        obj =>
+        (obj) =>
           obj[changeable.key] !==
-          this.props[changeable.storeName][changeable.storeField]
+          this.props[changeable.storeName][changeable.storeField],
       );
     }
     if (formatGroupLabel) {
-      options = options.map(item => {
+      options = options.map((item) => {
         const newItem = { ...item };
-        newItem.options = newItem.options.filter(filterFunc);
+        newItem.options = newItem.options.filter((option) =>
+          filterFunc(option, inputValue),
+        );
         return newItem;
       });
     } else {
@@ -570,28 +615,35 @@ class SelectTemplate extends Component {
     let curValue = value;
     if (multi && value && !creatable) {
       if (value.length && !this.debounceLoadOptions && !getOptionValue) {
-        curValue = optionsState.filter(
-          option => value.filter(valOption => option.value === valOption).length
+        curValue = (optionsState || []).filter(
+          (option) =>
+            value.filter((valOption) => option.value === valOption).length,
         );
       }
     } else if ((value || value === 0) && !async && !creatable) {
       curValue = options.filter(
-        option =>
-          (getOptionValue ? getOptionValue(option) : option.value) === value
+        (option) =>
+          (getOptionValue ? getOptionValue(option) : option.value) === value,
       );
     }
 
     if (creatable && multi && Array.isArray(value)) {
-      curValue = value.map(element => ({
+      curValue = value.map((element) => ({
         label: element,
-        value: element
+        value: element,
       }));
     }
+
     const props = {
+      unstyled: true,
       classNamePrefix: 'select',
       isMulti: multi,
       options,
-      isLoading: isFetching,
+      isLoading: !(
+        options.length ||
+        !isFetching ||
+        Array.isArray(this.props.options)
+      ),
       onChange: this.handleOnChange,
       value: curValue,
       className,
@@ -604,7 +656,8 @@ class SelectTemplate extends Component {
       noOptionsMessage,
       hideSelectedOptions,
       closeMenuOnSelect,
-      components: {}
+      components: {},
+      ...replacementProps,
     };
 
     if (!async && searchable) {
@@ -612,7 +665,7 @@ class SelectTemplate extends Component {
         ignoreCase: true,
         ignoreAccents: true,
         trim: true,
-        stringify: option => {
+        stringify: (option) => {
           let label = option.label;
           if (
             typeof label !== 'string' &&
@@ -623,7 +676,7 @@ class SelectTemplate extends Component {
           }
           return label;
         },
-        matchFrom: 'any'
+        matchFrom: 'any',
       });
     }
 
@@ -642,7 +695,7 @@ class SelectTemplate extends Component {
     }
 
     if (showMenuList) {
-      props.components.MenuList = props => {
+      props.components.MenuList = (props) => {
         let opts = value || [];
         if (!Array.isArray(value)) {
           opts = [value];
@@ -651,13 +704,13 @@ class SelectTemplate extends Component {
           <>
             <span
               className={`offfer-top__selected${
-                opts.filter(v => v).length ? '' : ' empty'
+                opts.filter((v) => v).length ? '' : ' empty'
               }`}
             >
               {opts
-                .filter(v => v)
-                .map(option =>
-                  Option(() => {})({
+                .filter((v) => v)
+                .map((option) =>
+                  this.Option((propsOption) => propsOption.children)({
                     ...props,
                     children: option.label,
                     data: option,
@@ -672,11 +725,11 @@ class SelectTemplate extends Component {
                           opts = [value];
                         }
                         this.handleOnChange(
-                          opts.filter(val => val.value !== option.value)
+                          opts.filter((val) => val.value !== option.value),
                         );
-                      }
-                    }
-                  })
+                      },
+                    },
+                  }),
                 )}
             </span>
             <components.MenuList {...props}>
@@ -688,7 +741,7 @@ class SelectTemplate extends Component {
     }
 
     if (optionHtml) {
-      props.components.Option = Option(optionHtml);
+      props.components.Option = this.Option(optionHtml);
       props.components.MultiValueContainer = CustomMultiValueContainer;
     }
 
@@ -708,6 +761,14 @@ class SelectTemplate extends Component {
       props.filterOption = filterOption;
     }
 
+    if (label) {
+      props.components.Control = Control;
+    }
+
+    if (clearable) {
+      props.openMenuOnFocus = true;
+    }
+
     if (async) {
       props.defaultOptions = defaultOptions;
       if (this.debounceLoadOptions) {
@@ -716,12 +777,7 @@ class SelectTemplate extends Component {
     }
 
     if (creatable) {
-      return (
-        <Creatable
-          {...props}
-          // components={{ Control }}
-        />
-      );
+      return <Creatable {...props} />;
     }
 
     if (async) {
@@ -730,25 +786,19 @@ class SelectTemplate extends Component {
           inputValue={inputValue}
           cacheOptions
           debounceInterval={300}
-          // components={{ Control }}
           {...props}
-          ref={ref => (this.selectRef.current = ref)}
+          ref={(ref) => (this.selectRef.current = ref)}
           onFocus={() =>
             this.selectRef.current.onInputChange(inputValue, {
               prevInputValue: '',
-              action: 'set-value'
+              action: 'set-value',
             })
           }
         />
       );
     }
 
-    return (
-      <Select
-        {...props}
-        // components={{ Control }}
-      />
-    );
+    return <Select {...props} />;
   }
 }
 
