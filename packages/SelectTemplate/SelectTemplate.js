@@ -11,23 +11,23 @@ import styled from 'styled-components';
 // export style from './index.sass';
 
 const Label = styled.label`
-    left: 12px;
-    pointer-events: none;
-    position: absolute;
-    color: #bababa;
-    transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    -moz-transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    -webkit-transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    z-index: 2;
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  color: #bababa;
+  transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  -moz-transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  -webkit-transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  z-index: 2;
 
-    top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
-    font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
+  top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
+  font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
 `;
 
 const Control = ({ children, ...props }) => (
@@ -264,7 +264,14 @@ class SelectTemplate extends Component {
       !disabled
     ) {
       if (!prevState.isActionClear) {
-        if (valueForFirstProps) {
+        if (
+          stateValue &&
+          !valueForFirstProps &&
+          typeof valueForFirstProps === 'string'
+        ) {
+          newState.value = valueForFirstProps;
+          newState.valueForFirst = valueForFirstProps;
+        } else if (valueForFirstProps && !stateValue) {
           newState.l = once(() =>
             nextProps.loadOptions(valueForFirstProps, 'true'),
           );
