@@ -256,8 +256,10 @@ class SelectTemplate extends Component {
     }
 
     if (
-      !stateValue &&
-      valueForFirstProps &&
+      ((!stateValue && valueForFirstProps) ||
+        (stateValue &&
+          !valueForFirstProps &&
+          typeof valueForFirstProps === 'string')) &&
       nextProps.loadOptions &&
       !disabled
     ) {
