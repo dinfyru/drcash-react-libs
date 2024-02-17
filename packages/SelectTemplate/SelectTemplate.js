@@ -11,23 +11,23 @@ import styled from 'styled-components';
 // export style from './index.sass';
 
 const Label = styled.label`
-    left: 12px;
-    pointer-events: none;
-    position: absolute;
-    color: #bababa;
-    transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    -moz-transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    -webkit-transition:
-            0.2s ease top,
-            0.2s ease font-size;
-    z-index: 2;
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  color: #bababa;
+  transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  -moz-transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  -webkit-transition:
+    0.2s ease top,
+    0.2s ease font-size;
+  z-index: 2;
 
-    top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
-    font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
+  top: ${(props) => (!Boolean(props.floating) ? '5px' : '10px')};
+  font-size: ${(props) => (!Boolean(props.floating) ? '8px' : '14px')};
 `;
 
 const Control = ({ children, ...props }) => (
@@ -257,7 +257,9 @@ class SelectTemplate extends Component {
 
     if (
       ((!stateValue && valueForFirstProps) ||
-        (stateValue && !valueForFirstProps  && typeof valueForFirstProps === 'string')) &&
+        (stateValue &&
+          !valueForFirstProps &&
+          typeof valueForFirstProps === 'string')) &&
       nextProps.loadOptions &&
       !disabled
     ) {
@@ -594,13 +596,32 @@ class SelectTemplate extends Component {
       );
     }
     if (formatGroupLabel) {
-      options = options.map((item) => {
-        const newItem = { ...item };
-        newItem.options = newItem.options.filter((option) =>
-          filterFunc(option, inputValue),
-        );
-        return newItem;
-      });
+      console.log(inputValue);
+      if (inputValue) {
+        options = options
+          .map((item) => item.options)
+          .flat()
+          .sort(function (a, b) {
+            const aValue = getOptionValue ? getOptionValue(a) : a.value;
+            const bValue = getOptionValue ? getOptionValue(b) : b.value;
+            if (aValue < bValue) {
+              return -1;
+            }
+            if (aValue > bValue) {
+              return 1;
+            }
+            return 0;
+          })
+          .filter((option) => filterFunc(option, inputValue));
+      } else {
+        options = options.map((item) => {
+          const newItem = { ...item };
+          newItem.options = newItem.options.filter((option) =>
+            filterFunc(option, inputValue),
+          );
+          return newItem;
+        });
+      }
     } else {
       options = options.filter(filterFunc);
     }

@@ -69,8 +69,9 @@ export default {
     }),
     resolve(),
     babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'runtime'
+      exclude: '.yarn/**',
+      babelHelpers: 'runtime',
+      skipPreflightCheck: true
     }),
     commonjs({
       namedExports: {
