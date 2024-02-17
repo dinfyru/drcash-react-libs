@@ -261,8 +261,6 @@ class SelectTemplate extends Component {
       nextProps.loadOptions &&
       !disabled
     ) {
-      console.log('select')
-      console.log(typeof valueForFirstProps, valueForFirstProps, stateValue, valueForFirst);
       if (!prevState.isActionClear) {
         newState.l = once(() =>
           nextProps.loadOptions(valueForFirstProps, 'true'),
@@ -271,12 +269,7 @@ class SelectTemplate extends Component {
       } else {
         newState.isActionClear = false;
       }
-      // newState.valueForFirst = valueForFirstProps;
     }
-
-    // if (prevState.isActionClear) {
-    //   newState.isActionClear = false;
-    // }
 
     return newState;
   }
