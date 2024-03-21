@@ -801,6 +801,8 @@ class SelectTemplate extends Component {
       }
     }
 
+    props.blurInputOnSelect = true;
+
     if (creatable) {
       return <Creatable {...props} />;
     }
