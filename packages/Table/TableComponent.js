@@ -78,14 +78,6 @@ const TableComponent = (props) => {
     }
 
     if (initFiltersValue) {
-      console.log(
-        !Object.keys(data[reducer].filtersValue).length,
-        refreshTableOnPush,
-        action,
-        props.history,
-      );
-      console.log(initFiltersValue, reducer, firstLoad);
-      console.log('------')
       if (
         !Object.keys(data[reducer].filtersValue).length ||
         (refreshTableOnPush && (action === 'PUSH' || action === 'POP'))
