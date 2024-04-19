@@ -358,6 +358,8 @@ class SelectTemplate extends Component {
       })
       .catch(() => {
         this.setState({
+          value: valueForFirst,
+          valueForFirst,
           disabled: false,
           l: null,
         });
