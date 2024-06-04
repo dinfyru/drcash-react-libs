@@ -95,6 +95,10 @@ const TableComponent = (props) => {
         listGet(reducer, url);
       }
     }
+
+    return () => {
+      changeFiltersValue(initFiltersValue, reducer, true);
+    };
   }, []);
 
   const lazyLoad = () => {
