@@ -40,7 +40,7 @@ const THead = (props) => {
 
     template.forEach((column, index) => {
       const {
-        thead: { value, sortKey, sortLtr, className },
+        thead: { value, sortKey, sortLtr, className, title },
         thead,
       } = column;
       let resultValue = value;
@@ -49,8 +49,6 @@ const THead = (props) => {
       }
 
       const itemProps = thead.props ? cloneDeep(thead.props) : {};
-      itemProps.title = itemProps.title || value;
-      itemProps.className = classNames([className, sortKey && 'cup']);
       if (!itemProps.title) {
         delete itemProps.title;
       } else {
@@ -59,8 +57,10 @@ const THead = (props) => {
 
       const th = (
         <th
-          key={index}
           {...itemProps}
+          key={index}
+          title={title || resultValue}
+          className={classNames([className, sortKey && 'cup'])}
           onClick={() =>
             sortOnClick({
               sortKey,
