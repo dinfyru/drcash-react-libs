@@ -1,6 +1,6 @@
 {
   "name": "drcash-react-libs",
-  "version": "0.7.121",
+  "version": "0.7.122",
   "description": "Dr cash react libs",
   "deprecated": false,
   "main": "packages/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dinfyru/drcash-react-libs"
+    "url": "git+https://github.com/Dinfyru/drcash-react-libs.git"
   },
   "keywords": [],
   "author": "Nikolay Glushchenko <dinfyru@gmail.com>",
@@ -76,7 +76,7 @@
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux": "6.0.1",
-    "react-select": "5.8.0",
+    "react-select": "5.7.7",
     "redux": "4.0.4",
     "rollup": "2.79.2",
     "rollup-plugin-babel": "4.4.0",
